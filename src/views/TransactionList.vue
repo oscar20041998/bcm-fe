@@ -1,0 +1,331 @@
+<template>
+  <div class="jumbotron">
+    <div class="row">
+      <div class="col-sm-3">
+        <h5>
+          <b-icon icon="reception4"></b-icon>
+          TRANSACTION LIST
+        </h5>
+      </div>
+      <div class="col-sm-2">
+        <select id="select-filter" class="form-control" v-model="criteria">
+          <option value="All">All</option>
+          <option value="TODAY">Today</option>
+          <option value="YESTERDAY">Yesterday</option>
+        </select>
+      </div>
+      <div class="col-sm-2">
+        <button
+          class="btn btn-dark"
+          id="button-search"
+          @click="searchTransactionByTime()"
+        >
+          <b-icon icon="filter"></b-icon> Filter
+        </button>
+      </div>
+      <div class="col-md-2">
+        <input
+          id="input-filter"
+          class="form-control"
+          type="date"
+          placeholder="Search by card number/ create by"
+          aria-label="Search"
+          v-model="criteriaSearchDate"
+        />
+      </div>
+      <div class="col-md-1">
+        <button
+          class="btn btn-primary"
+          id="button-search"
+          @click="searchTransactionByDate()"
+        >
+          <b-icon icon="search"></b-icon> Find
+        </button>
+      </div>
+    </div>
+    <hr class="my-4" />
+    <div
+      id="divLoading"
+      class="col-md-14"
+      style="text-align: center; display: none"
+    >
+      <b-spinner id="loading" label="Loading..."></b-spinner>
+    </div>
+    <div class="overflow-auto">
+      <b-table
+        head-variant="dark"
+        id="my-table"
+        caption-top
+        responsive="sm"
+        striped
+        hover
+        small
+        :items="transactionInfo.listTransaction"
+        :per-page="perPage"
+        :current-page="currentPage"
+      ></b-table>
+      <hr class="my-4" />
+      <div class="row" style="margin-left: 10px">
+        <div class="column">
+          <b-pagination
+            size="md"
+            pills
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="my-table"
+          ></b-pagination>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <strong>Total transactions: </strong>
+        <b-icon icon="bullseye" variant="danger"></b-icon>
+        {{ transactionInfo.totalTransaction }}
+      </div>
+      <div class="col-sm-3">
+        <strong>Total cash options: </strong>
+        <b-icon icon="wallet-fill" variant="success"></b-icon>
+        {{ transactionInfo.totalCashOption }}
+      </div>
+      <div class="col-sm-3">
+        <strong>Total card options: </strong>
+        <b-icon icon="credit-card2-front-fill"></b-icon>
+        {{ transactionInfo.totalCardOption }}
+      </div>
+      <div class="col-sm-12" style="text-align: right">
+        <h2>
+          <b-icon
+            icon="server"
+            animation="cylon-vertical"
+            variant="secondary"
+          ></b-icon>
+          Total sale: {{ transactionInfo.totalSale }}đ
+        </h2>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import http from "../axios/http-common";
+export default {
+  data() {
+    return {
+      accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
+      criteria: "",
+      criteriaSearchDate: "",
+      perPage: 15,
+      currentPage: 1,
+      transactionInfo: {
+        listTransaction: [],
+        totalSale: "",
+        totalTransaction: "",
+        totalCashOption: "",
+        totalCardOption: "",
+      },
+    };
+  },
+  mounted() {
+    this.checkLocalStorage();
+    this.getTransactions();
+  },
+  computed: {
+    rows() {
+      return this.transactionInfo.listTransaction.length;
+    },
+  },
+  methods: {
+    // check local storage
+    checkLocalStorage() {
+      var data = JSON.parse(localStorage.getItem("user"));
+      if (data == null) {
+        this.$swal({
+          toast: true,
+          showProgressBar: true,
+          position: "top-end",
+          title: "Please log in frist",
+          icon: "error",
+          showConfirmButton: false,
+          timer: 2100,
+        });
+        this.$router.push({
+          name: "Login",
+        });
+      }
+    },
+
+    // get all transation
+    getTransactions() {
+      $("#divLoading").css("display", "block");
+      http
+        .get("/transaction/api/get-transactions/" + this.accountUserValid)
+        .then((response) => {
+          if (response.status == "200") {
+            this.transactionInfo.listTransaction =
+              response.data.listTransactions;
+            this.transactionInfo.totalSale = response.data.totalPrice;
+            this.transactionInfo.totalTransaction =
+              response.data.totalTransaction;
+            this.transactionInfo.totalCashOption =
+              response.data.sumPaymentType.countCashOption;
+            this.transactionInfo.totalCardOption =
+              response.data.sumPaymentType.countCardOption;
+            $("#divLoading").css("display", "none");
+          } else if (response.status == "401") {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: "You do not have permission",
+              icon: "error",
+              showConfirmButton: false,
+              timer: 2100,
+            });
+            $("#divLoading").css("display", "none");
+          }
+        });
+    },
+
+    // search transactions depend on time
+    searchTransactionByTime() {
+      var criteria = this.criteria;
+      $("#divLoading").css("display", "block");
+      http
+        .post(
+          "/transaction/api/search-transactions/" +
+            this.accountUserValid +
+            "/" +
+            criteria
+        )
+        .then((response) => {
+          if (response.status == "200") {
+            if (response.data.listTransactions.size == 0) {
+              this.$swal({
+                toast: true,
+                showProgressBar: true,
+                position: "top-end",
+                title: "Not found any transaction",
+                icon: "info",
+                showConfirmButton: false,
+                timer: 2100,
+              });
+            } else {
+              this.transactionInfo.listTransaction =
+                response.data.listTransactions;
+              this.transactionInfo.totalSale = response.data.totalPrice;
+              this.transactionInfo.totalTransaction =
+                response.data.totalTransaction;
+              this.transactionInfo.totalCashOption =
+                response.data.sumPaymentType.countCashOption;
+              this.transactionInfo.totalCardOption =
+                response.data.sumPaymentType.countCardOption;
+              $("#divLoading").css("display", "none");
+            }
+          } else {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: "Some thing went wrong !!!",
+              icon: "error",
+              showConfirmButton: false,
+              timer: 2100,
+            });
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+          $("#divLoading").css("display", "none");
+          this.listTransaction = [];
+          this.totalSale = 0;
+        });
+    },
+
+    // search transaction by a date
+    searchTransactionByDate() {
+      var date = this.criteriaSearchDate;
+      $("#divLoading").css("display", "block");
+      http
+        .post(
+          "/transaction/api/search-transactions-by-date/" +
+            this.accountUserValid +
+            "/" +
+            date
+        )
+        .then((response) => {
+          if (response.status == "200") {
+            if (response.data.listTransactions.size == 0) {
+              this.$swal({
+                toast: true,
+                showProgressBar: true,
+                position: "top-end",
+                title: "Not found any transaction",
+                icon: "info",
+                showConfirmButton: false,
+                timer: 2100,
+              });
+            } else {
+              this.transactionInfo.listTransaction =
+                response.data.listTransactions;
+              this.transactionInfo.totalSale = response.data.totalPrice;
+              this.transactionInfo.totalTransaction =
+                response.data.totalTransaction;
+              this.transactionInfo.totalCashOption =
+                response.data.sumPaymentType.countCashOption;
+              this.transactionInfo.totalCardOption =
+                response.data.sumPaymentType.countCardOption;
+              $("#divLoading").css("display", "none");
+            }
+          } else {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: "Some thing went wrong !!!",
+              icon: "error",
+              showConfirmButton: false,
+              timer: 2100,
+            });
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+          $("#divLoading").css("display", "none");
+          this.listTransaction = [];
+          this.totalSale = 0;
+        });
+    },
+  },
+};
+</script>
+
+<style scoped>
+#input-filter,
+#select-filter,
+#button-search {
+  height: 32px;
+  font-size: 12px;
+  font-weight: 1px;
+}
+
+h2 {
+  color: green;
+}
+</style>
+>
