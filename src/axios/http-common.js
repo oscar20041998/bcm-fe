@@ -1,10 +1,10 @@
 import axios from "axios";
 
 export default axios.create({
-    baseURL: "http://bcm-api.com",
+    baseURL: "https://coffee-management-api.herokuapp.com",
     headers: {
         "Content-type": "application/json",
-        "Access-Control-Allow-Origin": "http://prd-coffee-management.com",
+        "Access-Control-Allow-Origin": "https://coffee-management-fe-0498.herokuapp.com",
         "Access-Control-Allow-Methods": "GET,POST, DELETE",
         "Access-Control-Allow-Headers": "*",
         "Access-Control-Allow-Credentials": "true"
