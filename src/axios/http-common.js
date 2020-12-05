@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default axios.create({
-    baseURL: "http://192.168.31.125:1510",
+    baseURL: "https://coffee-management-api.herokuapp.com",
     headers: {
         "Content-type": "application/json"
     }
