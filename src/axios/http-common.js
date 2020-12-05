@@ -3,6 +3,6 @@ import axios from "axios";
 export default axios.create({
     baseURL: "https://coffee-management-api.herokuapp.com",
     headers: {
-        "Content-type": "application/x-www-form-urlencoded"
+        "Content-type": "application/json"
     }
 })
