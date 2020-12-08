@@ -8,11 +8,7 @@
         </h5>
       </div>
       <div class="col-sm-4" style="text-align: right">
-        <b-button
-          v-b-toggle.sidebar-footer
-          title="Show category"
-          variant="light"
-        >
+        <b-button v-b-toggle.sidebar-footer title="Show category" variant="light">
           <b-icon icon="card-text" variant="dark"></b-icon>
         </b-button>
         <b-button
@@ -161,6 +157,7 @@
             <th scope="col">Product ID</th>
             <th scope="col">Category name</th>
             <th scope="col">Product name</th>
+            <th scope="col">Photo</th>
             <th scope="col">Price</th>
             <th scope="col">Create by</th>
             <th scope="col">Create date</th>
@@ -177,6 +174,7 @@
             </th>
             <td>{{ prd.categoryId }}</td>
             <td>{{ prd.productName }}</td>
+            <td><img :src="prd.imageContent" /></td>
             <td>đ{{ prd.priceFormatString }}</td>
             <td>{{ prd.createBy }}</td>
             <td>{{ prd.createDate }}</td>
@@ -224,15 +222,8 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="categoryDetailModalLabel">
-              CATEGORY DETAIL
-            </h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
+            <h5 class="modal-title" id="categoryDetailModalLabel">CATEGORY DETAIL</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -261,18 +252,10 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
               Close
             </button>
-            <button
-              type="button"
-              class="btn btn-success btn-sm"
-              @click="editCategory()"
-            >
+            <button type="button" class="btn btn-success btn-sm" @click="editCategory()">
               <b-icon icon="box-arrow-in-down-right"></b-icon>SAVE CHANGE
             </button>
           </div>
@@ -294,12 +277,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 id="title-form" class="modal-title">ADD NEW/ UPDATE PRODUCT</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -367,12 +345,27 @@
             </div>
             <div class="form-group row">
               <label for="inputPassword" class="col-sm-4 col-form-label">
-                <b-icon icon="card-heading"></b-icon>
+                <b-icon icon="box"></b-icon>
+                Choose image
+              </label>
+              <input ref="fileInput" type="file" @change="pickFile" />
+              <div
+                class="imagePreviewWrapper"
+                :style="{ 'background-image': `url(${selectedFile})` }"
+                @click="selectImage"
+              ></div>
+            </div>
+            <div class="form-group row">
+              <label for="inputPassword" class="col-sm-4 col-form-label">
+                <b-icon icon="image-fill"></b-icon>
                 Price
               </label>
-              <div class="col-sm-8">
+              <div class="col-sm-4">
+                <h5 id="price-format-string" style="display: block">
+                  {{ product.priceFormatString }}
+                </h5>
                 <ValidationProvider rules="required">
-                  <div slot-scope="{ errors }">
+                  <div slot-scope="{ errors }" id="priceDiv" style="display: none">
                     <input
                       class="form-control"
                       ref="input"
@@ -383,14 +376,20 @@
                   </div>
                 </ValidationProvider>
               </div>
+              <div class="col-sm-4">
+                <b-form-checkbox
+                  v-model="checked"
+                  name="check-button"
+                  switch
+                  @change="showEditPrice"
+                >
+                  Edit mode
+                </b-form-checkbox>
+              </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-success btn-sm"
-              @click="saveProduct()"
-            >
+            <button type="button" class="btn btn-success btn-sm" @click="saveProduct()">
               <b-icon icon="box-arrow-in-down-right"></b-icon>SAVE CHANGE
             </button>
           </div>
@@ -433,7 +432,10 @@ export default {
         categoryId: "",
         productName: "",
         price: "",
+        priceFormatString: "",
       },
+      checked: false,
+      selectedFile: null,
     };
   },
 
@@ -442,6 +444,7 @@ export default {
     this.checkLocalStorage();
     this.getAllCategories();
     this.getProducts();
+    this.showEditPrice();
   },
 
   computed: {
@@ -631,6 +634,7 @@ export default {
       this.product.productId = "";
       this.product.productName = "";
       this.product.categoryId = "";
+      this.selectedFile = null;
       this.product.price = "";
     },
 
@@ -650,9 +654,7 @@ export default {
                 showProgressBar: true,
                 position: "top-end",
                 title:
-                  "Change " +
-                  this.categoryModelEdit.categoryName +
-                  " successfully. !!!",
+                  "Change " + this.categoryModelEdit.categoryName + " successfully. !!!",
                 icon: "success",
                 showConfirmButton: false,
                 timer: 2100,
@@ -705,18 +707,11 @@ export default {
         if (result.isConfirmed) {
           http
             .delete(
-              "/category/api/delete-category/" +
-                categoryId +
-                "/" +
-                this.accountCurrent
+              "/category/api/delete-category/" + categoryId + "/" + this.accountCurrent
             )
             .then((response) => {
               if (response.status == "200") {
-                this.$swal(
-                  "Deleted!",
-                  "Your category has been deleted.",
-                  "success"
-                );
+                this.$swal("Deleted!", "Your category has been deleted.", "success");
                 this.callBackCategories();
                 this.callBackProducts();
               } else {
@@ -757,15 +752,12 @@ export default {
         productId: this.product.productId,
         categoryId: this.product.categoryId,
         productName: this.product.productName,
+        image: this.selectedFile,
         price: this.convertValueToInt,
         createBy: this.userCurrent,
         createDate: "",
       };
-      if (
-        request.categoryId != "" &&
-        request.productName != "" &&
-        request.price != ""
-      ) {
+      if (request.categoryId != "" && request.productName != "" && request.price != "") {
         http
           .post("/product/api/save-product/" + this.accountCurrent, request)
           .then((response) => {
@@ -828,15 +820,11 @@ export default {
     bindingDataProduct(productId) {
       $("#addNewProductModal").css("display", "block");
       http
-        .get(
-          "/product/api/get-product-by-id/" +
-            productId +
-            "/" +
-            this.accountCurrent
-        )
+        .get("/product/api/get-product-by-id/" + productId + "/" + this.accountCurrent)
         .then((response) => {
           if (response.status == "200") {
             this.product = response.data;
+            this.selectedFile = response.data.imageContent;
           }
         })
         .catch((error) => {
@@ -866,18 +854,11 @@ export default {
         if (result.isConfirmed) {
           http
             .delete(
-              "/product/api/delete-product/" +
-                productId +
-                "/" +
-                this.accountCurrent
+              "/product/api/delete-product/" + productId + "/" + this.accountCurrent
             )
             .then((response) => {
               if (response.status == "200") {
-                this.$swal(
-                  "Deleted!",
-                  "Your category has been deleted.",
-                  "success"
-                );
+                this.$swal("Deleted!", "Your category has been deleted.", "success");
                 this.callBackCategories();
                 this.callBackProducts();
               } else {
@@ -1004,6 +985,67 @@ export default {
         this.callBackProducts();
       }
     },
+
+    selectImage() {
+      this.$refs.fileInput.click();
+    },
+    pickFile(event) {
+      this.selectedFile = event.target.files[0];
+      let input = this.$refs.fileInput;
+      let file = input.files;
+      if (file && file[0]) {
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.selectedFile = e.target.result;
+        };
+        reader.readAsDataURL(file[0]);
+        this.$emit("input", file[0]);
+      }
+      console.log(this.selectedFile);
+    },
+
+    // execute save data
+    onUpload() {
+      let formData = new FormData();
+      formData.append("mutipartFile", this.selectedFile);
+      http
+        .post("/api/image/save-image", this.selectedFile)
+        .then((response) => {
+          if (response.status === "200") {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: "Save photo success !!!",
+              icon: "success",
+              showConfirmButton: false,
+              timer: 2100,
+            });
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+        });
+    },
+
+    // show input edit price
+    showEditPrice() {
+      if (this.checked === true) {
+        $("#priceDiv").css("display", "block");
+        $("#price-format-string").css("display", "none");
+      } else {
+        $("#priceDiv").css("display", "none");
+        $("#price-format-string").css("display", "block");
+      }
+    },
   },
 };
 </script>
@@ -1013,7 +1055,19 @@ button {
   text-align: left;
   height: 30px;
 }
-
+.imagePreviewWrapper {
+  width: 250px;
+  height: 250px;
+  display: block;
+  cursor: pointer;
+  margin: 0 auto 30px;
+  background-size: cover;
+  background-position: center center;
+}
+img {
+  height: 100px;
+  width: 100px;
+}
 thead,
 tr,
 td {
