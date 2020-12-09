@@ -9,16 +9,9 @@
       </div>
       <div class="col-sm-4" style="text-align: right">
         <b-button v-b-toggle.sidebar-footer title="Show category" variant="light">
-          <b-icon icon="card-text" variant="dark"></b-icon>
+          <b-icon icon="card-text" variant="dark"></b-icon> SHOW CATEGORY
         </b-button>
-        <b-button
-          v-b-toggle.sidebar-footer
-          title="Refresh data"
-          variant="light"
-          @click="callBackProducts()"
-        >
-          <b-icon icon="shuffle" variant="dark"></b-icon>
-        </b-button>
+
         <template v-if="currentRole == 'ROLE_ADMINISTRATOR'">
           <b-button
             variant="success"
@@ -26,7 +19,7 @@
             data-target="#addNewProducModal"
             @click="clearData()"
           >
-            <b-icon icon="plus-circle"></b-icon>
+            <b-icon icon="plus-circle"></b-icon> ADD NEW PRODUCT
           </b-button>
         </template>
       </div>
@@ -74,6 +67,9 @@
         <div class="px-4 py-6">
           <h5 style="color: black; text-algin: left">CATEGORY AVAILABLE</h5>
           <hr class="my-4" />
+          <b-button block variant="light" @click="callBackProducts()">
+            <b-icon icon="star-fill" variant="dark"></b-icon> All
+          </b-button>
           <template>
             <b-list-group v-for="c in listCategory" :key="c.idCategory">
               <div class="row">
@@ -345,7 +341,7 @@
             </div>
             <div class="form-group row">
               <label for="inputPassword" class="col-sm-4 col-form-label">
-                <b-icon icon="box"></b-icon>
+                <b-icon icon="image-fill"></b-icon>
                 Choose image
               </label>
               <input ref="fileInput" type="file" @change="pickFile" />
@@ -357,7 +353,7 @@
             </div>
             <div class="form-group row">
               <label for="inputPassword" class="col-sm-4 col-form-label">
-                <b-icon icon="image-fill"></b-icon>
+                <b-icon icon="cash"></b-icon>
                 Price
               </label>
               <div class="col-sm-4">
@@ -378,6 +374,7 @@
               </div>
               <div class="col-sm-4">
                 <b-form-checkbox
+                  id="checkBoxEditMode"
                   v-model="checked"
                   name="check-button"
                   switch
@@ -631,6 +628,7 @@ export default {
     clearData() {
       $("#selectCategory").css("display", "block");
       $("#inputCategory").css("display", "none");
+      $("#checkBoxEditMode").css("display", "none");
       this.product.productId = "";
       this.product.productName = "";
       this.product.categoryId = "";

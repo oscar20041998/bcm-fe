@@ -8,9 +8,10 @@ import ProfileUser from '../components/ProfileUser.vue'
 import AccountUser from '../views/AccountUser.vue'
 import User from '../views/User.vue'
 import FoodAndDrink from '../views/FoodAndDrink.vue'
-import Sale from '../views/Sale.vue'
+import Position from '../views/Position.vue'
 import Unauthorize from '../views/Unauthorize.vue'
 import TransactionList from '../views/TransactionList.vue'
+import OrderProduct from '../views/OrderProduct.vue'
 // var token = JSON.parse(localStorage.getItem('user')) != null || JSON.parse(localStorage.getItem('user')) != '' ? btoa(JSON.parse(localStorage.getItem('user'))) : ''
 Vue.use(VueRouter)
 const routes = [{
@@ -54,9 +55,9 @@ const routes = [{
         component: FoodAndDrink
     },
     {
-        path: '/sale-management/',
-        name: 'Sale',
-        component: Sale
+        path: '/positions/',
+        name: 'Position',
+        component: Position
     },
     {
         path: '/unauthorize/',
@@ -67,6 +68,11 @@ const routes = [{
         path: '/transaction-list/',
         name: 'TransactionList',
         component: TransactionList
+    },
+    {
+        path: '/order-product-page/',
+        name: 'OrderProduct',
+        component: OrderProduct
     }
 ]
 
