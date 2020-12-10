@@ -22,27 +22,57 @@
           <div class="row" style="margin-bottom: 15px">
             <div class="col-sm-2">
               <div>
-                <b-form-input list="my-list-id" v-model="searchLogRequest.userName"></b-form-input>
+                <b-form-input
+                  list="my-list-id"
+                  v-model="searchLogRequest.userName"
+                ></b-form-input>
                 <datalist id="my-list-id">
-                  <option v-for="account in listAccountAvailabel" v-bind:key="account.accountId">
+                  <option
+                    v-for="account in listAccountAvailabel"
+                    v-bind:key="account.accountId"
+                  >
                     {{ account.userName }}
                   </option>
                 </datalist>
               </div>
             </div>
             <div class="col-md-2">
-              <input id="input-filter" class="form-control" type="date" placeholder="Search by card number/ create by" aria-label="Search" v-model="searchLogRequest.date" />
+              <input
+                id="input-filter"
+                class="form-control"
+                type="date"
+                placeholder="Search by card number/ create by"
+                aria-label="Search"
+                v-model="searchLogRequest.date"
+              />
             </div>
             <div class="col-md-1">
-              <button class="btn btn-primary" id="button-search" @click="searchPersonalLog()"><b-icon icon="search"></b-icon> Find</button>
+              <button
+                class="btn btn-primary"
+                id="button-search"
+                @click="searchPersonalLog()"
+              >
+                <b-icon icon="search"></b-icon> Find
+              </button>
             </div>
             <div class="col-sm-6">
-              <button class="btn btn-secondary" id="button-search" @click="getListSytemLog()"><b-icon icon="search"></b-icon> Find by me</button>
+              <button
+                class="btn btn-secondary"
+                id="button-search"
+                @click="getListSytemLog()"
+              >
+                <b-icon icon="search"></b-icon> Find by me
+              </button>
             </div>
           </div>
           <div class="card-body">
             <div style="height: 600px; min-height: 10px; overflow-y: scroll">
-              <table id="table-log-detail" class="table table-striped table-responsive-sm" cellspacing="0" style="max-heigh: 100px">
+              <table
+                id="table-log-detail"
+                class="table table-striped table-responsive-sm"
+                cellspacing="0"
+                style="max-heigh: 100px"
+              >
                 <thead class="thead-dark">
                   <tr>
                     <th scope="col">User name</th>
@@ -55,16 +85,28 @@
                 <tbody sytle="min-height:10px; overflow-y:scroll">
                   <tr v-for="log in sytemLogList" v-bind:key="log.userName">
                     <th scope="row">
-                      <b-icon icon="person-fill" animation="no-fade" font-scale="1"></b-icon>
+                      <b-icon
+                        icon="person-fill"
+                        animation="no-fade"
+                        font-scale="1"
+                      ></b-icon>
                       {{ log.userName }}
                     </th>
                     <td>{{ log.action }}</td>
                     <td>
                       <template v-if="log.status === 'Success'">
-                        <b-icon icon="check-circle-fill" font-scale="1" variant="success"></b-icon>
+                        <b-icon
+                          icon="check-circle-fill"
+                          font-scale="1"
+                          variant="success"
+                        ></b-icon>
                       </template>
                       <template v-else-if="log.status === 'Failed'">
-                        <b-icon icon="x-circle-fill" font-scale="1" variant="danger"></b-icon>
+                        <b-icon
+                          icon="x-circle-fill"
+                          font-scale="1"
+                          variant="danger"
+                        ></b-icon>
                       </template>
                       {{ log.status }}
                     </td>
@@ -77,13 +119,20 @@
           </div>
         </div>
 
-        <template v-if="currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER'">
+        <template
+          v-if="currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER'"
+        >
           <!--ACCOUNT USER LOG-->
           <div class="carousel-item">
             <h5>ACCOUNT USER ACTIVITIVE LOG</h5>
             <div class="card-body">
               <div style="height: 600px; min-height: 10px; overflow-y: scroll">
-                <table id="table-log-detail" class="table table-striped table-responsive-sm" cellspacing="0" style="max-heigh: 100px">
+                <table
+                  id="table-log-detail"
+                  class="table table-striped table-responsive-sm"
+                  cellspacing="0"
+                  style="max-heigh: 100px"
+                >
                   <thead class="thead-dark">
                     <tr>
                       <th scope="col">AccountID</th>
@@ -96,7 +145,11 @@
                   <tbody sytle="min-height:10px; overflow-y:scroll">
                     <tr v-for="log in accountUserLog" v-bind:key="log.userName">
                       <th scope="row">
-                        <b-icon icon="check-fill" animation="no-fade" font-scale="1"></b-icon>
+                        <b-icon
+                          icon="check-fill"
+                          animation="no-fade"
+                          font-scale="1"
+                        ></b-icon>
                         {{ log.accountId }}
                       </th>
                       <td>{{ log.userName }}</td>
@@ -119,7 +172,12 @@
             <h5>USER ACTIVITIVE LOG</h5>
             <div class="card-body">
               <div style="height: 600px; min-height: 10px; overflow-y: scroll">
-                <table id="table-log-user-detail" class="table table-striped table-responsive-sm" cellspacing="0" style="max-heigh: 100px">
+                <table
+                  id="table-log-user-detail"
+                  class="table table-striped table-responsive-sm"
+                  cellspacing="0"
+                  style="max-heigh: 100px"
+                >
                   <thead class="thead-dark">
                     <tr>
                       <th scope="col">User ID</th>
@@ -134,7 +192,11 @@
                   <tbody sytle="min-height:10px; overflow-y:scroll">
                     <tr v-for="log in userLog" v-bind:key="log.userId">
                       <th scope="row">
-                        <b-icon icon="person-fill" animation="no-fade" font-scale="1"></b-icon>
+                        <b-icon
+                          icon="person-fill"
+                          animation="no-fade"
+                          font-scale="1"
+                        ></b-icon>
                         {{ log.userId }}
                       </th>
                       <td>{{ log.fullName }}</td>
@@ -159,7 +221,12 @@
             <h5>PRODUCT ACTIVITIVE LOG</h5>
             <div class="card-body">
               <div style="height: 600px; min-height: 10px; overflow-y: scroll">
-                <table id="table-log-user-detail" class="table table-striped table-responsive-sm" cellspacing="0" style="max-heigh: 100px">
+                <table
+                  id="table-log-user-detail"
+                  class="table table-striped table-responsive-sm"
+                  cellspacing="0"
+                  style="max-heigh: 100px"
+                >
                   <thead class="thead-dark">
                     <tr>
                       <th scope="col">Product name</th>
@@ -192,10 +259,20 @@
         </template>
       </div>
     </div>
-    <a class="carousel-control-prev" href="#carouselExampleInterval" role="button" data-slide="prev">
+    <a
+      class="carousel-control-prev"
+      href="#carouselExampleInterval"
+      role="button"
+      data-slide="prev"
+    >
       <b-icon icon="arrow-left-circle-fill" font-scale="4" variant="secondary"></b-icon>
     </a>
-    <a class="carousel-control-next" href="#carouselExampleInterval" role="button" data-slide="next">
+    <a
+      class="carousel-control-next"
+      href="#carouselExampleInterval"
+      role="button"
+      data-slide="next"
+    >
       <b-icon icon="arrow-right-circle-fill" font-scale="4" variant="secondary"></b-icon>
     </a>
   </div>
@@ -439,7 +516,7 @@ thead,
 tbody {
   width: 100%;
   height: 20px;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .pagination {

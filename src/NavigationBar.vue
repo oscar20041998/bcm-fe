@@ -72,6 +72,17 @@
                 </router-link>
               </li>
             </template>
+            <template v-if="getRole == 'ROLE_ADMINISTRATOR' || getRole == 'ROLE_MANAGER'">
+              <li class="nav-item">
+                <router-link
+                  class="nav-link btn btn-dark btn-sm"
+                  :to="{ name: 'PaymentConfig' }"
+                >
+                  <b-icon icon="gear-fill"></b-icon>
+                  Payment Configuration
+                </router-link>
+              </li>
+            </template>
           </template>
           <template v-if="isLogin == false">
             <li class="nav-item">
@@ -253,8 +264,7 @@ export default {
 
   a {
     font-weight: bold;
-    color: white;
-    font-size: 13px;
+    font-size: 12px;
 
     &.router-link-exact-active {
       color: orange;
