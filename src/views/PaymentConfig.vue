@@ -5,8 +5,8 @@
       active-tab-class="font-weight-bold text-success"
       content-class="mt-3"
     >
-      <b-tab title="Bank" active><p>I'm the first tab</p></b-tab>
-      <b-tab title="Electronic Wallet"><p>I'm the second tab</p></b-tab>
+      <b-tab title="Bank" active><BankInfos></BankInfos></b-tab>
+      <b-tab title="Electronic Wallet"><ElectronicWallet></ElectronicWallet></b-tab>
       <b-tab title="Card payment config"><p>I'm a disabled tab!</p></b-tab>
       <b-tab title="Payment config"><p>I'm a disabled tab!</p></b-tab>
     </b-tabs>
@@ -14,7 +14,13 @@
 </template>
 <script>
 import http from "../axios/http-common";
+import BankInfos from "../components/BanksInfo.vue";
+import ElectronicWallet from "../components/ElectronicWallet.vue";
 export default {
+  components: {
+    BankInfos,
+    ElectronicWallet,
+  },
   data() {
     return {};
   },
@@ -24,4 +30,8 @@ export default {
   methods: {},
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+tab {
+  font-size: 12px;
+}
+</style>

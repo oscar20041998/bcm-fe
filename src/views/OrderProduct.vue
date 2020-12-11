@@ -116,7 +116,12 @@
                         size="sm"
                         @click="decreaseOrderProduct(ord.productId)"
                       >
-                        <b-icon variant="dark" icon="caret-down" font-scale="1"></b-icon>
+                        <b-icon
+                          variant="dark"
+                          icon="caret-down-fill"
+                          font-scale="1"
+                          animation="cylon-vertical"
+                        ></b-icon>
                       </b-button>
                     </b-col>
                     <b-col>
@@ -365,7 +370,7 @@ export default {
         productId: object.productId,
         price: object.price,
         quantity: 1,
-        createBy: this.currentUser,
+        createBy: this.userCurrent,
       };
       http
         .post("/order-product/api/save-order/" + this.accountUserValid, request)
@@ -441,30 +446,7 @@ export default {
             )
             .then((response) => {
               if (response.status == "200") {
-                http
-                  .get(
-                    "/order-product/api/get-order-product-by-table-id/" +
-                      positionId +
-                      "/" +
-                      this.accountUserValid
-                  )
-                  .then((responseGet) => {
-                    if (responseGet.status == "200") {
-                      this.listOrderChoose = responseGet.data.listOrder;
-                      this.totalPrice = response.data.totalPrice;
-                    }
-                  })
-                  .catch((error) => {
-                    this.$swal({
-                      toast: true,
-                      showProgressBar: true,
-                      position: "top-end",
-                      title: error,
-                      icon: "error",
-                      showConfirmButton: false,
-                      timer: 2100,
-                    });
-                  });
+                this.getListOrderByTable(this.table.positionId);
               }
             })
             .catch((error) => {

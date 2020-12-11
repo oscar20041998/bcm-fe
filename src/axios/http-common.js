@@ -1,9 +1,9 @@
 import axios from "axios";
 
 export default axios.create({
-    baseURL: "https://bcm-api-v1.herokuapp.com",
+    baseURL: "http://192.168.31.125:1510",
 
 })
 
 // domain API: https://bcm-api-v1.herokuapp.com
-// local: http://192.168.31.125:2004
+// local: http://192.168.31.125:1510

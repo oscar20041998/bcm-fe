@@ -274,5 +274,13 @@ export default {
   .form-inline my-2 my-lg-0 {
     text-align: right;
   }
+
+  table tbody tr th td {
+    font-size: 12px;
+  }
+
+  html {
+    font-size: 12px;
+  }
 }
 </style>

@@ -82,7 +82,7 @@
               <div class="col-sm-5">
                 <b-button
                   block
-                  variant="success"
+                  variant="light"
                   title="Go to detail"
                   @click="goToPageOrder(p)"
                 >
@@ -403,6 +403,10 @@ tbody {
 i {
   font-size: 13px;
   color: rgb(194, 182, 182);
+}
+
+button {
+  text-align: center;
 }
 </style>
 >
