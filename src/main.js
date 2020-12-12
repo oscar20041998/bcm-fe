@@ -32,6 +32,7 @@ Vue.use(BootstrapVueIcons)
 Vue.use($)
 Vue.use(SlidingPagination)
 Vue.config.productionTip = false
+Vue.config.devtools = false
 Vue.component('paginate', VuejsPaginate)
 Vue.component('ValidationProvider', ValidationProvider);
 new Vue({

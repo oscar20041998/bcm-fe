@@ -1,37 +1,37 @@
 <template>
   <div style="height: 600px; min-height: 10px; overflow-y: scroll">
     <table
-      id="table-electronic-wallet"
+      id="table-bank-info"
       class="table table-striped table-responsive-sm"
       cellspacing="0"
       style="max-heigh: 100px"
     >
       <thead class="thead-dark">
         <tr>
-          <th scope="col">Id</th>
-          <th scope="col">Wallet name</th>
+          <th scope="col">Card type</th>
+          <th scope="col">Card name</th>
           <th scope="col">Status</th>
           <th scope="col">Created by</th>
           <th scope="col">Created date</th>
         </tr>
       </thead>
-      <tbody sytle="min-height:10px; overflow-y:scroll; font-size:12px">
-        <tr v-for="e in listEwallet" v-bind:key="e.id">
-          <th scope="row">
-            {{ e.id }}
-          </th>
-          <td>{{ e.walletName }}</td>
-          <b-form-checkbox
-            v-model="e.status"
-            name="check-button"
-            size="lg"
-            switch
-            @change="onChange(e, $event)"
-          >
-          </b-form-checkbox>
-          <td>{{ e.createBy }}</td>
+      <tbody sytle="min-height:10px; overflow-y:scroll">
+        <tr v-for="c in listCardType" v-bind:key="c.bankCode">
+          <td>{{ c.cardType }}</td>
+          <td>{{ c.cardName }}</td>
           <td>
-            <i>{{ e.createDate }}</i>
+            <b-form-checkbox
+              v-model="c.status"
+              name="check-button"
+              size="lg"
+              switch
+              @change="onChange(c, $event)"
+            >
+            </b-form-checkbox>
+          </td>
+          <td>{{ c.createBy }}</td>
+          <td>
+            <i>{{ c.createDate }}</i>
           </td>
         </tr>
       </tbody>
@@ -43,14 +43,15 @@ import http from "../axios/http-common";
 export default {
   data() {
     return {
-      listEwallet: [],
+      listCardType: [],
       accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
       currentUser: JSON.parse(localStorage.getItem("user")).userName,
+      listItemChecked: [],
     };
   },
   mounted() {
     this.checkLocalStorage();
-    this.getListEwalletInfo();
+    this.getListCardType();
   },
 
   methods: {
@@ -73,12 +74,12 @@ export default {
       }
     },
 
-    // get list bank info
-    getListEwalletInfo() {
+    // get list card type in fo
+    getListCardType() {
       http
-        .get("/api/electronic-wallet/get-list-ewallet-info/" + this.accountUserValid)
+        .get("/api/card-type/get-list-card-type-info/" + this.accountUserValid)
         .then((response) => {
-          this.listEwallet = response.data.wallets;
+          this.listCardType = response.data.cards;
         })
         .catch((error) => {
           this.$swal({
@@ -98,7 +99,7 @@ export default {
       if (event == false) {
         this.$swal({
           title: "Are you sure?",
-          text: "Disable the electronic wallet " + "'" + object.walletName + "'",
+          text: "Disable the card " + "'" + object.cardName + "'",
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
@@ -106,15 +107,15 @@ export default {
           confirmButtonText: "Yes, disable it!",
         }).then((result) => {
           if (result.isConfirmed) {
-            this.disableWallet(object.id);
+            this.disableCard(object.id);
           } else if (result.isDismissed) {
-            this.getListEwalletInfo();
+            this.getListCardType();
           }
         });
       } else {
         this.$swal({
           title: "Are you sure?",
-          text: "Enable the electronic wallet " + "'" + object.walletName + "'",
+          text: "Enable the card " + "'" + object.cardName + "'",
           icon: "info",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
@@ -122,26 +123,24 @@ export default {
           confirmButtonText: "Yes, enable it!",
         }).then((result) => {
           if (result.isConfirmed) {
-            this.enableWallet(object.id);
+            this.enableCard(object.id);
           } else if (result.isDismissed) {
-            this.getListEwalletInfo();
+            this.getListCardType();
           }
         });
       }
     },
     // disable electronic wallet
-    disableWallet(id) {
+    disableCard(id) {
       http
-        .post(
-          "/api/electronic-wallet/disable-ewallet/" + this.accountUserValid + "/" + id
-        )
+        .post("/api/card-type/disable-card/" + this.accountUserValid + "/" + id)
         .then((response) => {
           if (response.status == "200") {
             this.$swal({
               toast: true,
               showProgressBar: true,
               position: "top-end",
-              title: "Disabled the electronic wallet successfully !!!!",
+              title: "Disabled the card successfully !!!!",
               icon: "success",
               showConfirmButton: false,
               timer: 2100,
@@ -151,7 +150,7 @@ export default {
               toast: true,
               showProgressBar: true,
               position: "top-end",
-              title: "Disabled the electronic wallet failed !!!!",
+              title: "Disabled the card failed !!!!",
               icon: "error",
               showConfirmButton: false,
               timer: 2100,
@@ -172,16 +171,16 @@ export default {
     },
 
     // enable electronic wallet
-    enableWallet(id) {
+    enableCard(id) {
       http
-        .post("/api/electronic-wallet/enable-ewallet/" + this.accountUserValid + "/" + id)
+        .post("/api/card-type/enable-card/" + this.accountUserValid + "/" + id)
         .then((response) => {
           if (response.status == "200") {
             this.$swal({
               toast: true,
               showProgressBar: true,
               position: "top-end",
-              title: "Enabled the electronic wallet successfully !!!!",
+              title: "Enabled the card successfully !!!!",
               icon: "success",
               showConfirmButton: false,
               timer: 2100,
@@ -191,7 +190,7 @@ export default {
               toast: true,
               showProgressBar: true,
               position: "top-end",
-              title: "Enabled the electronic wallet failed !!!!",
+              title: "Enabled the card failed !!!!",
               icon: "error",
               showConfirmButton: false,
               timer: 2100,
@@ -220,5 +219,9 @@ export default {
   vertical-align: top;
   border-top: 1px solid #dee2e6;
   font-size: 12px;
+}
+
+input[type="checkbox"] {
+  cursor: help;
 }
 </style>

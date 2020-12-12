@@ -43,7 +43,7 @@
                   </p>
                   <b-button
                     pill
-                    variant="danger"
+                    variant="primary"
                     title="Add this to order"
                     @click="addProductToListOrder(prd)"
                   >
