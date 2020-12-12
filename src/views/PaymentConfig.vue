@@ -2,7 +2,7 @@
   <div class="jumbotron">
     <b-tabs
       id="tab-payment-config"
-      active-nav-item-class="font-weight-bold text-uppercase text-danger"
+      active-nav-item-class="font-weight-bold text-uppercase"
       active-tab-class="font-weight-bold text-success"
       content-class="mt-3"
     >
@@ -11,7 +11,6 @@
         ><ElectronicWalletComponent></ElectronicWalletComponent
       ></b-tab>
       <b-tab title="Card payment config"><CardTypeComponent></CardTypeComponent></b-tab>
-      <b-tab title="Payment config"><p>I'm a disabled tab!</p></b-tab>
     </b-tabs>
   </div>
 </template>
@@ -40,7 +39,6 @@ export default {
   color: #212529 !important;
 }
 
-.nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-link.active {
   color: #495057 !important;
   background-color: #fff !important;
