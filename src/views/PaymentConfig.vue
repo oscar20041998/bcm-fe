@@ -1,11 +1,6 @@
 <template>
   <div class="jumbotron">
-    <b-tabs
-      id="tab-payment-config"
-      active-nav-item-class="font-weight-bold text-uppercase"
-      active-tab-class="font-weight-bold text-success"
-      content-class="mt-3"
-    >
+    <b-tabs id="tab-payment-config" content-class="mt-3">
       <b-tab title="Bank" active><BankInfosComponent></BankInfosComponent></b-tab>
       <b-tab title="Electronic Wallet"
         ><ElectronicWalletComponent></ElectronicWalletComponent

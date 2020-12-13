@@ -143,7 +143,13 @@
           <strong>TOTAL PRICE: {{ totalPrice }}</strong>
         </div>
         <div style="padding: 10px">
-          <b-button variant="success" block size="lg">GO TO PAY</b-button>
+          <button
+            class="btn btn-success btn-block btn-log"
+            data-toggle="modal"
+            data-target=".bd-example-modal-lg"
+          >
+            GO TO PAY
+          </button>
         </div>
         <div style="padding: 10px">
           <b-button variant="light" block size="lg" @click="backToPosition()">
@@ -153,12 +159,17 @@
         </div>
       </div>
     </div>
+    <PaymentProduct></PaymentProduct>
   </div>
 </template>
 
 <script>
 import http from "../axios/http-common";
+import PaymentProduct from "../components/PaymentProduct.vue";
 export default {
+  components: {
+    PaymentProduct,
+  },
   data() {
     return {
       perPage: 5,

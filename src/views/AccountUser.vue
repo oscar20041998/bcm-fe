@@ -1,315 +1,296 @@
 <template>
-  <div class="jumbotron">
-    <div class="row">
-      <div class="col">
-        <h5>
-          <b-icon icon="building"></b-icon>
-          SYSTEM ACCOUNT
-        </h5>
+  <b-overlay :show="show" rounded="sm">
+    <div class="jumbotron">
+      <div class="row">
+        <div class="col">
+          <h5>
+            <b-icon icon="building"></b-icon>
+            SYSTEM ACCOUNT
+          </h5>
+        </div>
+        <div class="col-md-2">
+          <input
+            class="form-control"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+            v-model="ctiteriaUserNameSearch"
+            @keyup="searchAccountByUserName()"
+          />
+        </div>
+        <div class="col-md-1">
+          <b-icon icon="search"></b-icon>
+        </div>
       </div>
-      <div class="col-md-2">
-        <input
-          class="form-control"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-          v-model="ctiteriaUserNameSearch"
-          @keyup="searchAccountByUserName()"
-        />
-      </div>
-      <div class="col-md-1">
-        <b-icon icon="search"></b-icon>
-      </div>
-    </div>
-    <hr class="my-4" />
-    <div id="divLoading" class="col-md-14" style="text-align: center">
-      <b-spinner id="loading" label="Loading..."></b-spinner>
-    </div>
-    <div style="height: 670px; min-height: 10px; overflow-y: scroll">
-      <table
-        id="table-log-detail"
-        class="table table-striped table-responsive-sm"
-        cellspacing="0"
-        style="max-heigh: 100px"
-      >
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">Account ID</th>
-            <th scope="col">Used by</th>
-            <th scope="col">Role</th>
-            <th scope="col">User name</th>
-            <th scope="col">Status account</th>
-            <th scope="col">Created by</th>
-            <th scope="col">Created date</th>
-            <template
-              v-if="
-                currentRole == 'ROLE_ADMINISTRATOR' ||
-                currentRole == 'ROLE_MANAGER'
-              "
-            >
-              <th scope="col">Option</th>
-            </template>
-          </tr>
-        </thead>
-        <tbody sytle="min-height:10px; overflow-y:scroll">
-          <tr v-for="account in listAccount" v-bind:key="account.accountId">
-            <td>{{ account.accountId }}</td>
+      <hr class="my-4" />
+      <div style="height: 670px; min-height: 10px; overflow-y: scroll">
+        <table
+          id="table-log-detail"
+          class="table table-striped table-responsive-sm"
+          cellspacing="0"
+          style="max-heigh: 100px"
+        >
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Account ID</th>
+              <th scope="col">Used by</th>
+              <th scope="col">Role</th>
+              <th scope="col">User name</th>
+              <th scope="col">Status account</th>
+              <th scope="col">Created by</th>
+              <th scope="col">Created date</th>
+              <template
+                v-if="
+                  currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER'
+                "
+              >
+                <th scope="col">Option</th>
+              </template>
+            </tr>
+          </thead>
+          <tbody sytle="min-height:10px; overflow-y:scroll">
+            <tr v-for="account in listAccount" v-bind:key="account.accountId">
+              <td>{{ account.accountId }}</td>
 
-            <td scope="row">
-              <b-icon
-                icon="person-fill"
-                animation="no-fade"
-                font-scale="1"
-              ></b-icon
-              >{{ account.usedBy }}
-            </td>
-            <td>
-              {{ account.role }}
-              <template v-if="account.role === 'Role Administrator'">
-                <b-icon
-                  icon="star-fill"
-                  animation="fade"
-                  font-scale="1"
-                  variant="warning"
-                ></b-icon>
-              </template>
-            </td>
-            <td>
-              <template v-if="account.isLogin === '0'">
-                <b-icon
-                  icon="circle-fill"
-                  animation="throb"
-                  font-scale="1"
-                  variant="success"
-                  title="Being used"
-                ></b-icon>
-              </template>
-              <template v-else>
-                <b-icon
-                  icon="circle-fill"
-                  font-scale="1"
-                  variant="danger"
-                  title="Not active now"
-                ></b-icon>
-              </template>
-              {{ account.userName }}
-            </td>
-            <td>
-              <template v-if="account.status === 'ACTIVE'">
-                <b-icon
-                  icon="unlock-fill"
-                  font-scale="1"
-                  variant="success"
-                ></b-icon>
-              </template>
-              <template v-else-if="account.status === 'BLOCKED'">
-                <b-icon
-                  icon="lock-fill"
-                  animation="throb"
-                  font-scale="1"
-                  variant="danger"
-                ></b-icon>
-              </template>
-              {{ account.status }}
-            </td>
-            <td>{{ account.createdBy }}</td>
-            <td>{{ account.createdDate }}</td>
-            <td>
-              <div class="row">
-                <div class="col-md-3">
-                  <template
-                    v-if="
-                      (currentRole == 'ROLE_ADMINISTRATOR' ||
-                        currentRole == 'ROLE_MANAGER') &&
-                      account.role != 'Role Administrator' &&
-                      currentAccountId != account.accountId
-                    "
-                  >
+              <td scope="row">
+                <b-icon icon="person-fill" animation="no-fade" font-scale="1"></b-icon
+                >{{ account.usedBy }}
+              </td>
+              <td>
+                {{ account.role }}
+                <template v-if="account.role === 'Role Administrator'">
+                  <b-icon
+                    icon="star-fill"
+                    animation="fade"
+                    font-scale="1"
+                    variant="warning"
+                  ></b-icon>
+                </template>
+              </td>
+              <td>
+                <template v-if="account.isLogin === '0'">
+                  <b-icon
+                    icon="circle-fill"
+                    animation="throb"
+                    font-scale="1"
+                    variant="success"
+                    title="Being used"
+                  ></b-icon>
+                </template>
+                <template v-else>
+                  <b-icon
+                    icon="circle-fill"
+                    font-scale="1"
+                    variant="danger"
+                    title="Not active now"
+                  ></b-icon>
+                </template>
+                {{ account.userName }}
+              </td>
+              <td>
+                <template v-if="account.status === 'ACTIVE'">
+                  <b-icon icon="unlock-fill" font-scale="1" variant="success"></b-icon>
+                </template>
+                <template v-else-if="account.status === 'BLOCKED'">
+                  <b-icon
+                    icon="lock-fill"
+                    animation="throb"
+                    font-scale="1"
+                    variant="danger"
+                  ></b-icon>
+                </template>
+                {{ account.status }}
+              </td>
+              <td>{{ account.createdBy }}</td>
+              <td>{{ account.createdDate }}</td>
+              <td>
+                <div class="row">
+                  <div class="col-md-3">
+                    <template
+                      v-if="
+                        (currentRole == 'ROLE_ADMINISTRATOR' ||
+                          currentRole == 'ROLE_MANAGER') &&
+                        account.role != 'Role Administrator' &&
+                        currentAccountId != account.accountId
+                      "
+                    >
+                      <button
+                        type="button"
+                        class="btn btn-link btn-sm"
+                        data-toggle="modal"
+                        data-target="#accountUserModal"
+                        @click="getAccountDetail(account.accountId)"
+                      >
+                        <b-icon icon="pen-fill"></b-icon>
+                      </button>
+                    </template>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal account user -->
+      <div
+        class="modal fade"
+        id="accountUserModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="false"
+        data-backdrop="static"
+      >
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 id="title-form" class="modal-title">INFORMATION DETAIL</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="code"></b-icon>
+                  Account ID
+                </label>
+
+                <div class="col-sm-4">
+                  {{ accountInfo.accountId }}
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="person-square"></b-icon>
+                  Used By
+                </label>
+
+                <div class="col-sm-4">
+                  {{ accountInfo.usedBy }}
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="calendar2-date"></b-icon>
+                  Role
+                </label>
+                <div class="col-sm-4" style="text-align: left">
+                  {{ accountInfo.role }}
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="card-heading"></b-icon>
+                  Account name
+                </label>
+                <div class="col-sm-6">
+                  {{ accountInfo.userName }}
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="key-fill"></b-icon>
+                  Password
+                </label>
+                <div class="col-sm-6">
+                  {{ accountInfo.password }}
+                </div>
+                <template
+                  v-if="
+                    (accountInfo.status == 'ACTIVE' || accountInfo.status == 'BLOCKED') &&
+                    (currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER')
+                  "
+                >
+                  <div class="col-sm-1">
                     <button
                       type="button"
-                      class="btn btn-link btn-sm"
-                      data-toggle="modal"
-                      data-target="#accountUserModal"
-                      @click="getAccountDetail(account.accountId)"
+                      class="btn btn-primary"
+                      v-on:click="resetPassword()"
+                      title="Reset password for this account"
                     >
-                      <b-icon icon="pen-fill"></b-icon>
+                      <b-icon icon="bootstrap-reboot"></b-icon>
                     </button>
-                  </template>
+                  </div>
+                </template>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="phone-vibrate"> </b-icon>
+                  Status
+                </label>
+                <div class="col-sm-6">
+                  {{ accountInfo.status }}
+                </div>
+                <template
+                  v-if="
+                    accountInfo.status == 'ACTIVE' &&
+                    (currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER')
+                  "
+                >
+                  <div class="col-sm-1">
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      v-on:click="blockAccountUser()"
+                      title="Block this account"
+                    >
+                      <b-icon icon="lock-fill"></b-icon>
+                    </button>
+                  </div>
+                </template>
+                <template
+                  v-else-if="
+                    accountInfo.status == 'BLOCKED' &&
+                    (currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER')
+                  "
+                >
+                  <div class="col-sm-1">
+                    <button
+                      type="button"
+                      class="btn btn-success"
+                      v-on:click="unblockAccountUser()"
+                      title="Unblock this account"
+                    >
+                      <b-icon icon="unlock-fill"></b-icon>
+                    </button>
+                  </div>
+                </template>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="mailbox2"></b-icon>
+                  Create by
+                </label>
+                <div class="col-sm-8">
+                  {{ accountInfo.createdBy }}
                 </div>
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Modal account user -->
-    <div
-      class="modal fade"
-      id="accountUserModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="false"
-      data-backdrop="static"
-    >
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 id="title-form" class="modal-title">INFORMATION DETAIL</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="code"></b-icon>
-                Account ID
-              </label>
-
-              <div class="col-sm-4">
-                {{ accountInfo.accountId }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="person-square"></b-icon>
-                Used By
-              </label>
-
-              <div class="col-sm-4">
-                {{ accountInfo.usedBy }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="calendar2-date"></b-icon>
-                Role
-              </label>
-              <div class="col-sm-4" style="text-align: left">
-                {{ accountInfo.role }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="card-heading"></b-icon>
-                Account name
-              </label>
-              <div class="col-sm-6">
-                {{ accountInfo.userName }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="key-fill"></b-icon>
-                Password
-              </label>
-              <div class="col-sm-6">
-                {{ accountInfo.password }}
-              </div>
-              <template
-                v-if="
-                  (accountInfo.status == 'ACTIVE' ||
-                    accountInfo.status == 'BLOCKED') &&
-                  (currentRole == 'ROLE_ADMINISTRATOR' ||
-                    currentRole == 'ROLE_MANAGER')
-                "
-              >
-                <div class="col-sm-1">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    v-on:click="resetPassword()"
-                    title="Reset password for this account"
-                  >
-                    <b-icon icon="bootstrap-reboot"></b-icon>
-                  </button>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="calendar"></b-icon>
+                  Create date
+                </label>
+                <div class="col-sm-8">
+                  {{ accountInfo.createdDate }}
                 </div>
-              </template>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="phone-vibrate"> </b-icon>
-                Status
-              </label>
-              <div class="col-sm-6">
-                {{ accountInfo.status }}
               </div>
-              <template
-                v-if="
-                  accountInfo.status == 'ACTIVE' &&
-                  (currentRole == 'ROLE_ADMINISTRATOR' ||
-                    currentRole == 'ROLE_MANAGER')
-                "
-              >
-                <div class="col-sm-1">
-                  <button
-                    type="button"
-                    class="btn btn-danger"
-                    v-on:click="blockAccountUser()"
-                    title="Block this account"
-                  >
-                    <b-icon icon="lock-fill"></b-icon>
-                  </button>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="calendar2-check"></b-icon>
+                  Last login date
+                </label>
+                <div class="col-sm-8">
+                  {{ accountInfo.lasLoginDate }}
                 </div>
-              </template>
-              <template
-                v-else-if="
-                  accountInfo.status == 'BLOCKED' &&
-                  (currentRole == 'ROLE_ADMINISTRATOR' ||
-                    currentRole == 'ROLE_MANAGER')
-                "
-              >
-                <div class="col-sm-1">
-                  <button
-                    type="button"
-                    class="btn btn-success"
-                    v-on:click="unblockAccountUser()"
-                    title="Unblock this account"
-                  >
-                    <b-icon icon="unlock-fill"></b-icon>
-                  </button>
-                </div>
-              </template>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="mailbox2"></b-icon>
-                Create by
-              </label>
-              <div class="col-sm-8">
-                {{ accountInfo.createdBy }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="calendar"></b-icon>
-                Create date
-              </label>
-              <div class="col-sm-8">
-                {{ accountInfo.createdDate }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="calendar2-check"></b-icon>
-                Last login date
-              </label>
-              <div class="col-sm-8">
-                {{ accountInfo.lasLoginDate }}
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </b-overlay>
 </template>
 
 <style lang="scss" scoped>
@@ -367,7 +348,7 @@ export default {
         createdDate: "",
         lasLoginDate: "",
       },
-
+      show: true,
       currentRole: JSON.parse(localStorage.getItem("user")).roleCode,
       currentAccountId: JSON.parse(localStorage.getItem("user")).accountId,
     };
@@ -408,7 +389,7 @@ export default {
         .then((response) => {
           if ((response.status = "200")) {
             this.listAccount = response.data;
-            $("#loading").hide();
+            this.show = false;
           }
         })
         .catch((error) => {
@@ -435,12 +416,7 @@ export default {
       var userName = this.ctiteriaUserNameSearch;
       if (userName != "") {
         http
-          .get(
-            "/api/account/search-account-by-username/" +
-              accountValid +
-              "/" +
-              userName
-          )
+          .get("/api/account/search-account-by-username/" + accountValid + "/" + userName)
           .then((response) => {
             if ((response.status = "200")) {
               this.listAccount = response.data;
@@ -472,19 +448,15 @@ export default {
 
     // get account detail by account id
     getAccountDetail(accountId) {
+      this.show = true;
       var data = JSON.parse(localStorage.getItem("user"));
       var accountValid = data.accountId;
       http
-        .get(
-          "/api/account/get-account-by-account-id/" +
-            accountId +
-            "/" +
-            accountValid
-        )
+        .get("/api/account/get-account-by-account-id/" + accountId + "/" + accountValid)
         .then((response) => {
           if ((response.status = "200")) {
             this.accountInfo = response.data;
-            $("#loading").hide();
+            this.show = false;
           }
         })
         .catch((error) => {
@@ -502,6 +474,7 @@ export default {
           this.$router.push({
             name: "NotFound",
           });
+          this.show = false;
         });
     },
 
@@ -509,8 +482,7 @@ export default {
     blockAccountUser() {
       http
         .post(
-          "/api/account/block-an-account-user-by-account-id/" +
-            this.accountInfo.accountId
+          "/api/account/block-an-account-user-by-account-id/" + this.accountInfo.accountId
         )
         .then((response) => {
           if (response.status == "200") {
@@ -518,10 +490,7 @@ export default {
               toast: true,
               showProgressBar: true,
               position: "top-end",
-              title:
-                "Block account " +
-                this.accountInfo.accountId +
-                " successfully !!!",
+              title: "Block account " + this.accountInfo.accountId + " successfully !!!",
               icon: "success",
               showConfirmButton: false,
               timer: 2100,
@@ -558,9 +527,7 @@ export default {
               showProgressBar: true,
               position: "top-end",
               title:
-                "Activated account " +
-                this.accountInfo.accountId +
-                " successfully !!!",
+                "Activated account " + this.accountInfo.accountId + " successfully !!!",
               icon: "success",
               showConfirmButton: false,
               timer: 2100,
