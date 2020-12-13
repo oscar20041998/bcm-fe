@@ -1,46 +1,32 @@
 <template>
-  <div style="height: 600px; min-height: 10px; overflow-y: scroll">
-    <div class="col-md-5"></div>
-    <div class="col-md-5"><b-spinner id="loading" label="Loading..."></b-spinner></div>
-    <table
-      id="table-bank-info"
-      class="table table-striped table-responsive-sm"
-      cellspacing="0"
-      style="max-heigh: 100px"
-    >
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col">Bank code</th>
-          <th scope="col">Bank name</th>
-          <th scope="col">Status</th>
-          <th scope="col">Created by</th>
-          <th scope="col">Created date</th>
-        </tr>
-      </thead>
-      <tbody sytle="min-height:10px; overflow-y:scroll">
-        <tr v-for="b in listBankInfo" v-bind:key="b.bankCode">
-          <th scope="row">
-            {{ b.bankCode }}
-          </th>
-          <td>{{ b.bankName }}</td>
-          <td>
-            <b-form-checkbox
-              v-model="b.status"
-              name="check-button"
-              size="lg"
-              switch
-              @change="onChange(b, $event)"
-            >
-            </b-form-checkbox>
-          </td>
-          <td>{{ b.createBy }}</td>
-          <td>
-            <i>{{ b.createDate }}</i>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <b-overlay :show="show" rounded="sm">
+    <div style="height: 670px; min-height: 10px; overflow-y: scroll">
+      <div class="row">
+        <template v-for="b in listBankInfo">
+          <div class="col-sm-2" v-bind:key="b.bankCode">
+            <div class="card">
+              <img class="card-img-top" :src="b.imageContent" />
+              <div class="card-body">
+                <h5 class="card-title">
+                  <strong>{{ b.bankName }}</strong>
+                </h5>
+                <p class="card-text">
+                  {{ b.createBy }}
+                </p>
+                <b-form-checkbox
+                  v-model="b.status"
+                  name="check-button"
+                  size="lg"
+                  switch
+                  @change="onChange(b, $event)"
+                ></b-form-checkbox>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </b-overlay>
 </template>
 <script>
 import http from "../axios/http-common";
@@ -51,6 +37,8 @@ export default {
       accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
       currentUser: JSON.parse(localStorage.getItem("user")).userName,
       listItemChecked: [],
+      bankCode: "",
+      show: true,
     };
   },
   mounted() {
@@ -84,7 +72,7 @@ export default {
         .get("/api/bank-info/get-list-bank-info/" + this.accountUserValid)
         .then((response) => {
           this.listBankInfo = response.data.banks;
-          $("#loading").hide();
+          this.show = false;
         })
         .catch((error) => {
           this.$swal({
@@ -224,5 +212,18 @@ export default {
   vertical-align: top;
   border-top: 1px solid #dee2e6;
   font-size: 12px;
+}
+.card {
+  box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.2);
+  text-align: center;
+  background-color: transparent;
+  width: 250px;
+  height: fit-content;
+  padding: auto;
+  margin: 20px auto auto auto;
+}
+img {
+  height: 160px;
+  width: 248px;
 }
 </style>

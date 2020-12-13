@@ -5,6 +5,7 @@
     role="dialog"
     aria-labelledby="myLargeModalLabel"
     aria-hidden="true"
+    data-backdrop="static"
   >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -62,12 +63,15 @@
                   >Select bank</label
                 >
                 <div class="col-sm-8">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="cashInput"
-                    placeholder="Input bank"
-                  />
+                  <select class="form-control" id="selectCategory" v-model="bankSelected">
+                    <option value="">No select</option>
+                    <option
+                      v-for="bank in listBanks"
+                      :key="bank.bankCode"
+                      :value="bank.bankName"
+                      :label="bank.bankName"
+                    ></option>
+                  </select>
                 </div>
               </div>
               <!-- Input card number -->
@@ -91,13 +95,15 @@
                   >Select card</label
                 >
                 <div class="col-sm-8">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="cashInput"
-                    maxlength="16"
-                    placeholder="Input card number"
-                  />
+                  <select class="form-control" id="selectCategory" v-model="cardSelected">
+                    <option value="">No select</option>
+                    <option
+                      v-for="card in listCards"
+                      :key="card.id"
+                      :value="card.cardType"
+                      :label="card.cardName"
+                    ></option>
+                  </select>
                 </div>
               </div>
               <!-- Input card owner name -->
@@ -151,13 +157,15 @@
                   >Select wallet</label
                 >
                 <div class="col-sm-8">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="cashInput"
-                    maxlength="4"
-                    placeholder="Input cvv"
-                  />
+                  <select class="form-control" id="selectEwallet" v-model="cardSelected">
+                    <option value="">No select</option>
+                    <option
+                      v-for="wallet in listEwallet"
+                      :key="wallet.id"
+                      :value="wallet.walletName"
+                      :label="wallet.walletName"
+                    ></option>
+                  </select>
                 </div>
               </div>
               <div class="form-group row">
@@ -208,10 +216,13 @@ export default {
     return {
       table: JSON.parse(localStorage.getItem("orderInfo")).tableName,
       totalPrice: JSON.parse(localStorage.getItem("orderInfo")).totalPrice,
+      accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
       paymentType: "",
       listBanks: [],
       listCards: [],
       listEwallet: [],
+      bankSelected: "",
+      cardSelected: "",
     };
   },
 
@@ -225,12 +236,67 @@ export default {
     onClickCardOption() {
       $("#cardOptionDiv").css("display", "block");
       $("#eWalletDiv").css("display", "none");
+      http
+        .get("/api/bank-info/get-list-bank-active/" + this.accountUserValid)
+        .then((response) => {
+          if (response.status == "200") {
+            this.listBanks = response.data.banks;
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+        });
+
+      http
+        .get("/api/card-type/get-list-card-active/" + this.accountUserValid)
+        .then((response) => {
+          if (response.status == "200") {
+            this.listCards = response.data.cards;
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+        });
     },
 
     // click radio electronic wallet option
     onclickEwalletOption() {
       $("#eWalletDiv").css("display", "block");
       $("#cardOptionDiv").css("display", "none");
+      http
+        .get("/api/electronic-wallet/get-list-ewallet-active/" + this.accountUserValid)
+        .then((response) => {
+          if (response.status == "200") {
+            this.listEwallet = response.data.wallets;
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+        });
     },
 
     // click radio cash option
