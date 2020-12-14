@@ -10,9 +10,7 @@
                 <h5 class="card-title">
                   <strong>{{ b.bankName }}</strong>
                 </h5>
-                <p class="card-text">
-                  {{ b.createBy }}
-                </p>
+                <p class="card-text">{{ b.createBy }} - {{ b.createDate }}</p>
                 <b-form-checkbox
                   v-model="b.status"
                   name="check-button"

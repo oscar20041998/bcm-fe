@@ -11,7 +11,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 id="title-form" class="modal-title">
-            INFORMATION PAYMENT DETAIL {{ table }}
+            <b-icon icon="credit-card"></b-icon> INFORMATION PAYMENT DETAIL {{ table }}
           </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -63,7 +63,7 @@
                   >Select bank</label
                 >
                 <div class="col-sm-8">
-                  <select class="form-control" id="selectCategory" v-model="bankSelected">
+                  <select class="form-control" id="selectCategory" v-model="bankName">
                     <option value="">No select</option>
                     <option
                       v-for="bank in listBanks"
@@ -81,11 +81,13 @@
                 >
                 <div class="col-sm-8">
                   <input
-                    type="text"
+                    type="text "
                     class="form-control"
                     id="cashInput"
-                    maxlength="16"
+                    maxlength="19"
                     placeholder="Input card number"
+                    v-model="cardNumber"
+                    @keyup="formatCardNumber"
                   />
                 </div>
               </div>
@@ -95,8 +97,8 @@
                   >Select card</label
                 >
                 <div class="col-sm-8">
-                  <select class="form-control" id="selectCategory" v-model="cardSelected">
-                    <option value="">No select</option>
+                  <select class="form-control" id="selectCategory" v-model="cardType">
+                    <option disabled value="">No select</option>
                     <option
                       v-for="card in listCards"
                       :key="card.id"
@@ -118,6 +120,7 @@
                     id="cashInput"
                     maxlength="16"
                     placeholder="Input owner name"
+                    v-model="cardOwnerName"
                   />
                 </div>
               </div>
@@ -128,9 +131,10 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="cashInput"
+                    id="inputExprie"
                     maxlength="5"
                     placeholder="MM/YY"
+                    v-model="expireDate"
                   />
                 </div>
               </div>
@@ -144,6 +148,7 @@
                     id="cashInput"
                     maxlength="4"
                     placeholder="Input cvv"
+                    v-model="cvv"
                   />
                 </div>
               </div>
@@ -157,7 +162,7 @@
                   >Select wallet</label
                 >
                 <div class="col-sm-8">
-                  <select class="form-control" id="selectEwallet" v-model="cardSelected">
+                  <select class="form-control" id="selectEwallet" v-model="providerName">
                     <option value="">No select</option>
                     <option
                       v-for="wallet in listEwallet"
@@ -179,6 +184,7 @@
                     id="cashInput"
                     maxlength="4"
                     placeholder="Input transaction code"
+                    v-model="transactionCode"
                   />
                 </div>
               </div>
@@ -203,7 +209,9 @@
           </form>
         </div>
         <div class="modal-footer">
-          <b-button block variant="success" size="lg">ACCEPT PAYMENT</b-button>
+          <b-button block variant="success" size="lg" @click="saveTransaction()"
+            >ACCEPT PAYMENT</b-button
+          >
         </div>
       </div>
     </div>
@@ -217,12 +225,18 @@ export default {
       table: JSON.parse(localStorage.getItem("orderInfo")).tableName,
       totalPrice: JSON.parse(localStorage.getItem("orderInfo")).totalPrice,
       accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
+      bankName: "",
+      cardOwnerName: "",
+      cardNumber: "",
+      cardType: "",
+      expireDate: "",
+      cvv: "",
       paymentType: "",
       listBanks: [],
       listCards: [],
       listEwallet: [],
-      bankSelected: "",
-      cardSelected: "",
+      providerName: "",
+      transactionCode: "",
     };
   },
 
@@ -303,6 +317,62 @@ export default {
     onClickCashOption() {
       $("#cardOptionDiv").css("display", "none");
       $("#eWalletDiv").css("display", "none");
+    },
+
+    // format card number
+    formatCardNumber: function (event) {
+      var str = $(event.currentTarget).val().replace(/\s/g, "");
+      var numberChunk = str.match(/.{1,4}/g);
+      this.cardNumber = numberChunk.join(" ");
+      $(event.eventTarget).val(this.cardNumber);
+    },
+
+    saveTransaction() {
+      var request = {
+        totalPrice: JSON.parse(localStorage.getItem("orderInfo")).totalPrice,
+        tableId: JSON.parse(localStorage.getItem("orderInfo")).tableName,
+        paymentType: this.paymentType,
+        bankInfoRequest: {
+          bankName: this.bankName,
+          cardNumber: this.cardNumber,
+          cardOwnerName: this.cardOwnerName,
+          cardType: this.cardType,
+          expireDate: this.expireDate,
+          cvv: this.cvv,
+        },
+        eWalletRequest: {
+          providerName: this.providerName,
+          transactionCode: this.transactionCode,
+        },
+        listOrder: JSON.parse(localStorage.getItem("orderInfo")).listOrder,
+        createBy: JSON.parse(localStorage.getItem("user")).accountId,
+      };
+      http
+        .post("/transaction/api/save-transaction/" + this.accountUserValid, request)
+        .then((response) => {
+          if (response.status == "200") {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: "Payment success !!!",
+              icon: "success",
+              showConfirmButton: false,
+              timer: 3000,
+            });
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+        });
     },
   },
 };

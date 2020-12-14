@@ -1,41 +1,27 @@
 <template>
   <div style="height: 600px; min-height: 10px; overflow-y: scroll">
-    <table
-      id="table-electronic-wallet"
-      class="table table-striped table-responsive-sm"
-      cellspacing="0"
-      style="max-heigh: 100px"
-    >
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col">Id</th>
-          <th scope="col">Wallet name</th>
-          <th scope="col">Status</th>
-          <th scope="col">Created by</th>
-          <th scope="col">Created date</th>
-        </tr>
-      </thead>
-      <tbody sytle="min-height:10px; overflow-y:scroll; font-size:12px">
-        <tr v-for="e in listEwallet" v-bind:key="e.id">
-          <th scope="row">
-            {{ e.id }}
-          </th>
-          <td>{{ e.walletName }}</td>
-          <b-form-checkbox
-            v-model="e.status"
-            name="check-button"
-            size="lg"
-            switch
-            @change="onChange(e, $event)"
-          >
-          </b-form-checkbox>
-          <td>{{ e.createBy }}</td>
-          <td>
-            <i>{{ e.createDate }}</i>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="row">
+      <template v-for="e in listEwallet">
+        <div class="col-sm-2" v-bind:key="e.id">
+          <div class="card">
+            <img class="card-img-top" :src="e.imageContent" />
+            <div class="card-body">
+              <h5 class="card-title">
+                <strong>{{ e.walletName }}</strong>
+              </h5>
+              <p class="card-text">{{ e.createBy }} - {{ e.createDate }}</p>
+              <b-form-checkbox
+                v-model="e.status"
+                name="check-button"
+                size="lg"
+                switch
+                @change="onChange(e, $event)"
+              ></b-form-checkbox>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 <script>
@@ -214,6 +200,10 @@ export default {
 };
 </script>
 <style scoped>
+img {
+  height: 160px;
+  width: 280px;
+}
 .table td,
 .table th {
   padding: 0.75rem;
