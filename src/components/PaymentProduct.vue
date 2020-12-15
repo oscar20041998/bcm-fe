@@ -163,7 +163,7 @@
                 >
                 <div class="col-sm-8">
                   <select class="form-control" id="selectEwallet" v-model="providerName">
-                    <option value="">No select</option>
+                    <option diabled value="">No select</option>
                     <option
                       v-for="wallet in listEwallet"
                       :key="wallet.id"
@@ -361,6 +361,10 @@ export default {
               timer: 3000,
             });
           }
+          $(".modal-dialog").hide();
+          $(".modal-backdrop").remove();
+          this.$router.push({ name: "Position" });
+          this.clearData();
         })
         .catch((error) => {
           this.$swal({
@@ -373,6 +377,18 @@ export default {
             timer: 2100,
           });
         });
+    },
+
+    clearData() {
+      (this.bankName = ""),
+        (this.cardOwnerName = ""),
+        (this.cardNumber = ""),
+        (this.cardType = ""),
+        (this.expireDate = ""),
+        (this.cvv = ""),
+        (this.paymentType = ""),
+        (this.transactionCode = ""),
+        (this.providerName = "");
     },
   },
 };
