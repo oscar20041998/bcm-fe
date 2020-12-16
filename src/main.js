@@ -2,12 +2,9 @@ import Vue from 'vue'
 import NavigationBar from './NavigationBar.vue'
 import router from './router'
 import store from './store/index.js'
-
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import VueSweetalert2 from 'vue-sweetalert2';
 import SlidingPagination from 'vue-sliding-pagination'
-
-// If you don't need the styles, do not connect
 import 'sweetalert2/dist/sweetalert2.min.css';
 import $ from 'jquery'
 import { PaginationPlugin } from 'bootstrap-vue'
@@ -31,10 +28,12 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use($)
 Vue.use(SlidingPagination)
-Vue.config.productionTip = false
-Vue.config.devtools = true
 Vue.component('paginate', VuejsPaginate)
 Vue.component('ValidationProvider', ValidationProvider);
+
+Vue.config.productionTip = false
+Vue.config.devtools = false
+
 new Vue({
     BootstrapVue,
     BootstrapVueIcons,

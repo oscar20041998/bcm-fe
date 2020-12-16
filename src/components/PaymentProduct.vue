@@ -69,7 +69,7 @@
                       v-for="bank in listBanks"
                       :key="bank.bankCode"
                       :value="bank.bankName"
-                      :label="bank.bankName"
+                      :label="bank.bankCode"
                     ></option>
                   </select>
                 </div>
@@ -181,8 +181,8 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="cashInput"
-                    maxlength="4"
+                    id="transactionInput"
+                    maxlength="20"
                     placeholder="Input transaction code"
                     v-model="transactionCode"
                   />
@@ -199,8 +199,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  id="cashInput"
-                  placeholder="Input cash"
+                  id="totalPriceInput"
                   v-model="totalPrice"
                   readonly
                 />
@@ -222,9 +221,10 @@ import http from "../axios/http-common";
 export default {
   data() {
     return {
-      table: JSON.parse(localStorage.getItem("orderInfo")).tableName,
-      totalPrice: JSON.parse(localStorage.getItem("orderInfo")).totalPrice,
-      accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
+      table: "",
+      totalPrice: 0,
+      accountUserValid: "",
+      userName: "",
       bankName: "",
       cardOwnerName: "",
       cardNumber: "",
@@ -237,12 +237,17 @@ export default {
       listEwallet: [],
       providerName: "",
       transactionCode: "",
+      imageBank: "",
     };
   },
 
   mounted() {
     $("#cardOptionDiv").css("display", "none");
     $("#eWalletDiv").css("display", "none");
+    this.tableId = JSON.parse(localStorage.getItem("orderInfo")).tableName;
+    this.totalPrice = JSON.parse(localStorage.getItem("orderInfo")).totalPrice;
+    this.accountUserValid = JSON.parse(localStorage.getItem("user")).accountId;
+    this.userName = JSON.parse(localStorage.getItem("user")).userName;
   },
 
   methods: {
@@ -327,6 +332,7 @@ export default {
       $(event.eventTarget).val(this.cardNumber);
     },
 
+    // save tranaction
     saveTransaction() {
       var request = {
         totalPrice: JSON.parse(localStorage.getItem("orderInfo")).totalPrice,
@@ -345,7 +351,7 @@ export default {
           transactionCode: this.transactionCode,
         },
         listOrder: JSON.parse(localStorage.getItem("orderInfo")).listOrder,
-        createBy: JSON.parse(localStorage.getItem("user")).accountId,
+        createBy: this.userName,
       };
       http
         .post("/transaction/api/save-transaction/" + this.accountUserValid, request)

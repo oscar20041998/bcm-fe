@@ -1,183 +1,160 @@
 <template>
   <div class="jumbotron">
-    <div class="row">
-      <div class="col-sm-5">
-        <h5>
-          <b-icon icon="cup"></b-icon>
-          FOOD & DRINK MANAGEMENT
-        </h5>
-      </div>
-      <div class="col-sm-4" style="text-align: right">
-        <b-button v-b-toggle.sidebar-footer title="Show category" variant="light">
-          <b-icon icon="card-text" variant="dark"></b-icon> SHOW CATEGORY
-        </b-button>
-
-        <template v-if="currentRole == 'ROLE_ADMINISTRATOR'">
-          <b-button
-            variant="success"
-            data-toggle="modal"
-            data-target="#addNewProducModal"
-            @click="clearData()"
-          >
-            <b-icon icon="plus-circle"></b-icon> ADD NEW PRODUCT
+    <b-overlay :show="show" rounded="sm">
+      <div class="row">
+        <div class="col-sm-5">
+          <h5>
+            <b-icon icon="cup"></b-icon>
+            FOOD & DRINK MANAGEMENT
+          </h5>
+        </div>
+        <div class="col-sm-4" style="text-align: right">
+          <b-button v-b-toggle.sidebar-footer title="Show category" variant="light">
+            <b-icon icon="card-text" variant="dark"></b-icon> SHOW CATEGORY
           </b-button>
-        </template>
-      </div>
-      <div class="col-sm-2">
-        <input
-          id="input-search"
-          class="form-control"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-          v-model="criteria"
-          @keyup="getProductsByName()"
-        />
-      </div>
-      <div class="col-sm-1">
-        <b-icon icon="search"></b-icon>
-      </div>
-    </div>
-    <hr class="my-4" />
-    <div id="divLoading" class="col-md-12 hidden" style="text-align: center">
-      <b-spinner id="loading" label="Loading..."></b-spinner>
-    </div>
 
-    <!-- Left side bar -->
-    <div class="form-row">
-      <b-sidebar
-        bg-variant="light"
-        text-variant="light"
-        shadow
-        id="sidebar-footer"
-        aria-label="Sidebar with custom footer"
-        header
-      >
-        <template #footer="{ hide }">
-          <div class="d-flex bg-dark text-light align-items-center px-3 py-2">
-            <b-button size="sm" @click="hide">
-              <b-icon
-                icon="chevron-double-left"
-                variant="light"
-                animation="cylon"
-              ></b-icon>
-            </b-button>
-          </div>
-        </template>
-        <div class="px-4 py-6">
-          <h5 style="color: black; text-algin: left">CATEGORY AVAILABLE</h5>
-          <hr class="my-4" />
-          <b-button block variant="light" @click="callBackProducts()">
-            <b-icon icon="star-fill" variant="dark"></b-icon> All
-          </b-button>
-          <template>
-            <b-list-group v-for="c in listCategory" :key="c.idCategory">
-              <div class="row">
-                <div class="col-sm-8">
-                  <b-button
-                    block
-                    variant="light"
-                    v-model="categoryModelEdit.categoryId"
-                    @click="getProductByCategoryId(c.idCategory)"
-                  >
-                    <b-icon icon="star-fill" variant="dark"></b-icon>
-                    {{ c.categoryName }}
-                  </b-button>
-                </div>
-                <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
-                  <div class="col-sm-2">
-                    <b-button
-                      variant="light"
-                      title="Delete category"
-                      @click="deleteCategory(c.idCategory)"
-                    >
-                      <b-icon icon="trash-fill" variant="danger"></b-icon>
-                    </b-button>
-                  </div>
-                  <div class="col-sm-2">
-                    <b-button
-                      variant="light"
-                      title="Edit this category"
-                      data-toggle="modal"
-                      data-target="#categoryDetailModal"
-                      @click="bindingData(c)"
-                    >
-                      <b-icon icon=" pen"> </b-icon>
-                    </b-button>
-                  </div>
-                </template>
-              </div>
-            </b-list-group>
-          </template>
-          <hr class="my-4" />
           <template v-if="currentRole == 'ROLE_ADMINISTRATOR'">
-            <div class="row">
-              <div class="col-sm-8">
-                <ValidationProvider rules="required">
-                  <div slot-scope="{ errors }">
-                    <input
-                      id="addNewCategoryInput"
-                      type="text"
-                      class="form-control"
-                      placeholder="Entry new category"
-                      v-model="categoryModelAdd.categoryName"
-                    />
-                    <p>{{ errors[0] }}</p>
-                  </div>
-                </ValidationProvider>
-              </div>
-              <div class="col-sm-2">
-                <b-button
-                  pill
-                  variant="success"
-                  title="Add new category"
-                  @click="saveCategory()"
-                >
-                  <b-icon icon="plus-circle-fill"></b-icon>
-                </b-button>
-              </div>
-            </div>
+            <b-button
+              variant="success"
+              data-toggle="modal"
+              data-target="#addNewProducModal"
+              @click="clearData()"
+            >
+              <b-icon icon="plus-circle"></b-icon> ADD NEW PRODUCT
+            </b-button>
           </template>
         </div>
-      </b-sidebar>
-    </div>
-    <div style="height: 670px; min-height: 10px; overflow-y: scroll">
-      <table
-        id="table-log-detail"
-        class="table table-striped table-responsive-sm"
-        cellspacing="0"
-        style="max-heigh: 100px"
-      >
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">Product ID</th>
-            <th scope="col">Category name</th>
-            <th scope="col">Product name</th>
-            <th scope="col">Photo</th>
-            <th scope="col">Price</th>
-            <th scope="col">Create by</th>
-            <th scope="col">Create date</th>
-            <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
-              <th scope="col">Option</th>
-            </template>
-          </tr>
-        </thead>
-        <tbody sytle="min-height:10px; overflow-y:scroll">
-          <tr v-for="prd in listProduct" :key="prd.productId">
-            <th scope="row">
-              <b-icon icon="box" animation="no-fade" font-scale="1"></b-icon>
-              {{ prd.productId }}
-            </th>
-            <td>{{ prd.categoryId }}</td>
-            <td>{{ prd.productName }}</td>
-            <td><img :src="prd.imageContent" /></td>
-            <td>đ{{ prd.priceFormatString }}</td>
-            <td>{{ prd.createBy }}</td>
-            <td>{{ prd.createDate }}</td>
-            <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
-              <td>
+        <div class="col-sm-2">
+          <input
+            id="input-search"
+            class="form-control"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+            v-model="criteria"
+            @keyup="getProductsByName()"
+          />
+        </div>
+        <div class="col-sm-1">
+          <b-icon icon="search"></b-icon>
+        </div>
+      </div>
+      <hr class="my-4" />
+
+      <!-- Left side bar -->
+      <div class="form-row">
+        <b-sidebar
+          bg-variant="light"
+          text-variant="light"
+          shadow
+          id="sidebar-footer"
+          aria-label="Sidebar with custom footer"
+          header
+        >
+          <template #footer="{ hide }">
+            <div class="d-flex bg-dark text-light align-items-center px-3 py-2">
+              <b-button size="sm" @click="hide">
+                <b-icon
+                  icon="chevron-double-left"
+                  variant="light"
+                  animation="cylon"
+                ></b-icon>
+              </b-button>
+            </div>
+          </template>
+          <div class="px-4 py-6">
+            <h5 style="color: black; text-algin: left">CATEGORY AVAILABLE</h5>
+            <hr class="my-4" />
+            <b-button block variant="light" @click="callBackProducts()">
+              <b-icon icon="star-fill" variant="dark"></b-icon> All
+            </b-button>
+            <template>
+              <b-list-group v-for="c in listCategory" :key="c.idCategory">
                 <div class="row">
-                  <div class="col-md-3">
+                  <div class="col-sm-8">
+                    <b-button
+                      block
+                      variant="light"
+                      v-model="categoryModelEdit.categoryId"
+                      @click="getProductByCategoryId(c.idCategory)"
+                    >
+                      <b-icon icon="star-fill" variant="dark"></b-icon>
+                      {{ c.categoryName }}
+                    </b-button>
+                  </div>
+                  <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
+                    <div class="col-sm-2">
+                      <b-button
+                        variant="light"
+                        title="Delete category"
+                        @click="deleteCategory(c.idCategory)"
+                      >
+                        <b-icon icon="trash-fill" variant="danger"></b-icon>
+                      </b-button>
+                    </div>
+                    <div class="col-sm-2">
+                      <b-button
+                        variant="light"
+                        title="Edit this category"
+                        data-toggle="modal"
+                        data-target="#categoryDetailModal"
+                        @click="bindingData(c)"
+                      >
+                        <b-icon icon=" pen"> </b-icon>
+                      </b-button>
+                    </div>
+                  </template>
+                </div>
+              </b-list-group>
+            </template>
+            <hr class="my-4" />
+            <template v-if="currentRole == 'ROLE_ADMINISTRATOR'">
+              <div class="row">
+                <div class="col-sm-8">
+                  <ValidationProvider rules="required">
+                    <div slot-scope="{ errors }">
+                      <input
+                        id="addNewCategoryInput"
+                        type="text"
+                        class="form-control"
+                        placeholder="Entry new category"
+                        v-model="categoryModelAdd.categoryName"
+                      />
+                      <p>{{ errors[0] }}</p>
+                    </div>
+                  </ValidationProvider>
+                </div>
+                <div class="col-sm-2">
+                  <b-button
+                    pill
+                    variant="success"
+                    title="Add new category"
+                    @click="saveCategory()"
+                  >
+                    <b-icon icon="plus-circle-fill"></b-icon>
+                  </b-button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </b-sidebar>
+      </div>
+      <div style="height: 670px; min-height: 10px; overflow-y: scroll">
+        <div class="row">
+          <template v-for="prd in listProduct">
+            <div class="col-sm-2" v-bind:key="prd.productId">
+              <div class="card">
+                <img class="card-img-top" :src="prd.imageContent" />
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <strong>{{ prd.productName }}</strong>
+                  </h5>
+                  <p class="card-text">
+                    {{ prd.priceFormatString }}
+                  </p>
+                </div>
+                <div class="row">
+                  <div class="col-md-5">
                     <button
                       class="btn btn-link btn-sm"
                       data-toggle="modal"
@@ -188,7 +165,7 @@
                     </button>
                   </div>
                   <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                       <button
                         type="button"
                         class="btn btn-link btn-sm"
@@ -199,200 +176,203 @@
                     </div>
                   </template>
                 </div>
-              </td>
-            </template>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Modal category-->
-    <div
-      class="modal fade"
-      id="categoryDetailModal"
-      tabindex="-1"
-      aria-labelledby="categoryDetailModal"
-      aria-hidden="true"
-      data-backdrop="static"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="categoryDetailModalLabel">CATEGORY DETAIL</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="form-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  readonly
-                  v-model="categoryModelEdit.categoryId"
-                />
-                <hr class="my-4" />
-                <ValidationProvider rules="required">
-                  <div slot-scope="{ errors }">
-                    <input
-                      type="text"
-                      class="form-control"
-                      required
-                      v-model="categoryModelEdit.categoryName"
-                    />
-                    <p>{{ errors[0] }}</p>
-                  </div>
-                </ValidationProvider>
               </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-              Close
-            </button>
-            <button type="button" class="btn btn-success btn-sm" @click="editCategory()">
-              <b-icon icon="box-arrow-in-down-right"></b-icon>SAVE CHANGE
-            </button>
+            </div>
+          </template>
+        </div>
+      </div>
+      <!-- Modal category-->
+      <div
+        class="modal fade"
+        id="categoryDetailModal"
+        tabindex="-1"
+        aria-labelledby="categoryDetailModal"
+        aria-hidden="true"
+        data-backdrop="static"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="categoryDetailModalLabel">CATEGORY DETAIL</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    readonly
+                    v-model="categoryModelEdit.categoryId"
+                  />
+                  <hr class="my-4" />
+                  <ValidationProvider rules="required">
+                    <div slot-scope="{ errors }">
+                      <input
+                        type="text"
+                        class="form-control"
+                        required
+                        v-model="categoryModelEdit.categoryName"
+                      />
+                      <p>{{ errors[0] }}</p>
+                    </div>
+                  </ValidationProvider>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                Close
+              </button>
+              <button
+                type="button"
+                class="btn btn-success btn-sm"
+                @click="editCategory()"
+              >
+                <b-icon icon="box-arrow-in-down-right"></b-icon>SAVE CHANGE
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Modal add new product-->
-    <div
-      class="modal fade"
-      id="addNewProducModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="addNewProducModal"
-      aria-hidden="false"
-      data-backdrop="static"
-    >
-      <div class="modal-dialog modal-md" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 id="title-form" class="modal-title">ADD NEW/ UPDATE PRODUCT</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group row" style="display: none">
-              <label for="inputPassword" class="col-sm-4 col-form-label">
-                <b-icon icon="code"></b-icon>
-                Product Id
-              </label>
-              <div class="col-sm-8">
-                <input
-                  type="text"
-                  class="form-control"
-                  disabled
-                  v-model="product.productId"
-                />
-              </div>
+      <!-- Modal add new product-->
+      <div
+        class="modal fade"
+        id="addNewProducModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="addNewProducModal"
+        aria-hidden="false"
+        data-backdrop="static"
+      >
+        <div class="modal-dialog modal-md" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 id="title-form" class="modal-title">ADD NEW/ UPDATE PRODUCT</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-4 col-form-label">
-                <b-icon icon="tag-fill"></b-icon>
-                Category
-              </label>
-              <div class="col-sm-8">
-                <div>
+            <div class="modal-body">
+              <div class="form-group row" style="display: none">
+                <label for="inputPassword" class="col-sm-4 col-form-label">
+                  <b-icon icon="code"></b-icon>
+                  Product Id
+                </label>
+                <div class="col-sm-8">
+                  <input
+                    type="text"
+                    class="form-control"
+                    disabled
+                    v-model="product.productId"
+                  />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-4 col-form-label">
+                  <b-icon icon="tag-fill"></b-icon>
+                  Category
+                </label>
+                <div class="col-sm-8">
+                  <div>
+                    <ValidationProvider rules="required">
+                      <div slot-scope="{ errors }">
+                        <select
+                          class="form-control"
+                          id="selectCategory"
+                          v-model="product.categoryId"
+                        >
+                          <option
+                            v-for="ctg in listCategory"
+                            selected="ctg.categoryId"
+                            :key="ctg.idCategory"
+                            :value="ctg.idCategory"
+                            :label="ctg.categoryName"
+                          ></option>
+                        </select>
+                        <p>{{ errors[0] }}</p>
+                      </div>
+                    </ValidationProvider>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-4 col-form-label">
+                  <b-icon icon="box"></b-icon>
+                  Product name
+                </label>
+                <div class="col-sm-8" style="text-align: left">
                   <ValidationProvider rules="required">
                     <div slot-scope="{ errors }">
-                      <select
+                      <input
                         class="form-control"
-                        id="selectCategory"
-                        v-model="product.categoryId"
-                      >
-                        <option
-                          v-for="ctg in listCategory"
-                          selected="ctg.categoryId"
-                          :key="ctg.idCategory"
-                          :value="ctg.idCategory"
-                          :label="ctg.categoryName"
-                        ></option>
-                      </select>
+                        type="text"
+                        placeholder="Entry name of product"
+                        v-model="product.productName"
+                      />
                       <p>{{ errors[0] }}</p>
                     </div>
                   </ValidationProvider>
                 </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-4 col-form-label">
-                <b-icon icon="box"></b-icon>
-                Product name
-              </label>
-              <div class="col-sm-8" style="text-align: left">
-                <ValidationProvider rules="required">
-                  <div slot-scope="{ errors }">
-                    <input
-                      class="form-control"
-                      type="text"
-                      placeholder="Entry name of product"
-                      v-model="product.productName"
-                    />
-                    <p>{{ errors[0] }}</p>
-                  </div>
-                </ValidationProvider>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-4 col-form-label">
+                  <b-icon icon="image-fill"></b-icon>
+                  Choose image
+                </label>
+                <input ref="fileInput" type="file" @change="pickFile" />
+                <div
+                  class="imagePreviewWrapper"
+                  :style="{ 'background-image': `url(${selectedFile})` }"
+                  @click="selectImage"
+                ></div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-4 col-form-label">
+                  <b-icon icon="cash"></b-icon>
+                  Price
+                </label>
+                <div class="col-sm-4">
+                  <h5 id="price-format-string" style="display: block">
+                    {{ product.priceFormatString }}
+                  </h5>
+                  <ValidationProvider rules="required">
+                    <div slot-scope="{ errors }" id="priceDiv" style="display: none">
+                      <input
+                        class="form-control"
+                        ref="input"
+                        v-currency="options"
+                        v-model="product.price"
+                      />
+                      <p>{{ errors[0] }}</p>
+                    </div>
+                  </ValidationProvider>
+                </div>
+                <div class="col-sm-4">
+                  <b-form-checkbox
+                    id="checkBoxEditMode"
+                    v-model="checked"
+                    name="check-button"
+                    switch
+                    @change="showEditPrice"
+                  >
+                    Edit mode
+                  </b-form-checkbox>
+                </div>
               </div>
             </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-4 col-form-label">
-                <b-icon icon="image-fill"></b-icon>
-                Choose image
-              </label>
-              <input ref="fileInput" type="file" @change="pickFile" />
-              <div
-                class="imagePreviewWrapper"
-                :style="{ 'background-image': `url(${selectedFile})` }"
-                @click="selectImage"
-              ></div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success btn-sm" @click="saveProduct()">
+                <b-icon icon="box-arrow-in-down-right"></b-icon>SAVE CHANGE
+              </button>
             </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-4 col-form-label">
-                <b-icon icon="cash"></b-icon>
-                Price
-              </label>
-              <div class="col-sm-4">
-                <h5 id="price-format-string" style="display: block">
-                  {{ product.priceFormatString }}
-                </h5>
-                <ValidationProvider rules="required">
-                  <div slot-scope="{ errors }" id="priceDiv" style="display: none">
-                    <input
-                      class="form-control"
-                      ref="input"
-                      v-currency="options"
-                      v-model="product.price"
-                    />
-                    <p>{{ errors[0] }}</p>
-                  </div>
-                </ValidationProvider>
-              </div>
-              <div class="col-sm-4">
-                <b-form-checkbox
-                  id="checkBoxEditMode"
-                  v-model="checked"
-                  name="check-button"
-                  switch
-                  @change="showEditPrice"
-                >
-                  Edit mode
-                </b-form-checkbox>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-success btn-sm" @click="saveProduct()">
-              <b-icon icon="box-arrow-in-down-right"></b-icon>SAVE CHANGE
-            </button>
           </div>
         </div>
       </div>
-    </div>
+    </b-overlay>
   </div>
 </template>
 
@@ -433,6 +413,7 @@ export default {
       },
       checked: false,
       selectedFile: null,
+      show: true,
     };
   },
 
@@ -479,13 +460,12 @@ export default {
     },
     // get list category
     getAllCategories() {
-      $("#loading").show();
       http
         .get("/category/api/get-categories")
         .then((response) => {
           if (response.status == "200") {
             this.listCategory = response.data;
-            $("#loading").hide();
+            this.show = false;
           } else if (response.status == "401") {
             this.$router.push({
               name: "Login",
@@ -503,12 +483,14 @@ export default {
             this.$router.push({
               name: "NotFound",
             });
+            this.show = false;
           }
         })
         .catch((error) => {
           this.$router.push({
             name: "Login",
           });
+          this.show = false;
           this.$swal({
             toast: true,
             showProgressBar: true,
@@ -523,13 +505,12 @@ export default {
 
     // get all product
     getProducts() {
-      $("#loading").show();
       http
         .get("/product/api/get-all-products/" + this.accountCurrent)
         .then((response) => {
           if (response.status == "200") {
             this.listProduct = response.data;
-            $("#loading").hide();
+            this.show = false;
           } else {
             this.$swal({
               toast: true,
@@ -543,6 +524,7 @@ export default {
             this.$router.push({
               name: "NotFound",
             });
+            this.show = false;
           }
         })
         .catch((error) => {
@@ -555,6 +537,8 @@ export default {
             showConfirmButton: false,
             timer: 2100,
           });
+          this.show = false;
+
           this.$router.push({
             name: "NotFound",
           });
@@ -891,7 +875,7 @@ export default {
 
     // get all product by category
     getProductByCategoryId(pCategoryId) {
-      $("#loading").show();
+      this.show = true;
       http
         .get(
           "/product/api/get-products-by-category/" +
@@ -902,7 +886,7 @@ export default {
         .then((response) => {
           if (response.status == "200") {
             this.listProduct = response.data;
-            $("#loading").hide();
+            this.show = false;
           } else {
             this.$swal({
               toast: true,
@@ -916,6 +900,7 @@ export default {
             this.$router.push({
               name: "NotFound",
             });
+            this.show = false;
           }
         })
         .catch((error) => {
@@ -928,6 +913,7 @@ export default {
             showConfirmButton: false,
             timer: 2100,
           });
+          this.show = false;
           this.$router.push({
             name: "NotFound",
           });
@@ -936,8 +922,8 @@ export default {
 
     // get all product by name
     getProductsByName() {
+      this.show = true;
       var pProductName = this.criteria;
-      $("#loading").show();
       if (pProductName != "") {
         http
           .get(
@@ -949,7 +935,7 @@ export default {
           .then((response) => {
             if (response.status == "200") {
               this.listProduct = response.data;
-              $("#loading").hide();
+              this.show = false;
             } else {
               this.$swal({
                 toast: true,
@@ -960,6 +946,7 @@ export default {
                 showConfirmButton: false,
                 timer: 2100,
               });
+              this.show = false;
               this.$router.push({
                 name: "NotFound",
               });
@@ -999,39 +986,6 @@ export default {
         reader.readAsDataURL(file[0]);
         this.$emit("input", file[0]);
       }
-      console.log(this.selectedFile);
-    },
-
-    // execute save data
-    onUpload() {
-      let formData = new FormData();
-      formData.append("mutipartFile", this.selectedFile);
-      http
-        .post("/api/image/save-image", this.selectedFile)
-        .then((response) => {
-          if (response.status === "200") {
-            this.$swal({
-              toast: true,
-              showProgressBar: true,
-              position: "top-end",
-              title: "Save photo success !!!",
-              icon: "success",
-              showConfirmButton: false,
-              timer: 2100,
-            });
-          }
-        })
-        .catch((error) => {
-          this.$swal({
-            toast: true,
-            showProgressBar: true,
-            position: "top-end",
-            title: error,
-            icon: "error",
-            showConfirmButton: false,
-            timer: 2100,
-          });
-        });
     },
 
     // show input edit price
@@ -1063,9 +1017,20 @@ button {
   background-position: center center;
 }
 img {
-  height: 100px;
-  width: 100px;
+  height: 150px;
+  width: 250px;
 }
+
+.card {
+  box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.2);
+  text-align: center;
+  background-color: transparent;
+  width: fit-content;
+  height: fit-content;
+  padding: auto;
+  margin: 20px auto auto auto;
+}
+
 thead,
 tr,
 td {
