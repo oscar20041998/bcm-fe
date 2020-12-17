@@ -44,11 +44,7 @@
       </div>
     </div>
     <hr class="my-4" />
-    <div
-      id="divLoading"
-      class="col-md-14"
-      style="text-align: center; display: none"
-    >
+    <div id="divLoading" class="col-md-14" style="text-align: center; display: none">
       <b-spinner id="loading" label="Loading..."></b-spinner>
     </div>
     <div class="overflow-auto">
@@ -64,6 +60,7 @@
         :per-page="perPage"
         :current-page="currentPage"
       ></b-table>
+      <strong class="mt-3">Current Page: {{ currentPage }}</strong>
       <hr class="my-4" />
       <div class="row" style="margin-left: 10px">
         <div class="column">
@@ -94,11 +91,7 @@
       </div>
       <div class="col-sm-12" style="text-align: right">
         <h2>
-          <b-icon
-            icon="server"
-            animation="cylon-vertical"
-            variant="secondary"
-          ></b-icon>
+          <b-icon icon="server" animation="cylon-vertical" variant="secondary"></b-icon>
           Total sale: {{ transactionInfo.totalSale }}đ
         </h2>
       </div>
@@ -161,11 +154,9 @@ export default {
         .get("/transaction/api/get-transactions/" + this.accountUserValid)
         .then((response) => {
           if (response.status == "200") {
-            this.transactionInfo.listTransaction =
-              response.data.listTransactions;
+            this.transactionInfo.listTransaction = response.data.listTransactions;
             this.transactionInfo.totalSale = response.data.totalPrice;
-            this.transactionInfo.totalTransaction =
-              response.data.totalTransaction;
+            this.transactionInfo.totalTransaction = response.data.totalTransaction;
             this.transactionInfo.totalCashOption =
               response.data.sumPaymentType.countCashOption;
             this.transactionInfo.totalCardOption =
@@ -192,10 +183,7 @@ export default {
       $("#divLoading").css("display", "block");
       http
         .post(
-          "/transaction/api/search-transactions/" +
-            this.accountUserValid +
-            "/" +
-            criteria
+          "/transaction/api/search-transactions/" + this.accountUserValid + "/" + criteria
         )
         .then((response) => {
           if (response.status == "200") {
@@ -210,11 +198,9 @@ export default {
                 timer: 2100,
               });
             } else {
-              this.transactionInfo.listTransaction =
-                response.data.listTransactions;
+              this.transactionInfo.listTransaction = response.data.listTransactions;
               this.transactionInfo.totalSale = response.data.totalPrice;
-              this.transactionInfo.totalTransaction =
-                response.data.totalTransaction;
+              this.transactionInfo.totalTransaction = response.data.totalTransaction;
               this.transactionInfo.totalCashOption =
                 response.data.sumPaymentType.countCashOption;
               this.transactionInfo.totalCardOption =
@@ -273,11 +259,9 @@ export default {
                 timer: 2100,
               });
             } else {
-              this.transactionInfo.listTransaction =
-                response.data.listTransactions;
+              this.transactionInfo.listTransaction = response.data.listTransactions;
               this.transactionInfo.totalSale = response.data.totalPrice;
-              this.transactionInfo.totalTransaction =
-                response.data.totalTransaction;
+              this.transactionInfo.totalTransaction = response.data.totalTransaction;
               this.transactionInfo.totalCashOption =
                 response.data.sumPaymentType.countCashOption;
               this.transactionInfo.totalCardOption =

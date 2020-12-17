@@ -144,11 +144,7 @@
             <strong>TOTAL PRICE: {{ totalPrice }}</strong>
           </div>
           <div style="padding: 10px">
-            <button
-              class="btn btn-success btn-block btn-log"
-              data-toggle="modal"
-              data-target=".bd-example-modal-lg"
-            >
+            <button class="btn btn-success btn-block btn-log" @click="goToPaymentPay()">
               GO TO PAY
             </button>
           </div>
@@ -160,7 +156,6 @@
           </div>
         </div>
       </div>
-      <PaymentProduct></PaymentProduct>
     </b-overlay>
   </div>
 </template>
@@ -184,7 +179,7 @@ export default {
       listProduct: [],
       listOrderByTable: [],
       listOrderChoose: [],
-      totalPrice: 0,
+      totalPrice: 1110,
       show: true,
       imageBank: null,
     };
@@ -483,6 +478,10 @@ export default {
 
     backToPosition() {
       this.$router.push({ name: "Position" });
+    },
+
+    goToPaymentPay() {
+      this.$router.push({ name: "PaymentProduct" });
     },
   },
 };

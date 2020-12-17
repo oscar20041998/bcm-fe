@@ -25,12 +25,13 @@
                 <div class="col-md-8">
                   <ValidationProvider rules="required">
                     <div slot-scope="{ errors }">
-                      <input
+                      <b-input
                         name="username"
                         type="text"
                         class="form-control"
                         v-model="userRequest.userName"
                         maxlength="20"
+                        size="sm"
                       />
                       <p>{{ errors[0] }}</p>
                     </div>
@@ -46,11 +47,12 @@
                 <div class="col-md-8">
                   <ValidationProvider rules="required">
                     <div slot-scope="{ errors }">
-                      <input
+                      <b-input
                         type="password"
                         class="form-control"
                         v-model="userRequest.passWord"
                         required
+                        size="sm"
                       />
                       <p>{{ errors[0] }}</p>
                     </div>

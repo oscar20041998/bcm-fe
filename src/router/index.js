@@ -13,6 +13,7 @@ import Unauthorize from '../views/Unauthorize.vue'
 import TransactionList from '../views/TransactionList.vue'
 import OrderProduct from '../views/OrderProduct.vue'
 import PaymentConfig from '../views/PaymentConfig.vue'
+import PaymentProduct from '../components/PaymentProduct.vue'
 // var token = JSON.parse(localStorage.getItem('user')) != null || JSON.parse(localStorage.getItem('user')) != '' ? btoa(JSON.parse(localStorage.getItem('user'))) : ''
 Vue.use(VueRouter)
 const routes = [{
@@ -79,6 +80,11 @@ const routes = [{
         path: '/payment-configurtion/',
         name: 'PaymentConfig',
         component: PaymentConfig
+    },
+    {
+        path: '/payment-product/',
+        name: 'PaymentProduct',
+        component: PaymentProduct
     }
 ]
 
