@@ -139,7 +139,7 @@
           </div>
         </b-sidebar>
       </div>
-      <div style="height: 670px; min-height: 10px; overflow-y: scroll">
+      <div style="height: 670px; min-height: 10px; overflow-x: scroll">
         <div class="row">
           <template v-for="prd in listProduct">
             <div class="col-sm-2" v-bind:key="prd.productId">

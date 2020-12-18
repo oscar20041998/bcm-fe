@@ -20,6 +20,7 @@
                 <div>
                   <b-form-input
                     list="my-list-id"
+                    size="sm"
                     v-model="searchLogRequest.userName"
                   ></b-form-input>
                   <datalist id="my-list-id">
@@ -33,7 +34,8 @@
                 </div>
               </div>
               <div class="col-md-2">
-                <input
+                <b-input
+                  size="sm"
                   id="input-filter"
                   class="form-control"
                   type="date"
@@ -42,7 +44,7 @@
                   v-model="searchLogRequest.date"
                 />
               </div>
-              <div class="col-md-1">
+              <div class="col-md-6">
                 <button
                   class="btn btn-primary"
                   id="button-search"
@@ -51,7 +53,7 @@
                   <b-icon icon="search"></b-icon> Find
                 </button>
               </div>
-              <div class="col-sm-6">
+              <div class="col-sm-2">
                 <button
                   class="btn btn-secondary"
                   id="button-search"
@@ -122,7 +124,7 @@
             <div class="carousel-item">
               <h5>ACCOUNT USER ACTIVITIVE LOG</h5>
               <div class="card-body">
-                <div style="height: 600px; min-height: 10px; overflow-y: scroll">
+                <div style="height: 600px; min-height: 10px; overflow-x: scroll">
                   <table
                     id="table-log-detail"
                     class="table table-striped table-responsive-sm"
@@ -138,7 +140,7 @@
                         <th scope="col">Created date</th>
                       </tr>
                     </thead>
-                    <tbody sytle="min-height:10px; overflow-y:scroll">
+                    <tbody sytle="min-height:10px; overflow-x:scroll">
                       <tr v-for="log in accountUserLog" v-bind:key="log.userName">
                         <th scope="row">
                           <b-icon
@@ -167,7 +169,7 @@
             <div class="carousel-item">
               <h5>USER ACTIVITIVE LOG</h5>
               <div class="card-body">
-                <div style="height: 600px; min-height: 10px; overflow-y: scroll">
+                <div style="height: 600px; min-height: 10px; overflow-x: scroll">
                   <table
                     id="table-log-user-detail"
                     class="table table-striped table-responsive-sm"
@@ -216,7 +218,7 @@
             <div class="carousel-item">
               <h5>PRODUCT ACTIVITIVE LOG</h5>
               <div class="card-body">
-                <div style="height: 600px; min-height: 10px; overflow-y: scroll">
+                <div style="height: 600px; min-height: 10px; overflow-x: scroll">
                   <table
                     id="table-log-user-detail"
                     class="table table-striped table-responsive-sm"

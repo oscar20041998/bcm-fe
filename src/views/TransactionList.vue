@@ -51,15 +51,31 @@
       <b-table
         head-variant="dark"
         id="my-table"
-        caption-top
         responsive="sm"
+        sticky-header
         striped
         hover
         small
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
         :items="transactionInfo.listTransaction"
+        :fields="transactionInfo.fields"
         :per-page="perPage"
         :current-page="currentPage"
-      ></b-table>
+      >
+        <template v-slot:cell(action)="data">
+          <b-button
+            pill
+            size="sm"
+            @click="showDetailTranasction(data.item)"
+            class="mr-1"
+            title="Show detail this transaction"
+            variant="success"
+          >
+            <b-icon icon="pencil"></b-icon>
+          </b-button>
+        </template>
+      </b-table>
       <strong class="mt-3">Current Page: {{ currentPage }}</strong>
       <hr class="my-4" />
       <div class="row" style="margin-left: 10px">
@@ -107,9 +123,21 @@ export default {
       accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
       criteria: "",
       criteriaSearchDate: "",
+      sortBy: "createDate",
+      sortDesc: true,
       perPage: 15,
       currentPage: 1,
       transactionInfo: {
+        fields: [
+          "transactionId",
+          "orderId",
+          "tableId",
+          "paymentType",
+          "totalPrice",
+          "createBy",
+          "createDate",
+          "action",
+        ],
         listTransaction: [],
         totalSale: "",
         totalTransaction: "",
@@ -294,6 +322,11 @@ export default {
           this.listTransaction = [];
           this.totalSale = 0;
         });
+    },
+
+    // show detail tranaction
+    showDetailTranasction(object) {
+      console.log(object);
     },
   },
 };
