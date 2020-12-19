@@ -15,7 +15,9 @@ import VueCurrencyInput from "vue-currency-input";
 import Vuex from 'vuex';
 import { ModalPlugin } from 'bootstrap-vue'
 import { ValidationProvider } from 'vee-validate';
+import VueMask from 'v-mask'
 
+Vue.use(VueMask);
 Vue.use(ModalPlugin)
 Vue.use(Vuex)
 Vue.use(VueCurrencyInput);

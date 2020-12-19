@@ -341,11 +341,11 @@
                   </h5>
                   <ValidationProvider rules="required">
                     <div slot-scope="{ errors }" id="priceDiv" style="display: none">
-                      <input
+                      <b-input
                         class="form-control"
                         ref="input"
-                        v-currency="options"
                         v-model="product.price"
+                        v-mask="'###,###,###,###'"
                       />
                       <p>{{ errors[0] }}</p>
                     </div>
@@ -357,7 +357,7 @@
                     v-model="checked"
                     name="check-button"
                     switch
-                    @change="showEditPrice"
+                    @change="showEditPrice($event)"
                   >
                     Edit mode
                   </b-form-checkbox>
@@ -422,7 +422,6 @@ export default {
     this.checkLocalStorage();
     this.getAllCategories();
     this.getProducts();
-    this.showEditPrice();
   },
 
   computed: {
@@ -613,6 +612,8 @@ export default {
       $("#selectCategory").css("display", "block");
       $("#inputCategory").css("display", "none");
       $("#checkBoxEditMode").css("display", "none");
+      $("#priceDiv").css("display", "block");
+      $("#price-format-string").css("display", "none");
       this.product.productId = "";
       this.product.productName = "";
       this.product.categoryId = "";
@@ -735,7 +736,7 @@ export default {
         categoryId: this.product.categoryId,
         productName: this.product.productName,
         image: this.selectedFile,
-        price: this.convertValueToInt,
+        price: this.product.price,
         createBy: this.userCurrent,
         createDate: "",
       };
@@ -989,8 +990,8 @@ export default {
     },
 
     // show input edit price
-    showEditPrice() {
-      if (this.checked === true) {
+    showEditPrice: function (event) {
+      if (event == true) {
         $("#priceDiv").css("display", "block");
         $("#price-format-string").css("display", "none");
       } else {

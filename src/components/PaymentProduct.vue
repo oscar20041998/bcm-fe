@@ -33,9 +33,9 @@
                   <b-form-radio
                     v-model="paymentType"
                     name="some-radios"
-                    value="Electronic Wallet"
+                    value="Electronic wallet"
                     @change="onclickEwalletOption()"
-                    >Electronic Wallet</b-form-radio
+                    >Electronic wallet</b-form-radio
                   >
                 </b-col>
               </b-row>
@@ -72,7 +72,7 @@
                 maxlength="19"
                 placeholder="Input card number"
                 v-model="cardNumber"
-                @keyup="formatCardNumber"
+                v-mask="'#### #### #### ####'"
               />
             </div>
           </div>
@@ -116,6 +116,7 @@
                 maxlength="5"
                 placeholder="MM/YY"
                 v-model="expireDate"
+                v-mask="'##/##'"
               />
             </div>
           </div>
@@ -307,14 +308,6 @@ export default {
       $("#eWalletDiv").css("display", "none");
     },
 
-    // format card number
-    formatCardNumber: function (event) {
-      var str = $(event.currentTarget).val().replace(/\s/g, "");
-      var numberChunk = str.match(/.{1,4}/g);
-      this.cardNumber = numberChunk.join(" ");
-      $(event.eventTarget).val(this.cardNumber);
-    },
-
     // save tranaction
     saveTransaction() {
       var request = {
@@ -336,6 +329,71 @@ export default {
         listOrder: JSON.parse(localStorage.getItem("orderInfo")).listOrder,
         createBy: JSON.parse(localStorage.getItem("user")).userName,
       };
+      var isValid = this.valdiateBeforeSaveTransaction(request);
+      if (isValid) {
+        this.executeSaveTransaction(request);
+      } else {
+        this.$swal({
+          toast: true,
+          showProgressBar: true,
+          position: "top-end",
+          title: "Missing information to save the transaction",
+          icon: "info",
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      }
+    },
+
+    clearData() {
+      (this.bankName = ""),
+        (this.cardOwnerName = ""),
+        (this.cardNumber = ""),
+        (this.cardType = ""),
+        (this.expireDate = ""),
+        (this.cvv = ""),
+        (this.paymentType = ""),
+        (this.transactionCode = ""),
+        (this.providerName = "");
+    },
+
+    // validate before save the transaction
+    valdiateBeforeSaveTransaction: function (object) {
+      if (object.paymentType != null && object.paymentType != "") {
+        if (object.paymentType == "Card option") {
+          return (
+            object.bankInfoRequest.bankName != null &&
+            object.bankInfoRequest.bankName != "" &&
+            object.bankInfoRequest.cardNumber != null &&
+            object.bankInfoRequest.cardNumber != "" &&
+            object.bankInfoRequest.cardType != null &&
+            object.bankInfoRequest.cardType != "" &&
+            object.bankInfoRequest.expireDate != null &&
+            object.bankInfoRequest.expireDate != "" &&
+            object.bankInfoRequest.cvv != null &&
+            object.bankInfoRequest.cvv != "" &&
+            object.bankInfoRequest.cardOwnerName != null &&
+            object.bankInfoRequest.cardOwnerName != ""
+          );
+        } else if (object.paymentType == "Electronic wallet") {
+          return (
+            object.eWalletRequest.providerName != null &&
+            object.eWalletRequest.providerName != "" &&
+            object.eWalletRequest.transactionCode != null &&
+            object.eWalletRequest.transactionCode != ""
+          );
+        } else if (object.paymentType == "Cash option") {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    },
+
+    // execute save transaction
+    executeSaveTransaction: function (request) {
       http
         .post("/transaction/api/save-transaction/" + this.accountUserValid, request)
         .then((response) => {
@@ -366,18 +424,6 @@ export default {
             timer: 2100,
           });
         });
-    },
-
-    clearData() {
-      (this.bankName = ""),
-        (this.cardOwnerName = ""),
-        (this.cardNumber = ""),
-        (this.cardType = ""),
-        (this.expireDate = ""),
-        (this.cvv = ""),
-        (this.paymentType = ""),
-        (this.transactionCode = ""),
-        (this.providerName = "");
     },
 
     backToOrderProduct() {

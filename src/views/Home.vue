@@ -64,55 +64,51 @@
               </div>
             </div>
             <div class="card-body">
-              <div style="height: 600px; min-height: 10px; overflow-y: scroll">
-                <table
-                  id="table-log-detail"
-                  class="table table-striped table-responsive-sm"
-                  cellspacing="0"
-                  style="max-heigh: 100px"
+              <div class="system-log-div">
+                <b-table
+                  :items="sytemLogList"
+                  :fields="fieldsPerLog"
+                  head-variant="dark"
+                  id="my-table-systemLogList"
+                  responsive="sm"
+                  sticky-header
+                  striped
+                  hover
+                  small
+                  :per-page="perPageSystemLog"
+                  :current-page="currentPageSystemLog"
                 >
-                  <thead class="thead-dark">
-                    <tr>
-                      <th scope="col">User name</th>
-                      <th scope="col">Action</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Action on time</th>
-                      <th scope="col">Log by</th>
-                    </tr>
-                  </thead>
-                  <tbody sytle="min-height:10px; overflow-y:scroll">
-                    <tr v-for="log in sytemLogList" v-bind:key="log.userName">
-                      <th scope="row">
-                        <b-icon
-                          icon="person-fill"
-                          animation="no-fade"
-                          font-scale="1"
-                        ></b-icon>
-                        {{ log.userName }}
-                      </th>
-                      <td>{{ log.action }}</td>
-                      <td>
-                        <template v-if="log.status === 'Success'">
-                          <b-icon
-                            icon="check-circle-fill"
-                            font-scale="1"
-                            variant="success"
-                          ></b-icon>
-                        </template>
-                        <template v-else-if="log.status === 'Failed'">
-                          <b-icon
-                            icon="x-circle-fill"
-                            font-scale="1"
-                            variant="danger"
-                          ></b-icon>
-                        </template>
-                        {{ log.status }}
-                      </td>
-                      <td>{{ log.actionDate }}</td>
-                      <td><i>SYSTEM</i></td>
-                    </tr>
-                  </tbody>
-                </table>
+                  <template v-slot:cell(status)="data">
+                    <template v-if="data.value === 'Success'">
+                      <b-icon
+                        icon="check-circle-fill"
+                        font-scale="1"
+                        variant="success"
+                      ></b-icon>
+                    </template>
+                    <template v-else>
+                      <b-icon
+                        icon="x-circle-fill"
+                        font-scale="1"
+                        variant="danger"
+                      ></b-icon>
+                    </template>
+                  </template>
+                </b-table>
+                <strong class="mt-3">Current Page: {{ currentPageSystemLog }}</strong>
+                <hr class="my-4" />
+                <div class="row" style="margin-left: 10px">
+                  <div class="column">
+                    <b-pagination
+                      size="md"
+                      pills
+                      v-model="currentPageSystemLog"
+                      :total-rows="rowsSystemLog"
+                      :per-page="perPageSystemLog"
+                      aria-controls="my-table"
+                    ></b-pagination>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -124,43 +120,51 @@
             <div class="carousel-item">
               <h5>ACCOUNT USER ACTIVITIVE LOG</h5>
               <div class="card-body">
-                <div style="height: 600px; min-height: 10px; overflow-x: scroll">
-                  <table
-                    id="table-log-detail"
-                    class="table table-striped table-responsive-sm"
-                    cellspacing="0"
-                    style="max-heigh: 100px"
+                <div class="system-log-div">
+                  <b-table
+                    :items="accountUserLog"
+                    :fields="fieldsUserLog"
+                    head-variant="dark"
+                    id="my-table-systemLogList"
+                    responsive="sm"
+                    sticky-header
+                    striped
+                    hover
+                    small
+                    :per-page="perPageAccountLog"
+                    :current-page="currentPageAccountLog"
                   >
-                    <thead class="thead-dark">
-                      <tr>
-                        <th scope="col">AccountID</th>
-                        <th scope="col">User name</th>
-                        <th scope="col">Action</th>
-                        <th scope="col">Created by</th>
-                        <th scope="col">Created date</th>
-                      </tr>
-                    </thead>
-                    <tbody sytle="min-height:10px; overflow-x:scroll">
-                      <tr v-for="log in accountUserLog" v-bind:key="log.userName">
-                        <th scope="row">
-                          <b-icon
-                            icon="check-fill"
-                            animation="no-fade"
-                            font-scale="1"
-                          ></b-icon>
-                          {{ log.accountId }}
-                        </th>
-                        <td>{{ log.userName }}</td>
-                        <td>
-                          <strong>{{ log.userAction }}</strong>
-                        </td>
-                        <td>{{ log.createdBy }}</td>
-                        <td>
-                          <i>{{ log.createdDate }}</i>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                    <template v-slot:cell(status)="data">
+                      <template v-if="data.value === 'Success'">
+                        <b-icon
+                          icon="check-circle-fill"
+                          font-scale="1"
+                          variant="success"
+                        ></b-icon>
+                      </template>
+                      <template v-else>
+                        <b-icon
+                          icon="x-circle-fill"
+                          font-scale="1"
+                          variant="danger"
+                        ></b-icon>
+                      </template>
+                    </template>
+                  </b-table>
+                  <strong class="mt-3">Current Page: {{ currentPageAccountLog }}</strong>
+                  <hr class="my-4" />
+                  <div class="row" style="margin-left: 10px">
+                    <div class="column">
+                      <b-pagination
+                        size="md"
+                        pills
+                        v-model="currentPageAccountLog"
+                        :total-rows="rowsAccountLog"
+                        :per-page="perPageAccountLog"
+                        aria-controls="my-table"
+                      ></b-pagination>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -299,13 +303,47 @@ export default {
         userName: "",
         date: "",
       },
+      fieldsPerLog: ["userName", "action", "status", "actionDate"],
+      fieldsAccountLog: [
+        "accountId",
+        "userName",
+        "usedBy",
+        "actionUser",
+        "createBy",
+        "createDate",
+      ],
+
       show: true,
       // current role of user
       currentRole: JSON.parse(localStorage.getItem("user")).roleCode,
+      perPageSystemLog: 15,
+      currentPageSystemLog: 1,
+      perPageUserLog: 15,
+      currentPageUserLog: 1,
+      perPageAccountLog: 15,
+      currentPageAccountLog: 1,
+      perPageProductLog: 15,
+      currentPageProductLog: 1,
     };
   },
 
-  computed: {},
+  computed: {
+    rowsSystemLog() {
+      return this.sytemLogList.length;
+    },
+
+    rowsAccountLog() {
+      return this.accountUserLog.length;
+    },
+
+    rowsUserLog() {
+      return this.userLog.length;
+    },
+
+    rowsProductLog() {
+      return this.productLog.length;
+    },
+  },
   mounted() {
     this.checkLocalStorage();
     this.getListSytemLog();
@@ -533,7 +571,13 @@ tbody {
 button {
   text-align: left;
 }
-
+.system-log-div {
+  font-size: 13px;
+}
+.b-table-sticky-header {
+  overflow-y: auto;
+  max-height: 650px;
+}
 .carousel-control-prev,
 .carousel-control-next {
   background-color: #ffa50000;

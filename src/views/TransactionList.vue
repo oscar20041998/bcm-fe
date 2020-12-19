@@ -1,118 +1,255 @@
 <template>
-  <div class="jumbotron">
-    <div class="row">
-      <div class="col-sm-3">
-        <h5>
-          <b-icon icon="reception4"></b-icon>
-          TRANSACTION LIST
-        </h5>
-      </div>
-      <div class="col-sm-2">
-        <select id="select-filter" class="form-control" v-model="criteria">
-          <option value="All">All</option>
-          <option value="TODAY">Today</option>
-          <option value="YESTERDAY">Yesterday</option>
-        </select>
-      </div>
-      <div class="col-sm-2">
-        <button
-          class="btn btn-dark"
-          id="button-search"
-          @click="searchTransactionByTime()"
-        >
-          <b-icon icon="filter"></b-icon> Filter
-        </button>
-      </div>
-      <div class="col-md-2">
-        <input
-          id="input-filter"
-          class="form-control"
-          type="date"
-          placeholder="Search by card number/ create by"
-          aria-label="Search"
-          v-model="criteriaSearchDate"
-        />
-      </div>
-      <div class="col-md-1">
-        <button
-          class="btn btn-primary"
-          id="button-search"
-          @click="searchTransactionByDate()"
-        >
-          <b-icon icon="search"></b-icon> Find
-        </button>
-      </div>
-    </div>
-    <hr class="my-4" />
-    <div id="divLoading" class="col-md-14" style="text-align: center; display: none">
-      <b-spinner id="loading" label="Loading..."></b-spinner>
-    </div>
-    <div class="overflow-auto">
-      <b-table
-        head-variant="dark"
-        id="my-table"
-        responsive="sm"
-        sticky-header
-        striped
-        hover
-        small
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        :items="transactionInfo.listTransaction"
-        :fields="transactionInfo.fields"
-        :per-page="perPage"
-        :current-page="currentPage"
-      >
-        <template v-slot:cell(action)="data">
-          <b-button
-            pill
-            size="sm"
-            @click="showDetailTranasction(data.item)"
-            class="mr-1"
-            title="Show detail this transaction"
-            variant="success"
+  <b-overlay :show="show" rounded="sm">
+    <div class="jumbotron">
+      <div class="row">
+        <div class="col-sm-3">
+          <h5>
+            <b-icon icon="reception4"></b-icon>
+            TRANSACTION LIST
+          </h5>
+        </div>
+        <div class="col-sm-2">
+          <select id="select-filter" class="form-control" v-model="criteria">
+            <option value="All">All</option>
+            <option value="TODAY">Today</option>
+            <option value="YESTERDAY">Yesterday</option>
+          </select>
+        </div>
+        <div class="col-sm-2">
+          <button
+            class="btn btn-dark"
+            id="button-search"
+            @click="searchTransactionByTime()"
           >
-            <b-icon icon="pencil"></b-icon>
-          </b-button>
-        </template>
-      </b-table>
-      <strong class="mt-3">Current Page: {{ currentPage }}</strong>
-      <hr class="my-4" />
-      <div class="row" style="margin-left: 10px">
-        <div class="column">
-          <b-pagination
-            size="md"
-            pills
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="my-table"
-          ></b-pagination>
+            <b-icon icon="filter"></b-icon> Filter
+          </button>
+        </div>
+        <div class="col-md-2">
+          <input
+            id="input-filter"
+            class="form-control"
+            type="date"
+            placeholder="Search by card number/ create by"
+            aria-label="Search"
+            v-model="criteriaSearchDate"
+          />
+        </div>
+        <div class="col-md-1">
+          <button
+            class="btn btn-primary"
+            id="button-search"
+            @click="searchTransactionByDate()"
+          >
+            <b-icon icon="search"></b-icon> Find
+          </button>
         </div>
       </div>
-      <div class="col-sm-3">
-        <strong>Total transactions: </strong>
-        <b-icon icon="bullseye" variant="danger"></b-icon>
-        {{ transactionInfo.totalTransaction }}
+      <hr class="my-4" />
+      <div class="overflow-auto">
+        <b-table
+          head-variant="dark"
+          id="my-table"
+          responsive="sm"
+          sticky-header
+          striped
+          hover
+          small
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :items="transactionInfo.listTransaction"
+          :fields="transactionInfo.fields"
+          :per-page="perPage"
+          :current-page="currentPage"
+        >
+          <template v-slot:cell(action)="data">
+            <b-button
+              pill
+              size="sm"
+              @click="showDetailTranasction(data.item)"
+              class="mr-1"
+              title="Show detail this transaction"
+              variant="success"
+              v-b-modal.modal-scrollable
+            >
+              <b-icon icon="pencil"></b-icon>
+            </b-button>
+          </template>
+        </b-table>
+        <strong class="mt-3">Current Page: {{ currentPage }}</strong>
+        <hr class="my-4" />
+        <div class="row" style="margin-left: 10px">
+          <div class="column">
+            <b-pagination
+              size="md"
+              pills
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="my-table"
+            ></b-pagination>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <strong>Total transactions: </strong>
+          <b-icon icon="bullseye" variant="danger"></b-icon>
+          {{ transactionInfo.totalTransaction }}
+        </div>
+        <div class="col-sm-3">
+          <strong>Total cash options: </strong>
+          <b-icon icon="wallet-fill" variant="success"></b-icon>
+          {{ transactionInfo.totalCashOption }}
+        </div>
+        <div class="col-sm-3">
+          <strong>Total card options: </strong>
+          <b-icon icon="credit-card2-front-fill"></b-icon>
+          {{ transactionInfo.totalCardOption }}
+        </div>
+        <div class="col-sm-3">
+          <strong>Total E.Wallet options: </strong>
+          <b-icon icon="upc-scan"></b-icon>
+          {{ transactionInfo.totalEWalletOption }}
+        </div>
+        <div class="col-sm-12" style="text-align: right">
+          <h2>
+            <b-icon icon="server" animation="cylon-vertical" variant="secondary"></b-icon>
+            Total sale: {{ transactionInfo.totalSale }}đ
+          </h2>
+        </div>
       </div>
-      <div class="col-sm-3">
-        <strong>Total cash options: </strong>
-        <b-icon icon="wallet-fill" variant="success"></b-icon>
-        {{ transactionInfo.totalCashOption }}
-      </div>
-      <div class="col-sm-3">
-        <strong>Total card options: </strong>
-        <b-icon icon="credit-card2-front-fill"></b-icon>
-        {{ transactionInfo.totalCardOption }}
-      </div>
-      <div class="col-sm-12" style="text-align: right">
-        <h2>
-          <b-icon icon="server" animation="cylon-vertical" variant="secondary"></b-icon>
-          Total sale: {{ transactionInfo.totalSale }}đ
-        </h2>
-      </div>
+
+      <!-- Modal tranaction detail-->
+      <b-modal
+        id="modal-scrollable"
+        scrollable
+        title="Transaction Detail Content"
+        data-backdrop="static"
+      >
+        <div class="overflow-auto">
+          <b-table
+            :items="transactionDetail.listOrdered"
+            :fields="transactionDetail.fields"
+            head-variant="dark"
+            id="my-table-transaction-detail"
+            responsive="sm"
+            sticky-header
+            striped
+            hover
+            small
+          ></b-table>
+        </div>
+        <hr class="my-2" />
+        <!--Field table id-->
+        <b-row>
+          <b-col><strong>Table: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.tableId }}</i></b-col
+          >
+        </b-row>
+        <!--Field transaction id-->
+        <b-row>
+          <b-col><strong>Transaction Id: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.transactionId }}</i></b-col
+          >
+        </b-row>
+
+        <!--Feild order id-->
+        <b-row>
+          <b-col><strong>Order Id: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.orderId }}</i></b-col
+          >
+        </b-row>
+
+        <!--Feild payment type-->
+        <b-row>
+          <b-col><strong>Payment type: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.paymentType }}</i></b-col
+          >
+        </b-row>
+        <!--Feild bank name-->
+        <b-row>
+          <b-col><strong>Bank Name: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.bankName }}</i></b-col
+          >
+        </b-row>
+
+        <!--Field card number-->
+        <b-row>
+          <b-col><strong>Card Number: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.cardNumber }}</i></b-col
+          >
+        </b-row>
+
+        <!-- Field card type-->
+        <b-row>
+          <b-col><strong>Card Type: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.cardType }}</i></b-col
+          >
+        </b-row>
+
+        <!-- Field expire date card-->
+        <b-row>
+          <b-col><strong>Expire Date: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.expireDate }}</i></b-col
+          >
+        </b-row>
+
+        <!-- Field cvv number-->
+        <b-row>
+          <b-col><strong>Cvv: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.cvv }}</i></b-col
+          >
+        </b-row>
+
+        <!--Field provide name for electronic wallet-->
+        <b-row>
+          <b-col><strong>Provider Name: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.providerName }}</i></b-col
+          >
+        </b-row>
+
+        <!--Feild tranaction code for electronic walllet-->
+        <b-row>
+          <b-col><strong>Transaction Code: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.transactionCode }}</i></b-col
+          >
+        </b-row>
+
+        <!--Field create by-->
+        <b-row>
+          <b-col><strong>Create By: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.createBy }}</i></b-col
+          >
+        </b-row>
+
+        <!--Field create date-->
+        <b-row>
+          <b-col><strong>Create Date: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.createDate }}</i></b-col
+          >
+        </b-row>
+
+        <!--Field total price tranaction-->
+        <b-row>
+          <b-col><strong>Total Price: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.totalPrice }}</i></b-col
+          >
+        </b-row>
+      </b-modal>
     </div>
-  </div>
+  </b-overlay>
 </template>
 
 <script>
@@ -127,6 +264,7 @@ export default {
       sortDesc: true,
       perPage: 15,
       currentPage: 1,
+      show: false,
       transactionInfo: {
         fields: [
           "transactionId",
@@ -143,6 +281,26 @@ export default {
         totalTransaction: "",
         totalCashOption: "",
         totalCardOption: "",
+        totalEWalletOption: "",
+      },
+      transactionDetail: {
+        fields: ["productName", "quantity", "price", "createBy", "createDate"],
+        info: {
+          transactionId: "",
+          orderId: "",
+          tableId: "",
+          paymentType: "",
+          bankName: "",
+          cardNumber: "",
+          cardType: "",
+          expireDate: "",
+          cvv: "",
+          providerName: "",
+          transactionCode: "",
+          createBy: "",
+          createDate: "",
+        },
+        listOrdered: [],
       },
     };
   },
@@ -177,7 +335,7 @@ export default {
 
     // get all transation
     getTransactions() {
-      $("#divLoading").css("display", "block");
+      this.show = true;
       http
         .get("/transaction/api/get-transactions/" + this.accountUserValid)
         .then((response) => {
@@ -189,7 +347,9 @@ export default {
               response.data.sumPaymentType.countCashOption;
             this.transactionInfo.totalCardOption =
               response.data.sumPaymentType.countCardOption;
-            $("#divLoading").css("display", "none");
+            this.transactionInfo.totalEWalletOption =
+              response.data.sumPaymentType.electronicWalletOption;
+            this.show = false;
           } else if (response.status == "401") {
             this.$swal({
               toast: true,
@@ -200,7 +360,7 @@ export default {
               showConfirmButton: false,
               timer: 2100,
             });
-            $("#divLoading").css("display", "none");
+            this.show = false;
           }
         });
     },
@@ -208,7 +368,7 @@ export default {
     // search transactions depend on time
     searchTransactionByTime() {
       var criteria = this.criteria;
-      $("#divLoading").css("display", "block");
+      this.show = true;
       http
         .post(
           "/transaction/api/search-transactions/" + this.accountUserValid + "/" + criteria
@@ -233,7 +393,10 @@ export default {
                 response.data.sumPaymentType.countCashOption;
               this.transactionInfo.totalCardOption =
                 response.data.sumPaymentType.countCardOption;
-              $("#divLoading").css("display", "none");
+              this.transactionInfo.totalEWaleltOption =
+                response.data.sumPaymentType.electronicWalletOption;
+
+              this.show = false;
             }
           } else {
             this.$swal({
@@ -257,7 +420,7 @@ export default {
             showConfirmButton: false,
             timer: 2100,
           });
-          $("#divLoading").css("display", "none");
+          this.show = false;
           this.listTransaction = [];
           this.totalSale = 0;
         });
@@ -266,7 +429,7 @@ export default {
     // search transaction by a date
     searchTransactionByDate() {
       var date = this.criteriaSearchDate;
-      $("#divLoading").css("display", "block");
+      this.show = true;
       http
         .post(
           "/transaction/api/search-transactions-by-date/" +
@@ -294,7 +457,10 @@ export default {
                 response.data.sumPaymentType.countCashOption;
               this.transactionInfo.totalCardOption =
                 response.data.sumPaymentType.countCardOption;
-              $("#divLoading").css("display", "none");
+              this.transactionInfo.totalEWaleltOption =
+                response.data.sumPaymentType.electronicWalletOption;
+
+              this.show = false;
             }
           } else {
             this.$swal({
@@ -306,6 +472,7 @@ export default {
               showConfirmButton: false,
               timer: 2100,
             });
+            this.show = false;
           }
         })
         .catch((error) => {
@@ -318,7 +485,7 @@ export default {
             showConfirmButton: false,
             timer: 2100,
           });
-          $("#divLoading").css("display", "none");
+          this.show = false;
           this.listTransaction = [];
           this.totalSale = 0;
         });
@@ -326,13 +493,39 @@ export default {
 
     // show detail tranaction
     showDetailTranasction(object) {
-      console.log(object);
+      this.show = true;
+      var request = {
+        transactionId: object.transactionId,
+        orderId: object.orderId,
+        tableId: object.tableId,
+      };
+      http
+        .post("/transaction/api/get-transaction-detail/" + this.accountUserValid, request)
+        .then((response) => {
+          if (response.status == "200") {
+            this.transactionDetail.info = response.data.transactionDetail;
+            this.transactionDetail.listOrdered = response.data.listOrdered;
+            this.show = false;
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+          this.show = false;
+        });
     },
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #input-filter,
 #select-filter,
 #button-search {
@@ -342,7 +535,16 @@ export default {
 }
 
 h2 {
-  color: green;
+  color: red;
+}
+
+.overflow-auto {
+  font-size: 13px;
+}
+.b-table-sticky-header > .table,
+.table-responsive > .table,
+[class*="table-responsive-"] > .table {
+  margin-bottom: 0;
+  font-size: 13px;
 }
 </style>
->
