@@ -56,6 +56,7 @@
           small
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
+          show-empty
           :items="transactionInfo.listTransaction"
           :fields="transactionInfo.fields"
           :per-page="perPage"

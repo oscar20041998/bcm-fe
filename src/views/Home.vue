@@ -85,6 +85,7 @@
                         font-scale="1"
                         variant="success"
                       ></b-icon>
+                      {{ data.value }}
                     </template>
                     <template v-else>
                       <b-icon
@@ -92,6 +93,7 @@
                         font-scale="1"
                         variant="danger"
                       ></b-icon>
+                      {{ data.value }}
                     </template>
                   </template>
                 </b-table>
@@ -123,7 +125,7 @@
                 <div class="system-log-div">
                   <b-table
                     :items="accountUserLog"
-                    :fields="fieldsUserLog"
+                    :fields="fieldsAccountLog"
                     head-variant="dark"
                     id="my-table-systemLogList"
                     responsive="sm"
@@ -134,20 +136,22 @@
                     :per-page="perPageAccountLog"
                     :current-page="currentPageAccountLog"
                   >
-                    <template v-slot:cell(status)="data">
-                      <template v-if="data.value === 'Success'">
+                    <template v-slot:cell(userAction)="data">
+                      <template v-if="data.value === 'INSERTED'">
                         <b-icon
-                          icon="check-circle-fill"
+                          icon="plus-circle"
                           font-scale="1"
                           variant="success"
                         ></b-icon>
+                        {{ data.value }}
+                      </template>
+                      <template v-else-if="data.value === 'DELETED'">
+                        <b-icon icon="trash" font-scale="1" variant="danger"></b-icon>
+                        {{ data.value }}
                       </template>
                       <template v-else>
-                        <b-icon
-                          icon="x-circle-fill"
-                          font-scale="1"
-                          variant="danger"
-                        ></b-icon>
+                        <b-icon icon="hammer" font-scale="1" variant="info"></b-icon>
+                        {{ data.value }}
                       </template>
                     </template>
                   </b-table>
@@ -173,47 +177,53 @@
             <div class="carousel-item">
               <h5>USER ACTIVITIVE LOG</h5>
               <div class="card-body">
-                <div style="height: 600px; min-height: 10px; overflow-x: scroll">
-                  <table
-                    id="table-log-user-detail"
-                    class="table table-striped table-responsive-sm"
-                    cellspacing="0"
-                    style="max-heigh: 100px"
+                <div class="system-log-div">
+                  <b-table
+                    :items="userLog"
+                    :fields="fieldsUserLog"
+                    head-variant="dark"
+                    id="my-table-systemLogList"
+                    responsive="sm"
+                    sticky-header
+                    striped
+                    hover
+                    small
+                    :per-page="perPageUserLog"
+                    :current-page="currentPageUserLog"
                   >
-                    <thead class="thead-dark">
-                      <tr>
-                        <th scope="col">User ID</th>
-                        <th scope="col">Full name</th>
-                        <th scope="col">Phone number</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Action</th>
-                        <th scope="col">Created by</th>
-                        <th scope="col">Created date</th>
-                      </tr>
-                    </thead>
-                    <tbody sytle="min-height:10px; overflow-y:scroll">
-                      <tr v-for="log in userLog" v-bind:key="log.userId">
-                        <th scope="row">
-                          <b-icon
-                            icon="person-fill"
-                            animation="no-fade"
-                            font-scale="1"
-                          ></b-icon>
-                          {{ log.userId }}
-                        </th>
-                        <td>{{ log.fullName }}</td>
-                        <td>{{ log.phoneNumber }}</td>
-                        <td>{{ log.email }}</td>
-                        <td>
-                          <strong>{{ log.userAction }}</strong>
-                        </td>
-                        <td>{{ log.createdBy }}</td>
-                        <td>
-                          <i>{{ log.createdDate }}</i>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                    <template v-slot:cell(userAction)="data">
+                      <template v-if="data.value === 'INSERTED'">
+                        <b-icon
+                          icon="plus-circle"
+                          font-scale="1"
+                          variant="success"
+                        ></b-icon>
+                        {{ data.value }}
+                      </template>
+                      <template v-else-if="data.value === 'DELETED'">
+                        <b-icon icon="trash" font-scale="1" variant="danger"></b-icon>
+                        {{ data.value }}
+                      </template>
+                      <template v-else>
+                        <b-icon icon="hammer" font-scale="1" variant="info"></b-icon>
+                        {{ data.value }}
+                      </template>
+                    </template>
+                  </b-table>
+                  <strong class="mt-3">Current Page: {{ currentPageUserLog }}</strong>
+                  <hr class="my-4" />
+                  <div class="row" style="margin-left: 10px">
+                    <div class="column">
+                      <b-pagination
+                        size="md"
+                        pills
+                        v-model="currentPageUserLog"
+                        :total-rows="rowsUserLog"
+                        :per-page="perPageUseLog"
+                        aria-controls="my-table"
+                      ></b-pagination>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -222,39 +232,53 @@
             <div class="carousel-item">
               <h5>PRODUCT ACTIVITIVE LOG</h5>
               <div class="card-body">
-                <div style="height: 600px; min-height: 10px; overflow-x: scroll">
-                  <table
-                    id="table-log-user-detail"
-                    class="table table-striped table-responsive-sm"
-                    cellspacing="0"
-                    style="max-heigh: 100px"
+                <div class="system-log-div">
+                  <b-table
+                    :items="productLog"
+                    :fields="fieldsProductLog"
+                    head-variant="dark"
+                    id="my-table-systemLogList"
+                    responsive="sm"
+                    sticky-header
+                    striped
+                    hover
+                    small
+                    :per-page="perPageProductLog"
+                    :current-page="currentPageProductLog"
                   >
-                    <thead class="thead-dark">
-                      <tr>
-                        <th scope="col">Product name</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Action user</th>
-                        <th scope="col">Create by</th>
-                        <th scope="col">Create date</th>
-                      </tr>
-                    </thead>
-                    <tbody sytle="min-height:10px; overflow-y:scroll">
-                      <tr v-for="log in productLog" :key="log.id">
-                        <th scope="row">
-                          <b-icon icon="box" animation="no-fade" font-scale="1"></b-icon>
-                          {{ log.productName }}
-                        </th>
-                        <td>{{ log.price }}</td>
-                        <td>
-                          <strong>{{ log.userAction }}</strong>
-                        </td>
-                        <td>{{ log.createBy }}</td>
-                        <td>
-                          <i>{{ log.createDate }}</i>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                    <template v-slot:cell(userAction)="data">
+                      <template v-if="data.value === 'INSERTED'">
+                        <b-icon
+                          icon="plus-circle"
+                          font-scale="1"
+                          variant="success"
+                        ></b-icon>
+                        {{ data.value }}
+                      </template>
+                      <template v-else-if="data.value === 'DELETED'">
+                        <b-icon icon="trash" font-scale="1" variant="danger"></b-icon>
+                        {{ data.value }}
+                      </template>
+                      <template v-else>
+                        <b-icon icon="hammer" font-scale="1" variant="info"></b-icon>
+                        {{ data.value }}
+                      </template>
+                    </template>
+                  </b-table>
+                  <strong class="mt-3">Current Page: {{ currentPageProductLog }}</strong>
+                  <hr class="my-4" />
+                  <div class="row" style="margin-left: 10px">
+                    <div class="column">
+                      <b-pagination
+                        size="md"
+                        pills
+                        v-model="currentPageProductLog"
+                        :total-rows="rowsProductLog"
+                        :per-page="perPageProductLog"
+                        aria-controls="my-table"
+                      ></b-pagination>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -307,22 +331,31 @@ export default {
       fieldsAccountLog: [
         "accountId",
         "userName",
-        "usedBy",
-        "actionUser",
-        "createBy",
-        "createDate",
+        "userAction",
+        "createdBy",
+        "createdDate",
       ],
+      fieldsUserLog: [
+        "userId",
+        "fullName",
+        "phoneNumber",
+        "email",
+        "userAction",
+        "createdBy",
+        "createdDate",
+      ],
+      fieldsProductLog: ["productName", "price", "userAction", "createBy", "createDate"],
 
       show: true,
       // current role of user
       currentRole: JSON.parse(localStorage.getItem("user")).roleCode,
-      perPageSystemLog: 15,
+      perPageSystemLog: 20,
       currentPageSystemLog: 1,
-      perPageUserLog: 15,
+      perPageUserLog: 20,
       currentPageUserLog: 1,
-      perPageAccountLog: 15,
+      perPageAccountLog: 20,
       currentPageAccountLog: 1,
-      perPageProductLog: 15,
+      perPageProductLog: 20,
       currentPageProductLog: 1,
     };
   },

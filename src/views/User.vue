@@ -1,119 +1,103 @@
 <template>
-  <div class="jumbotron">
-    <div class="row">
-      <div class="col-md-5">
-        <h5>
-          <b-icon icon="person-fill"></b-icon>
-          USER AVAILABLE
-        </h5>
+  <b-overlay :show="show" rounded="sm">
+    <div class="jumbotron">
+      <div class="row">
+        <div class="col-md-5">
+          <h5>
+            <b-icon icon="person-fill"></b-icon>
+            USER AVAILABLE
+          </h5>
+        </div>
+        <div class="col-sm-4" style="text-align: right">
+          <b-button
+            variant="success"
+            data-toggle="modal"
+            data-target="#addNewUserModal"
+            v-on:click="clearData()"
+            title="Add new user"
+          >
+            <b-icon icon="person-plus-fill"></b-icon>
+          </b-button>
+        </div>
+        <div class="col-sm-2">
+          <input
+            id="input-search"
+            class="form-control"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+            v-model="criteria"
+            @keyup="searchUser()"
+          />
+        </div>
+        <div class="col-sm-1">
+          <b-icon icon="search"></b-icon>
+        </div>
       </div>
-      <div class="col-sm-4" style="text-align: right">
-        <b-button
-          variant="success"
-          data-toggle="modal"
-          data-target="#addNewUserModal"
-          v-on:click="clearData()"
-          title="Add new user"
+      <hr class="my-4" />
+      <div class="user-div">
+        <b-table
+          :items="listUser"
+          :fields="fields"
+          head-variant="dark"
+          id="my-table-systemLogList"
+          responsive="sm"
+          striped
+          hover
+          small
+          :per-page="perPage"
+          :current-page="currentPage"
         >
-          <b-icon icon="person-plus-fill"></b-icon>
-        </b-button>
-      </div>
-      <div class="col-sm-2">
-        <input
-          id="input-search"
-          class="form-control"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-          v-model="criteria"
-          @keyup="searchUser()"
-        />
-      </div>
-      <div class="col-sm-1">
-        <b-icon icon="search"></b-icon>
-      </div>
-    </div>
-    <hr class="my-4" />
-    <div id="divLoading" class="col-md-12" style="text-align: center">
-      <b-spinner id="loading" label="Loading..."></b-spinner>
-    </div>
-    <div style="height: 670px; min-height: 10px; overflow-y: scroll">
-      <table
-        id="table-log-detail"
-        class="table table-striped table-reponsive-sm"
-        cellspacing="0"
-        style="max-heigh: 100px"
-      >
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">User ID</th>
-            <th scope="col">Full name</th>
-            <th scope="col">Birthday</th>
-            <th scope="col">ID card</th>
-            <th scope="col">Address</th>
-            <th scope="col">Phone number</th>
-            <th scope="col">Email</th>
-            <th scope="col">Option</th>
-          </tr>
-        </thead>
-        <tbody sytle="min-height:10px; overflow-y:scroll">
-          <tr v-for="user in listUser" v-bind:key="user.userId">
-            <td scope="row">{{ user.userId }}</td>
-            <td scope="row">
-              <b-icon
-                icon="person-fill"
-                animation="no-fade"
-                font-scale="1"
-              ></b-icon
-              >{{ user.fullName }}
-            </td>
-            <td scope="row">{{ user.dateOfBirth }}</td>
-            <td>{{ user.idCard }}</td>
-            <td>{{ user.address }}</td>
-            <td>{{ user.phoneNumber }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-              <div class="row">
-                <div class="col-md-3">
-                  <button
-                    class="btn btn-link btn-sm"
-                    type="button"
-                    @click="clickOnEditUser(user.userId)"
-                    data-toggle="modal"
-                    data-target="#profileUserModal"
-                  >
-                    <b-icon
-                      icon="exclamation-circle-fill"
-                      variant="info"
-                    ></b-icon>
-                  </button>
-                </div>
-                <div class="col-md-3">
-                  <button
-                    class="btn btn-link btn-sm"
-                    @click="clickOnEditUser(user.userId)"
-                    data-toggle="modal"
-                    data-target="#addNewUserModal"
-                  >
-                    <b-icon icon="pen-fill"></b-icon>
-                  </button>
-                </div>
-                <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
-                  <div class="col-md-3">
-                    <button
-                      type="button"
-                      class="btn btn-link btn-sm"
-                      v-on:click="deleteUserById(user.userId)"
-                    >
-                      <b-icon icon="archive-fill" variant="danger"></b-icon>
-                    </button>
-                  </div>
-                </template>
+          <template v-slot:cell(option)="data">
+            <div class="row">
+              <div class="col-md-3">
+                <button
+                  class="btn btn-link btn-sm"
+                  type="button"
+                  @click="clickOnEditUser(data.item.userId)"
+                  data-toggle="modal"
+                  data-target="#profileUserModal"
+                >
+                  <b-icon icon="exclamation-circle-fill" variant="info"></b-icon>
+                </button>
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              <div class="col-md-3">
+                <button
+                  class="btn btn-link btn-sm"
+                  @click="clickOnEditUser(data.item.userId)"
+                  data-toggle="modal"
+                  data-target="#addNewUserModal"
+                >
+                  <b-icon icon="pen-fill"></b-icon>
+                </button>
+              </div>
+              <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
+                <div class="col-md-3">
+                  <button
+                    type="button"
+                    class="btn btn-link btn-sm"
+                    v-on:click="deleteUserById(data.item.userId)"
+                  >
+                    <b-icon icon="archive-fill" variant="danger"></b-icon>
+                  </button>
+                </div>
+              </template>
+            </div>
+          </template>
+        </b-table>
+        <div class="row" style="margin-left: 10px">
+          <div class="column">
+            <b-pagination
+              size="md"
+              pills
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="my-table"
+            ></b-pagination>
+          </div>
+        </div>
+      </div>
 
       <!-- Modal object create new user-->
       <div
@@ -128,24 +112,13 @@
         <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 id="title-form" class="modal-title">
-                ADD/ UPDATE INFORMATION USER
-              </h5>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
+              <h5 id="title-form" class="modal-title">ADD/ UPDATE INFORMATION USER</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <div
-                class="form-group row"
-                id="div_user_id"
-                style="display: none"
-              >
+              <div class="form-group row" id="div_user_id" style="display: none">
                 <label for="inputPassword" class="col-sm-2 col-form-label">
                   <b-icon icon="code"></b-icon>
                   User ID
@@ -303,9 +276,7 @@
                           v-model="profileInfo.role"
                           aria-placeholder="Select a role"
                         >
-                          <option value="ROLE_ADMINISTRATOR">
-                            Role Administrator
-                          </option>
+                          <option value="ROLE_ADMINISTRATOR">Role Administrator</option>
                           <option value="ROLE_MANAGER">Role Manager</option>
                           <option value="ROLE_STAFF">Role Staff</option>
                         </select>
@@ -348,120 +319,115 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Modal profile user-->
-    <div
-      class="modal fade"
-      id="profileUserModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="false"
-      data-backdrop="static"
-    >
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 id="title-form" class="modal-title">INFORMATION DETAIL</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="code"></b-icon>
-                User Id
-              </label>
+      <!-- Modal profile user-->
+      <div
+        class="modal fade"
+        id="profileUserModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="false"
+        data-backdrop="static"
+      >
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 id="title-form" class="modal-title">INFORMATION DETAIL</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="code"></b-icon>
+                  User Id
+                </label>
 
-              <div class="col-sm-4">
-                {{ profileInfo.userId }}
+                <div class="col-sm-4">
+                  {{ profileInfo.userId }}
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="person-square"></b-icon>
-                Full name
-              </label>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="person-square"></b-icon>
+                  Full name
+                </label>
 
-              <div class="col-sm-4">
-                {{ profileInfo.fullName }}
+                <div class="col-sm-4">
+                  {{ profileInfo.fullName }}
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="calendar2-date"></b-icon>
-                Date of birth
-              </label>
-              <div class="col-sm-4" style="text-align: left">
-                {{ profileInfo.dateOfBirth }}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="calendar2-date"></b-icon>
+                  Date of birth
+                </label>
+                <div class="col-sm-4" style="text-align: left">
+                  {{ profileInfo.dateOfBirth }}
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="card-heading"></b-icon>
-                Id card
-              </label>
-              <div class="col-sm-6">
-                {{ profileInfo.idCard }}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="card-heading"></b-icon>
+                  Id card
+                </label>
+                <div class="col-sm-6">
+                  {{ profileInfo.idCard }}
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="map"></b-icon>
-                Address
-              </label>
-              <div class="col-sm-8">
-                {{ profileInfo.address }}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="map"></b-icon>
+                  Address
+                </label>
+                <div class="col-sm-8">
+                  {{ profileInfo.address }}
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="phone-vibrate"> </b-icon>
-                Phone
-              </label>
-              <div class="col-sm-8">
-                {{ profileInfo.phoneNumber }}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="phone-vibrate"> </b-icon>
+                  Phone
+                </label>
+                <div class="col-sm-8">
+                  {{ profileInfo.phoneNumber }}
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="mailbox2"></b-icon>
-                Email
-              </label>
-              <div class="col-sm-8">
-                {{ profileInfo.email }}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="mailbox2"></b-icon>
+                  Email
+                </label>
+                <div class="col-sm-8">
+                  {{ profileInfo.email }}
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="bezier2"></b-icon>
-                Create by
-              </label>
-              <div class="col-sm-8">
-                {{ profileInfo.createdBy }}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="bezier2"></b-icon>
+                  Create by
+                </label>
+                <div class="col-sm-8">
+                  {{ profileInfo.createdBy }}
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="calendar2-check"></b-icon>
-                Create on date
-              </label>
-              <div class="col-sm-8">
-                {{ profileInfo.createdDate }}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="calendar2-check"></b-icon>
+                  Create on date
+                </label>
+                <div class="col-sm-8">
+                  {{ profileInfo.createdDate }}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </b-overlay>
 </template>
 
 <style lang="scss" scoped>
@@ -469,14 +435,9 @@
   text-align: right;
 }
 
-tbody {
-  height: 100px;
-  /* Just for the demo          */
-  overflow-y: auto;
-  /* Trigger vertical scroll    */
-  overflow-x: show;
-  position: relative;
-  font-size: 14px;
+.user-div {
+  font-size: 13px;
+  height: 660px;
 }
 
 tbody {
@@ -504,6 +465,11 @@ tbody {
 #input-search {
   height: 30px;
 }
+
+.user-div {
+  height: 660px;
+  font-size: 13px;
+}
 </style>
 >
 
@@ -523,7 +489,18 @@ export default {
     return {
       currentRole: "",
       listUser: [],
-
+      currentPage: 1,
+      perPage: 25,
+      fields: [
+        "userId",
+        "fullName",
+        "address",
+        "phoneNumber",
+        "email",
+        "createdBy",
+        "createdDate",
+        "option",
+      ],
       // object user
       profileInfo: {
         userId: "",
@@ -545,7 +522,7 @@ export default {
         accountCreateBy: "",
         accountCreateDate: "",
       },
-
+      show: false,
       // search criteria
       criteria: "",
     };
@@ -557,22 +534,8 @@ export default {
   },
 
   computed: {
-    computedList: function () {
-      var vm = this;
-      return this.listUser.filter(function (item) {
-        return (
-          item.fullName.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1 ||
-          item.idCard.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1 ||
-          item.email.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1 ||
-          item.phoneNumber.toLowerCase().indexOf(vm.query.toLowerCase()) !==
-            -1 ||
-          item.address.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1 ||
-          item.dataOfBirth.toLowerCase().indexOf(vm.query.toLowerCase()) !==
-            -1 ||
-          item.accountCreateBy.toLowerCase().indexOf(vm.query.toLowerCase()) !==
-            -1
-        );
-      });
+    rows() {
+      return this.listUser.length;
     },
   },
 
@@ -598,7 +561,7 @@ export default {
 
     // get all list user
     getListUser() {
-      $("#loading").show();
+      this.show = true;
       var data = JSON.parse(localStorage.getItem("user"));
       this.currentRole = data.roleCode;
       var accountValid = data.accountId;
@@ -607,7 +570,7 @@ export default {
         .then((response) => {
           if ((response.status = "200")) {
             this.listUser = response.data;
-            $("#loading").hide();
+            this.show = false;
           }
         })
         .catch((error) => {
@@ -623,6 +586,7 @@ export default {
           this.$router.push({
             name: "NotFound",
           });
+          this.show = false;
         });
     },
 
@@ -633,7 +597,7 @@ export default {
     // save a new user
     saveNewUser() {
       var data = JSON.parse(localStorage.getItem("user"));
-      $("#loading").show();
+      this.show = true;
       var request = {
         userId: this.profileInfo.userId,
         accountIdValid: data.accountId,
@@ -663,7 +627,7 @@ export default {
           .post("/user/api/create-new-user", request)
           .then((response) => {
             if (response.status == "200") {
-              $("#loading").hide();
+              this.show = false;
               this.$swal({
                 toast: true,
                 showProgressBar: true,
@@ -677,7 +641,7 @@ export default {
               $(".modal").css("display", "none");
               $(".modal-backdrop").css("display", "none");
             } else {
-              $("#loading").hide();
+              this.show = false;
               this.$swal({
                 toast: true,
                 showProgressBar: true,
@@ -690,7 +654,7 @@ export default {
             }
           })
           .catch((error) => {
-            $("#loading").hide();
+            this.show = false;
             $(".modal").css("display", "none");
             $(".modal-backdrop").css("display", "none");
             this.$swal({
@@ -704,7 +668,7 @@ export default {
             });
           });
       } else {
-        $("#loading").hide();
+        this.show = false;
         this.$swal({
           toast: true,
           showProgressBar: true,
@@ -728,7 +692,7 @@ export default {
           this.profileInfo = response.data;
         })
         .catch((error) => {
-          $("#loading").hide();
+          this.show = false;
           this.$swal({
             toast: true,
             showProgressBar: true,
@@ -775,16 +739,10 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           http
-            .delete(
-              "/user/api/delete-user-by-id/" + pUserId + "/" + accountIdValid
-            )
+            .delete("/user/api/delete-user-by-id/" + pUserId + "/" + accountIdValid)
             .then((response) => {
               if (response.status == "200") {
-                this.$swal(
-                  "Deleted!",
-                  "Your file has been deleted.",
-                  "success"
-                );
+                this.$swal("Deleted!", "Your user has been deleted.", "success");
                 this.callBack();
               } else {
                 this.$swal({
@@ -812,6 +770,7 @@ export default {
                 name: "NotFound",
               });
             });
+          this.show = false;
         }
       });
     },
@@ -825,11 +784,7 @@ export default {
       if (criteria != "") {
         http
           .post(
-            "/user/api/search-user-by-criteria" +
-              "/" +
-              criteria +
-              "/" +
-              accountIdValid
+            "/user/api/search-user-by-criteria" + "/" + criteria + "/" + accountIdValid
           )
           .then((response) => {
             if (response.status == "200") {

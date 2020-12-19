@@ -55,10 +55,25 @@
         <div class="col-sm-3">
           <b-row>
             <b-col>
-              <h5>
-                <b-icon icon="pencil"></b-icon>
-                {{ table.positionName }}
-              </h5>
+              <select
+                data-toggle="tooltip"
+                data-placement="top"
+                title="Select to move to new position"
+                class="form-control input-sm"
+                id="select-position"
+                v-model="positionSelected"
+                @change="moveTableCurrent"
+              >
+                <option selected value="" disabled>
+                  {{ table.positionName }} (current)
+                </option>
+                <option
+                  v-for="p in positions"
+                  :key="p.positionId"
+                  :value="p.positionId"
+                  :label="p.positionName"
+                ></option>
+              </select>
             </b-col>
             <b-col>
               <b-button-group style="margin-left: 35px">
@@ -69,85 +84,71 @@
               </b-button-group>
             </b-col>
           </b-row>
-          <div
-            style="height: 470px; min-height: 10px; overflow-y: scroll; margin-top: 10px"
-          >
-            <table
-              id="table-log-detail"
-              class="table table-striped table-responsive-sm"
-              cellspacing="0"
-              style="max-heigh: 100px"
+          <div style="font-size: 13px; margin-top: 20px">
+            <b-table
+              :items="listOrderChoose"
+              :fields="fields"
+              head-variant="dark"
+              id="my-table-systemLogList"
+              responsive="sm"
+              sticky-header
+              striped
+              hover
+              small
+              show-empty
             >
-              <thead class="thead-dark">
-                <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col">Quantity</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-              <tbody sytle="min-height:10px; overflow-y:scroll">
-                <tr v-for="ord in listOrderChoose" v-bind:key="ord.productId">
-                  <td scope="row">
-                    <template v-if="ord.statusProduct !== 'PENDING'">
+              <template v-slot:cell(productName)="data">
+                <template v-if="data.item.statusProduct === 'PENDING'">
+                  <b-icon icon="x-circle-fill" variant="danger"></b-icon> {{ data.value }}
+                </template>
+                <template v-else>
+                  <b-icon icon="check-circle-fill" variant="success"></b-icon>
+                  {{ data.value }}
+                </template>
+              </template>
+              <template v-slot:cell(option)="data">
+                <b-row>
+                  <b-col>
+                    <b-button
+                      pill
+                      variant="light"
+                      size="sm"
+                      @click="decreaseOrderProduct(data.item.productId)"
+                    >
                       <b-icon
-                        icon="check-circle-fill"
+                        variant="dark"
+                        icon="arrow-down"
                         font-scale="1"
-                        variant="success"
+                        animation="cylon-vertical"
+                        title="Decrease this"
                       ></b-icon>
-                    </template>
-                    <template v-else>
-                      <b-icon
-                        icon="x-circle-fill"
-                        font-scale="1"
-                        variant="danger"
-                      ></b-icon>
-                    </template>
-                    {{ ord.productName }}
-                  </td>
-                  <td>{{ ord.quantity }}</td>
-                  <td>
-                    {{ ord.priceConvert }}
-                  </td>
-                  <td>
-                    <b-row>
-                      <b-col>
-                        <b-button
-                          variant="light"
-                          size="sm"
-                          @click="decreaseOrderProduct(ord.productId)"
-                        >
-                          <b-icon
-                            variant="dark"
-                            icon="caret-down-fill"
-                            font-scale="1"
-                            animation="cylon-vertical"
-                          ></b-icon>
-                        </b-button>
-                      </b-col>
-                      <b-col>
-                        <b-button
-                          variant="danger"
-                          size="sm"
-                          @click="deletOrderProdct(ord.productId)"
-                        >
-                          <b-icon icon="trash-fill" font-scale="1"></b-icon>
-                        </b-button>
-                      </b-col>
-                    </b-row>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    </b-button>
+                  </b-col>
+                  <b-col>
+                    <b-button
+                      pill
+                      variant="light"
+                      size="sm"
+                      title="Delete this"
+                      @click="deletOrderProdct(data.item.productId)"
+                    >
+                      <b-icon icon="trash2-fill" font-scale="1" variant="danger"></b-icon>
+                    </b-button>
+                  </b-col>
+                </b-row>
+              </template>
+            </b-table>
           </div>
           <div class="label-total">
             <strong>TOTAL PRICE: {{ totalPrice }}</strong>
           </div>
-          <div style="padding: 10px">
-            <button class="btn btn-success btn-block btn-log" @click="goToPaymentPay()">
-              GO TO PAY
-            </button>
-          </div>
+          <template v-if="size">
+            <div style="padding: 10px">
+              <button class="btn btn-success btn-block btn-log" @click="goToPaymentPay()">
+                GO TO PAY
+              </button>
+            </div>
+          </template>
           <div style="padding: 10px">
             <b-button variant="light" block size="lg" @click="backToPosition()">
               <b-icon icon="chevron-bar-left" font-scale="2" animation="cylon"></b-icon
@@ -179,9 +180,13 @@ export default {
       listProduct: [],
       listOrderByTable: [],
       listOrderChoose: [],
-      totalPrice: 1110,
+      positions: [],
+      totalPrice: 0,
       show: true,
       imageBank: null,
+      size: false,
+      fields: ["productName", "quantity", "priceConvert", "option"],
+      positionSelected: "",
     };
   },
 
@@ -190,7 +195,11 @@ export default {
     this.getProducts();
     this.getAllCategories();
     this.getListOrderByTable(this.table.positionId);
+    this.getPosition();
+    this.checkList();
   },
+
+  computed: {},
 
   methods: {
     // check local storage
@@ -211,7 +220,30 @@ export default {
         });
       }
     },
-
+    // get all position available
+    getPosition() {
+      this.show = true;
+      http
+        .get("/position/api/get-positions/" + this.accountUserValid)
+        .then((response) => {
+          if (response.status == "200") {
+            this.positions = response.data.positions;
+          }
+          this.show = false;
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+          this.show = false;
+        });
+    },
     // get list order by table
     getListOrderByTable(tableId) {
       http
@@ -224,9 +256,10 @@ export default {
         .then((response) => {
           if (response.status == "200") {
             this.listOrderChoose = response.data.listOrder;
-            this.totalPrice = response.data.totalPrice;
+            this.totalPrice = response.data.totalPrice || 0;
             localStorage.setItem("orderInfo", JSON.stringify(response.data));
             this.show = false;
+            this.checkList();
           }
         })
         .catch((error) => {
@@ -241,6 +274,16 @@ export default {
           });
           this.show = false;
         });
+    },
+
+    // check list size to show button pay
+    checkList() {
+      var size = this.totalPrice;
+      if (size == 0) {
+        this.size = false;
+      } else {
+        this.size = true;
+      }
     },
 
     // get list category
@@ -483,6 +526,77 @@ export default {
     goToPaymentPay() {
       this.$router.push({ name: "PaymentProduct" });
     },
+
+    moveTableCurrent: function (event) {
+      if (this.positionSelected !== this.table.positionId) {
+        this.$swal({
+          title: "Are you sure?",
+          text: "This position will be changed to " + this.positionSelected,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, update it!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.executeMovePosition();
+          } else if (result.isDismissed) {
+            $("#select-position").prop("selectedIndex", 0);
+          }
+        });
+      } else {
+        $("#select-position").prop("selectedIndex", 0);
+        this.$swal({
+          toast: true,
+          showProgressBar: true,
+          position: "top-end",
+          title: "No change was made",
+          icon: "info",
+          showConfirmButton: false,
+          timer: 3500,
+        });
+      }
+    },
+
+    // implement handle move position
+    executeMovePosition() {
+      var currentTable = this.table.positionId;
+      var newTable = this.positionSelected;
+      http
+        .post(
+          "/position/api/move-current-table/" +
+            currentTable +
+            "/" +
+            newTable +
+            "/" +
+            this.accountUserValid
+        )
+        .then((response) => {
+          if (response.status == "200") {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: "Moved success fully",
+              icon: "success",
+              showConfirmButton: false,
+              timer: 3500,
+            });
+            this.$router.push({ name: "Position" });
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+        });
+    },
   },
 };
 </script>
@@ -518,9 +632,5 @@ strong {
   margin-top: 10px;
   margin-bottom: 10px;
   text-align: right;
-}
-
-table {
-  font-size: 12px;
 }
 </style>

@@ -9,11 +9,12 @@
           </h5>
         </div>
         <div class="col-md-2">
-          <input
+          <b-input
             class="form-control"
             type="search"
             placeholder="Search"
             aria-label="Search"
+            size="sm"
             v-model="ctiteriaUserNameSearch"
             @keyup="searchAccountByUserName()"
           />
@@ -23,113 +24,92 @@
         </div>
       </div>
       <hr class="my-4" />
-      <div style="height: 670px; min-height: 10px; overflow-y: scroll">
-        <table
-          id="table-log-detail"
-          class="table table-striped table-responsive-sm"
-          cellspacing="0"
-          style="max-heigh: 100px"
+      <div class="user-div">
+        <b-table
+          :items="listAccount"
+          :fields="fields"
+          head-variant="dark"
+          id="my-table-systemLogList"
+          responsive="sm"
+          striped
+          hover
+          small
+          :per-page="perPage"
+          :current-page="currentPage"
         >
-          <thead class="thead-dark">
-            <tr>
-              <th scope="col">Account ID</th>
-              <th scope="col">Used by</th>
-              <th scope="col">Role</th>
-              <th scope="col">User name</th>
-              <th scope="col">Status account</th>
-              <th scope="col">Created by</th>
-              <th scope="col">Created date</th>
-              <template
-                v-if="
-                  currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER'
-                "
-              >
-                <th scope="col">Option</th>
-              </template>
-            </tr>
-          </thead>
-          <tbody sytle="min-height:10px; overflow-y:scroll">
-            <tr v-for="account in listAccount" v-bind:key="account.accountId">
-              <td>{{ account.accountId }}</td>
-
-              <td scope="row">
-                <b-icon icon="person-fill" animation="no-fade" font-scale="1"></b-icon
-                >{{ account.usedBy }}
-              </td>
-              <td>
-                {{ account.role }}
-                <template v-if="account.role === 'Role Administrator'">
-                  <b-icon
-                    icon="star-fill"
-                    animation="fade"
-                    font-scale="1"
-                    variant="warning"
-                  ></b-icon>
+          <template v-slot:cell(userName)="data">
+            <template v-if="data.item.isLogin === '0'">
+              <b-icon
+                icon="circle-fill"
+                animation="throb"
+                font-scale="1"
+                variant="success"
+                title="Being used"
+              ></b-icon>
+              {{ data.value }}
+            </template>
+            <template v-else>
+              <b-icon
+                icon="circle-fill"
+                font-scale="1"
+                variant="danger"
+                title="Not active now"
+              ></b-icon>
+              {{ data.value }}
+            </template>
+          </template>
+          <template v-slot:cell(status)="data">
+            <template v-if="data.value === 'ACTIVE'">
+              <b-icon icon="unlock-fill" font-scale="1" variant="success"></b-icon>
+              {{ data.value }}
+            </template>
+            <template v-else-if="data.value === 'BLOCKED'">
+              <b-icon
+                icon="lock-fill"
+                animation="throb"
+                font-scale="1"
+                variant="danger"
+              ></b-icon>
+              {{ data.value }}
+            </template>
+          </template>
+          <template v-slot:cell(option)="data">
+            <b-row>
+              <b-col>
+                <template
+                  v-if="
+                    (currentRole == 'ROLE_ADMINISTRATOR' ||
+                      currentRole == 'ROLE_MANAGER') &&
+                    data.item.role != 'Role Administrator' &&
+                    currentAccountId != data.item.accountId
+                  "
+                >
+                  <button
+                    type="button"
+                    class="btn btn-link btn-sm"
+                    data-toggle="modal"
+                    data-target="#accountUserModal"
+                    @click="getAccountDetail(data.item.accountId)"
+                  >
+                    <b-icon icon="pen-fill"></b-icon>
+                  </button>
                 </template>
-              </td>
-              <td>
-                <template v-if="account.isLogin === '0'">
-                  <b-icon
-                    icon="circle-fill"
-                    animation="throb"
-                    font-scale="1"
-                    variant="success"
-                    title="Being used"
-                  ></b-icon>
-                </template>
-                <template v-else>
-                  <b-icon
-                    icon="circle-fill"
-                    font-scale="1"
-                    variant="danger"
-                    title="Not active now"
-                  ></b-icon>
-                </template>
-                {{ account.userName }}
-              </td>
-              <td>
-                <template v-if="account.status === 'ACTIVE'">
-                  <b-icon icon="unlock-fill" font-scale="1" variant="success"></b-icon>
-                </template>
-                <template v-else-if="account.status === 'BLOCKED'">
-                  <b-icon
-                    icon="lock-fill"
-                    animation="throb"
-                    font-scale="1"
-                    variant="danger"
-                  ></b-icon>
-                </template>
-                {{ account.status }}
-              </td>
-              <td>{{ account.createdBy }}</td>
-              <td>{{ account.createdDate }}</td>
-              <td>
-                <div class="row">
-                  <div class="col-md-3">
-                    <template
-                      v-if="
-                        (currentRole == 'ROLE_ADMINISTRATOR' ||
-                          currentRole == 'ROLE_MANAGER') &&
-                        account.role != 'Role Administrator' &&
-                        currentAccountId != account.accountId
-                      "
-                    >
-                      <button
-                        type="button"
-                        class="btn btn-link btn-sm"
-                        data-toggle="modal"
-                        data-target="#accountUserModal"
-                        @click="getAccountDetail(account.accountId)"
-                      >
-                        <b-icon icon="pen-fill"></b-icon>
-                      </button>
-                    </template>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </b-col>
+            </b-row>
+          </template>
+        </b-table>
+        <div class="row" style="margin-left: 10px">
+          <div class="column">
+            <b-pagination
+              size="md"
+              pills
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="my-table"
+            ></b-pagination>
+          </div>
+        </div>
       </div>
 
       <!-- Modal account user -->
@@ -325,6 +305,11 @@ th {
 input {
   height: 30px;
 }
+
+.user-div {
+  font-size: 13px;
+  height: 660px;
+}
 </style>
 >
 
@@ -351,12 +336,30 @@ export default {
       show: true,
       currentRole: JSON.parse(localStorage.getItem("user")).roleCode,
       currentAccountId: JSON.parse(localStorage.getItem("user")).accountId,
+      currentPage: 1,
+      perPage: 25,
+      fields: [
+        "accountId",
+        "userName",
+        "role",
+        "usedBy",
+        "status",
+        "createdBy",
+        "createdDate",
+        "option",
+      ],
     };
   },
 
   mounted() {
     this.checkLoaclStorage();
     this.getListAccount();
+  },
+
+  computed: {
+    rows() {
+      return this.listAccount.length;
+    },
   },
 
   methods: {

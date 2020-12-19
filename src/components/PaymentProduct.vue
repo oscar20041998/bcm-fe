@@ -99,7 +99,7 @@
                 type="text"
                 class="form-control"
                 id="cashInput"
-                maxlength="16"
+                maxlength="100"
                 placeholder="Input owner name"
                 v-model="cardOwnerName"
               />
