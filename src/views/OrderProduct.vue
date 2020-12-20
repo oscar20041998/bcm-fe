@@ -76,11 +76,10 @@
               </select>
             </b-col>
             <b-col>
-              <b-button-group style="margin-left: 35px">
-                <b-button variant="light">
-                  <b-icon icon="scissors"></b-icon> Split
+              <b-button-group style="margin-left: 70px">
+                <b-button v-b-modal.modal-xl>
+                  <b-icon icon="pie-chart"></b-icon> Split/ Merge
                 </b-button>
-                <b-button> <b-icon icon="pie-chart"></b-icon> Merge </b-button>
               </b-button-group>
             </b-col>
           </b-row>
@@ -158,15 +157,16 @@
         </div>
       </div>
     </b-overlay>
+    <SplitMergeProduct></SplitMergeProduct>
   </div>
 </template>
 
 <script>
 import http from "../axios/http-common";
-import PaymentProduct from "../components/PaymentProduct.vue";
+import SplitMergeProduct from "../components/SplitMergeProduct.vue";
 export default {
   components: {
-    PaymentProduct,
+    SplitMergeProduct,
   },
   data() {
     return {
@@ -185,7 +185,12 @@ export default {
       show: true,
       imageBank: null,
       size: false,
-      fields: ["productName", "quantity", "priceConvert", "option"],
+      fields: [
+        { key: "productName", sortable: true },
+        { key: "quantity", sortable: true },
+        { key: "priceConvert", sortable: true, label: "Price" },
+        "option",
+      ],
       positionSelected: "",
     };
   },

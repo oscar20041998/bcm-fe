@@ -219,10 +219,8 @@ export default {
   },
 
   mounted() {
-    $("#loading").hide();
     this.checkLocalStorage();
     this.getPosition();
-    this.getAllCategories();
   },
 
   computed: {},

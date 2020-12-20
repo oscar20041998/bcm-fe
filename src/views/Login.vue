@@ -4,7 +4,7 @@
       <div class="container">
         <div class="row" style="margin-left: 30%">
           <div class="col-md-1">
-            <img src="../assets/coffee-cup.png" />
+            <img src="../assets/coffeecup.png" />
           </div>
           <div class="col-md-8">
             <h1>COFFEE ADMINSTRATOR</h1>
@@ -48,6 +48,7 @@
                   <ValidationProvider rules="required">
                     <div slot-scope="{ errors }">
                       <b-input
+                        password-reveal
                         type="password"
                         class="form-control"
                         v-model="userRequest.passWord"
@@ -133,7 +134,7 @@ input {
 
 h1 {
   text-align: center;
-  font-size: 38px;
+  font-size: 28px;
   color: brown;
   margin-left: 40px;
   width: auto;

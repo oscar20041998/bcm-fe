@@ -75,6 +75,7 @@
                   striped
                   hover
                   small
+                  sort-icon-left
                   :per-page="perPageSystemLog"
                   :current-page="currentPageSystemLog"
                 >
@@ -131,6 +132,7 @@
                     responsive="sm"
                     sticky-header
                     striped
+                    sort-icon-left
                     hover
                     small
                     :per-page="perPageAccountLog"
@@ -186,6 +188,7 @@
                     responsive="sm"
                     sticky-header
                     striped
+                    sort-icon-left
                     hover
                     small
                     :per-page="perPageUserLog"
@@ -219,7 +222,7 @@
                         pills
                         v-model="currentPageUserLog"
                         :total-rows="rowsUserLog"
-                        :per-page="perPageUseLog"
+                        :per-page="perPageUserLog"
                         aria-controls="my-table"
                       ></b-pagination>
                     </div>
@@ -241,6 +244,7 @@
                     responsive="sm"
                     sticky-header
                     striped
+                    sort-icon-left
                     hover
                     small
                     :per-page="perPageProductLog"
@@ -327,24 +331,35 @@ export default {
         userName: "",
         date: "",
       },
-      fieldsPerLog: ["userName", "action", "status", "actionDate"],
+      fieldsPerLog: [
+        { key: "userName", sortable: true },
+        { key: "action", sortable: true },
+        { key: "status", sortable: true },
+        { key: "actionDate", sortable: true },
+      ],
       fieldsAccountLog: [
-        "accountId",
-        "userName",
-        "userAction",
-        "createdBy",
-        "createdDate",
+        { key: "accountId", sortable: true },
+        { key: "userName", sortable: true },
+        { key: "userAction", sortable: true },
+        { key: "createdBy", sortable: true },
+        { key: "createdDate", sortable: true },
       ],
       fieldsUserLog: [
-        "userId",
-        "fullName",
-        "phoneNumber",
-        "email",
-        "userAction",
-        "createdBy",
-        "createdDate",
+        { key: "userId", sortable: true },
+        { key: "fullName", sortable: true },
+        { key: "phoneNumber", sortable: true },
+        { key: "email", sortable: true },
+        { key: "userAction", sortable: true },
+        { key: "createdBy", sortable: true },
+        { key: "createdDate", sortable: true },
       ],
-      fieldsProductLog: ["productName", "price", "userAction", "createBy", "createDate"],
+      fieldsProductLog: [
+        { key: "productName", sortable: true },
+        { key: "price", sortable: true },
+        { key: "userAction", sortable: true },
+        { key: "createBy", sortable: true },
+        { key: "createDate", sortable: true },
+      ],
 
       show: true,
       // current role of user

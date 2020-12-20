@@ -29,13 +29,16 @@
           :items="listAccount"
           :fields="fields"
           head-variant="dark"
-          id="my-table-systemLogList"
+          id="my-table-account-user"
           responsive="sm"
           striped
           hover
           small
+          sort-icon-left
           :per-page="perPage"
           :current-page="currentPage"
+          primary-key="userName"
+          :tbody-transition-props="transProps"
         >
           <template v-slot:cell(userName)="data">
             <template v-if="data.item.isLogin === '0'">
@@ -310,6 +313,9 @@ input {
   font-size: 13px;
   height: 660px;
 }
+table#my-table-account-user .flip-list-move {
+  transition: transform 1s;
+}
 </style>
 >
 
@@ -319,6 +325,10 @@ import $ from "jquery";
 export default {
   data() {
     return {
+      transProps: {
+        // Transition name
+        name: "flip-list",
+      },
       listAccount: [],
       ctiteriaUserNameSearch: "",
       accountInfo: {
@@ -339,13 +349,13 @@ export default {
       currentPage: 1,
       perPage: 25,
       fields: [
-        "accountId",
-        "userName",
-        "role",
-        "usedBy",
-        "status",
-        "createdBy",
-        "createdDate",
+        { key: "accountId", sortable: true },
+        { key: "userName", sortable: true },
+        { key: "role", sortable: true },
+        { key: "usedBy", sortable: true },
+        { key: "status", sortable: true },
+        { key: "createdBy", sortable: true },
+        { key: "createdDate", sortable: true },
         "option",
       ],
     };

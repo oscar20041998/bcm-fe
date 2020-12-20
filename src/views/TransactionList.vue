@@ -123,7 +123,11 @@
         id="modal-scrollable"
         scrollable
         title="Transaction Detail Content"
-        data-backdrop="static"
+        no-close-on-backdrop
+        ok-title="Send to email"
+        ok-variant="success"
+        ok-only
+        @ok="handleOK"
       >
         <div class="overflow-auto">
           <b-table
