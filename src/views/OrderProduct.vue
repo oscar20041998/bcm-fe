@@ -77,7 +77,7 @@
             </b-col>
             <b-col>
               <b-button-group style="margin-left: 70px">
-                <b-button v-b-modal.modal-xl>
+                <b-button squared v-b-modal.modal-xl>
                   <b-icon icon="pie-chart"></b-icon> Split/ Merge
                 </b-button>
               </b-button-group>
@@ -143,13 +143,19 @@
           </div>
           <template v-if="size">
             <div style="padding: 10px">
-              <button class="btn btn-success btn-block btn-log" @click="goToPaymentPay()">
+              <b-button
+                squared
+                block
+                size="lg"
+                variant="success"
+                @click="goToPaymentPay()"
+              >
                 GO TO PAY
-              </button>
+              </b-button>
             </div>
           </template>
           <div style="padding: 10px">
-            <b-button variant="light" block size="lg" @click="backToPosition()">
+            <b-button squared variant="light" block size="lg" @click="backToPosition()">
               <b-icon icon="chevron-bar-left" font-scale="2" animation="cylon"></b-icon
               >BACK TO POSITION</b-button
             >
@@ -228,24 +234,23 @@ export default {
     // get all position available
     getPosition() {
       this.show = true;
+      var currentTable = this.table.positionId;
       http
         .get("/position/api/get-positions/" + this.accountUserValid)
         .then((response) => {
           if (response.status == "200") {
             this.positions = response.data.positions;
+            var data = this.positions;
+            $.each(data, function (i, e) {
+              if (currentTable == e.positionId) {
+                data.splice(i, 1);
+              }
+            });
           }
           this.show = false;
         })
         .catch((error) => {
-          this.$swal({
-            toast: true,
-            showProgressBar: true,
-            position: "top-end",
-            title: error,
-            icon: "error",
-            showConfirmButton: false,
-            timer: 2100,
-          });
+          console.log(error);
           this.show = false;
         });
     },

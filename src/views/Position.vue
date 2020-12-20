@@ -80,11 +80,12 @@
                 <div class="col-sm-5">
                   <b-button
                     block
-                    variant="light"
+                    squared
+                    variant="outline-secondary"
                     title="Go to detail"
                     @click="goToPageOrder(p)"
                   >
-                    <b-icon icon="power"></b-icon>
+                    <b-icon variant="info" icon="power"></b-icon>
                     OPEN
                   </b-button>
                 </div>

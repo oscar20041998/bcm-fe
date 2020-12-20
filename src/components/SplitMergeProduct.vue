@@ -2,25 +2,16 @@
   <b-modal
     id="modal-xl"
     size="xl"
-    title="Split or Merge product to new position"
+    title="PRODUCTION SPLIT"
     no-close-on-backdrop
+    ok-title="Agree and split"
+    ok-variant="success"
+    @ok="saveSplitList"
   >
     <b-row>
-      <b-col>{{ table.positionId }}</b-col>
-      <b-col>
-        <b-form-group
-          label="Select mode:"
-          label-for="table-select-mode-select"
-          label-cols-md="4"
-        >
-          <b-form-select
-            id="table-select-mode-select"
-            v-model="selectMode"
-            :options="modes"
-            class="mb-3"
-          ></b-form-select>
-        </b-form-group>
-      </b-col>
+      <b-col><strong>CURRENT: </strong> {{ table.positionName }}</b-col>
+      <b-col> </b-col>
+      <b-col><strong>SPLIT TO: </strong> </b-col>
       <b-col
         ><select
           data-toggle="tooltip"
@@ -42,10 +33,11 @@
     <hr class="my-2" />
     <div class="region-button-select">
       <b-row>
-        <b-button-group>
-          <b-button size="sm" @click="selectAllRows">Select all</b-button>
-          <b-button size="sm" @click="clearSelected">Clear selected</b-button>
-        </b-button-group>
+        <template v-if="listSplit.length > 0">
+          <b-button-group>
+            <b-button size="sm" @click="clearSelected">Clear selected</b-button>
+          </b-button-group>
+        </template>
       </b-row>
     </div>
     <b-row>
@@ -170,24 +162,23 @@ export default {
     // get all position available
     getPosition() {
       this.show = true;
+      var currentTable = this.table.positionId;
       http
         .get("/position/api/get-positions/" + this.accountUserValid)
         .then((response) => {
           if (response.status == "200") {
             this.positions = response.data.positions;
+            var data = this.positions;
+            $.each(data, function (i, e) {
+              if (currentTable == e.positionId) {
+                data.splice(i, 1);
+              }
+            });
           }
           this.show = false;
         })
         .catch((error) => {
-          this.$swal({
-            toast: true,
-            showProgressBar: true,
-            position: "top-end",
-            title: error,
-            icon: "error",
-            showConfirmButton: false,
-            timer: 2100,
-          });
+          console.log(error);
           this.show = false;
         });
     },
@@ -206,14 +197,117 @@ export default {
       });
     },
 
-    // select all row
-    selectAllRows() {
-      this.$refs.selectableTable.selectAllRows();
-    },
-
     // clear all selected
     clearSelected() {
       this.$refs.selectableTable.clearSelected();
+      this.revertListSplit();
+    },
+
+    // save split list
+    saveSplitList() {
+      if (this.listSplit.length > 0) {
+        if (
+          this.positionSelected !== this.table.positionId &&
+          this.positionSelected != ""
+        ) {
+          this.$swal({
+            title: "Are you sure?",
+            text:
+              "We will split " +
+              this.listSplit.length +
+              " order to " +
+              this.positionSelected,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, split it!",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.implementSplit();
+            } else if (result.isDismissed) {
+              this.revertListSplit();
+              $("#select-position").prop("selectedIndex", 0);
+            }
+          });
+        } else {
+          $("#select-position").prop("selectedIndex", 0);
+          this.revertListSplit();
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: "No change was made",
+            icon: "info",
+            showConfirmButton: false,
+            timer: 3500,
+          });
+        }
+      } else {
+        this.$swal({
+          toast: true,
+          showProgressBar: true,
+          position: "top-end",
+          title: "Please select item, which you want to split",
+          icon: "info",
+          showConfirmButton: false,
+          timer: 3500,
+        });
+      }
+    },
+
+    // revert list when click cancel button
+    revertListSplit() {
+      var data = this.listSplit;
+      var backList = this.listOrder;
+      while (data.length > 0) {
+        $.each(data, function (i, e) {
+          backList.push(e);
+          data.splice(i, 1);
+        });
+      }
+    },
+
+    // impletmet split order
+    implementSplit() {
+      var request = this.listSplit;
+      var currentTable = this.table.positionId;
+      var selectedTable = this.positionSelected;
+      http
+        .post(
+          "/order-product/api/split-order/" +
+            this.accountUserValid +
+            "/" +
+            currentTable +
+            "/" +
+            selectedTable,
+          request
+        )
+        .then((response) => {
+          if (response.status == "200") {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: "Split order successfully ... !!!",
+              icon: "success",
+              showConfirmButton: false,
+              timer: 3500,
+            });
+            this.$router.push({ name: "Position" });
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+        });
     },
   },
 };
