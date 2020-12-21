@@ -76,11 +76,13 @@
               </select>
             </b-col>
             <b-col>
-              <b-button-group style="margin-left: 70px">
-                <b-button squared v-b-modal.modal-xl>
-                  <b-icon icon="pie-chart"></b-icon> Split product
-                </b-button>
-              </b-button-group>
+              <template v-if="size">
+                <b-button-group style="margin-left: 70px">
+                  <b-button squared v-b-modal.modal-xl>
+                    <b-icon icon="pie-chart"></b-icon> Split product
+                  </b-button>
+                </b-button-group>
+              </template>
             </b-col>
           </b-row>
           <div style="font-size: 13px; margin-top: 20px">

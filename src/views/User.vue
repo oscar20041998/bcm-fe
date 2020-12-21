@@ -783,7 +783,7 @@ export default {
       var criteria = this.criteria;
       if (criteria != "") {
         http
-          .post(
+          .get(
             "/user/api/search-user-by-criteria" + "/" + criteria + "/" + accountIdValid
           )
           .then((response) => {
