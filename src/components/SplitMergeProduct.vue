@@ -31,15 +31,6 @@
       ></b-col>
     </b-row>
     <hr class="my-2" />
-    <div class="region-button-select">
-      <b-row>
-        <template v-if="listSplit.length > 0">
-          <b-button-group>
-            <b-button size="sm" @click="clearSelected">Clear selected</b-button>
-          </b-button-group>
-        </template>
-      </b-row>
-    </div>
     <b-row>
       <b-col>
         <div class="region-table">
@@ -59,6 +50,9 @@
             selectable
             @row-selected="onRowSelected"
           >
+            <caption>
+              Items sold in August, grouped by Country and City:
+            </caption>
             <template #cell(selected)="{ rowSelected }">
               <template v-if="rowSelected">
                 <b-icon icon="check-circle-fill" variant="success"></b-icon>
@@ -77,6 +71,10 @@
           <b-table
             :items="listSplit"
             :fields="fieldsSplit"
+            :select-mode="selectModeBackList"
+            @row-selected="onRowSelectedBackList"
+            selectable
+            ref="selecttableTableBackList"
             head-variant="dark"
             id="my-table-systemLogList"
             responsive="md"
@@ -85,7 +83,18 @@
             hover
             small
             show-empty
-          ></b-table>
+          >
+            <template #cell(selected)="{ rowSelected }">
+              <template v-if="rowSelected">
+                <b-icon icon="x-circle-fill" variant="danger"></b-icon>
+                <span class="sr-only">Selected</span>
+              </template>
+              <template v-else>
+                <span aria-hidden="true">&nbsp;</span>
+                <span class="sr-only">Not selected</span>
+              </template>
+            </template>
+          </b-table>
         </div>
       </b-col>
     </b-row>
@@ -99,12 +108,12 @@ export default {
       listOrder: [],
       listSplit: [],
       listSelected: [],
+      listBack: [],
       positions: [],
       table: JSON.parse(localStorage.getItem("table")),
       userName: JSON.parse(localStorage.getItem("user")).userName,
       accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
       fieldsOrder: [
-        { key: "selected", sortable: false },
         { key: "productName", sortable: true },
         { key: "quantity", sortable: true },
         { key: "priceConvert", sortable: true, label: "Price" },
@@ -117,6 +126,7 @@ export default {
       modes: ["single", "multi"],
       selectedRows: [],
       selectMode: "single",
+      selectModeBackList: "single",
       totalPrice: "",
       positionSelected: "",
     };
@@ -197,10 +207,18 @@ export default {
       });
     },
 
-    // clear all selected
-    clearSelected() {
-      this.$refs.selectableTable.clearSelected();
-      this.revertListSplit();
+    // revert product into list order product
+    onRowSelectedBackList(items) {
+      var temListOrder = this.listOrder;
+      var temSplitOrder = this.listSplit;
+      $.each(items, function (i, e) {
+        temListOrder.push(e);
+        $.each(temSplitOrder, function (ii, ee) {
+          if (ee.productName === e.productName) {
+            temSplitOrder.splice(ii, 1);
+          }
+        });
+      });
     },
 
     // save split list
@@ -258,14 +276,12 @@ export default {
 
     // revert list when click cancel button
     revertListSplit() {
-      var data = this.listSplit;
-      var backList = this.listOrder;
-      while (data.length > 0) {
-        $.each(data, function (i, e) {
-          backList.push(e);
-          data.splice(i, 1);
-        });
-      }
+      var data = this.listBack;
+      var listOrder = this.listOrder;
+      $.each(data, function (i, e) {
+        listOrder.push(e);
+        data.splice(i, 1);
+      });
     },
 
     // impletmet split order

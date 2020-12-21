@@ -78,7 +78,7 @@
             <b-col>
               <b-button-group style="margin-left: 70px">
                 <b-button squared v-b-modal.modal-xl>
-                  <b-icon icon="pie-chart"></b-icon> Split/ Merge
+                  <b-icon icon="pie-chart"></b-icon> Split product
                 </b-button>
               </b-button-group>
             </b-col>

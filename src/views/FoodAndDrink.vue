@@ -1,44 +1,55 @@
 <template>
   <div class="jumbotron">
     <b-overlay :show="show" rounded="sm">
-      <div class="row">
-        <div class="col-sm-5">
+      <b-row>
+        <b-col>
           <h5>
             <b-icon icon="cup"></b-icon>
             FOOD & DRINK MANAGEMENT
           </h5>
-        </div>
-        <div class="col-sm-4" style="text-align: right">
-          <b-button v-b-toggle.sidebar-footer title="Show category" variant="light">
-            <b-icon icon="card-text" variant="dark"></b-icon> SHOW CATEGORY
-          </b-button>
-
-          <template v-if="currentRole == 'ROLE_ADMINISTRATOR'">
+        </b-col>
+        <b-col>
+          <b-button-group>
             <b-button
-              variant="success"
-              data-toggle="modal"
-              data-target="#addNewProducModal"
-              @click="clearData()"
+              squared
+              v-b-toggle.sidebar-footer
+              title="Show category"
+              variant="light"
             >
-              <b-icon icon="plus-circle"></b-icon> ADD NEW PRODUCT
+              <b-icon icon="card-text" variant="dark"></b-icon> SHOW CATEGORY
             </b-button>
-          </template>
-        </div>
-        <div class="col-sm-2">
-          <input
+
+            <template v-if="currentRole == 'ROLE_ADMINISTRATOR'">
+              <b-button
+                squared
+                variant="success"
+                data-toggle="modal"
+                data-target="#addNewProducModal"
+                @click="clearData()"
+              >
+                <b-icon icon="plus-circle"></b-icon> ADD NEW PRODUCT
+              </b-button>
+            </template>
+          </b-button-group>
+        </b-col>
+        <b-col></b-col>
+        <b-col></b-col>
+        <b-col>
+          <b-input
             id="input-search"
             class="form-control"
             type="search"
+            size="sm"
             placeholder="Search"
             aria-label="Search"
             v-model="criteria"
             @keyup="getProductsByName()"
           />
-        </div>
+        </b-col>
         <div class="col-sm-1">
           <b-icon icon="search"></b-icon>
         </div>
-      </div>
+      </b-row>
       <hr class="my-4" />
 
       <!-- Left side bar -->
@@ -113,9 +124,10 @@
                 <div class="col-sm-8">
                   <ValidationProvider rules="required">
                     <div slot-scope="{ errors }">
-                      <input
+                      <b-input
                         id="addNewCategoryInput"
                         type="text"
+                        size="sm"
                         class="form-control"
                         placeholder="Entry new category"
                         v-model="categoryModelAdd.categoryName"
@@ -126,7 +138,7 @@
                 </div>
                 <div class="col-sm-2">
                   <b-button
-                    pill
+                    squared
                     variant="success"
                     title="Add new category"
                     @click="saveCategory()"
@@ -140,47 +152,74 @@
         </b-sidebar>
       </div>
       <div style="height: 670px; min-height: 10px; overflow-x: scroll">
-        <div class="row">
+        <b-row>
           <template v-for="prd in listProduct">
-            <div class="col-sm-2" v-bind:key="prd.productId">
-              <div class="card">
-                <img class="card-img-top" :src="prd.imageContent" />
-                <div class="card-body">
-                  <h5 class="card-title">
-                    <strong>{{ prd.productName }}</strong>
-                  </h5>
-                  <p class="card-text">
-                    {{ prd.priceFormatString }}
-                  </p>
-                </div>
-                <div class="row">
-                  <div class="col-md-5">
-                    <button
-                      class="btn btn-link btn-sm"
-                      data-toggle="modal"
-                      data-target="#addNewProducModal"
-                      @click="bindingDataProduct(prd.productId)"
-                    >
-                      <b-icon icon="pen-fill"></b-icon>
-                    </button>
-                  </div>
+            <b-col :key="prd.productId">
+              <b-card
+                v-bind:key="prd.productId"
+                :title="prd.productName"
+                :img-src="prd.imageContent"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 20rem"
+                class="mb-2"
+              >
+                <b-card-text>
+                  {{ prd.priceFormatString }}
+                </b-card-text>
+
+                <b-button-group>
+                  <button
+                    class="btn btn-link btn-sm"
+                    data-toggle="modal"
+                    title="Edit product"
+                    data-target="#addNewProducModal"
+                    @click="bindingDataProduct(prd.productId)"
+                  >
+                    <b-icon icon="pen-fill"></b-icon>
+                  </button>
                   <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
-                    <div class="col-md-5">
-                      <button
-                        type="button"
-                        class="btn btn-link btn-sm"
-                        @click="deleteProduct(prd.productId)"
-                      >
-                        <b-icon icon="archive-fill" variant="danger"></b-icon>
-                      </button>
-                    </div>
+                    <b-button
+                      size="sm"
+                      squared
+                      title="Delete product"
+                      variant="light"
+                      @click="deleteProduct(prd.productId)"
+                    >
+                      <b-icon icon="archive-fill" variant="danger"></b-icon>
+                    </b-button>
                   </template>
-                </div>
-              </div>
-            </div>
+                </b-button-group>
+              </b-card>
+            </b-col>
           </template>
-        </div>
+        </b-row>
       </div>
+
+      <!-- <b-button-group>
+                      <b-button
+                        size="sm"
+                        block
+                        squared
+                        variant="light"
+                        @click="bindingDataProduct(prd.productId)"
+                      >
+                        <b-icon variant="primary" icon="pen-fill"></b-icon>
+                      </b-button>
+                      <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
+                        <b-button
+                          size="sm"
+                          block
+                          squared
+                          variant="light"
+                          @click="deleteProduct(prd.productId)"
+                        >
+                          <b-icon icon="archive-fill" variant="danger"></b-icon>
+                        </b-button>
+                      </template>
+                    </b-button-group> -->
+
       <!-- Modal category-->
       <div
         class="modal fade"
@@ -1018,8 +1057,8 @@ button {
   background-position: center center;
 }
 img {
-  height: 150px;
-  width: 250px;
+  height: 10rem;
+  width: 19rem;
 }
 
 .card {
@@ -1032,12 +1071,9 @@ img {
   margin: 20px auto auto auto;
 }
 
-thead,
-tr,
-td {
+p {
   font-size: 13px;
 }
-
 #input-search {
   height: 30px;
 }

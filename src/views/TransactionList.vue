@@ -9,20 +9,17 @@
           </h5>
         </div>
         <div class="col-sm-2">
-          <select id="select-filter" class="form-control" v-model="criteria">
+          <select
+            id="select-filter"
+            class="form-control"
+            v-model="criteria"
+            @change="filerTransaction"
+          >
+            <option selected value="">Please select filter</option>
             <option value="All">All</option>
             <option value="TODAY">Today</option>
             <option value="YESTERDAY">Yesterday</option>
           </select>
-        </div>
-        <div class="col-sm-2">
-          <button
-            class="btn btn-dark"
-            id="button-search"
-            @click="searchTransactionByTime()"
-          >
-            <b-icon icon="filter"></b-icon> Filter
-          </button>
         </div>
         <div class="col-md-2">
           <input
@@ -31,21 +28,13 @@
             type="date"
             placeholder="Search by card number/ create by"
             aria-label="Search"
+            @change="searchTransactionByDate"
             v-model="criteriaSearchDate"
           />
         </div>
-        <div class="col-md-1">
-          <button
-            class="btn btn-primary"
-            id="button-search"
-            @click="searchTransactionByDate()"
-          >
-            <b-icon icon="search"></b-icon> Find
-          </button>
-        </div>
       </div>
       <hr class="my-4" />
-      <div class="overflow-auto">
+      <div class="region-transactions">
         <b-table
           head-variant="dark"
           id="my-table"
@@ -54,8 +43,7 @@
           striped
           hover
           small
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
+          sort-icon-left
           show-empty
           :items="transactionInfo.listTransaction"
           :fields="transactionInfo.fields"
@@ -69,10 +57,10 @@
               @click="showDetailTranasction(data.item)"
               class="mr-1"
               title="Show detail this transaction"
-              variant="success"
+              variant="dark"
               v-b-modal.modal-scrollable
             >
-              <b-icon icon="pencil"></b-icon>
+              <b-icon size="sm" icon="pencil" font-scale="1"></b-icon>
             </b-button>
           </template>
         </b-table>
@@ -272,14 +260,14 @@ export default {
       show: false,
       transactionInfo: {
         fields: [
-          "transactionId",
-          "orderId",
-          "tableId",
-          "paymentType",
-          "totalPrice",
-          "createBy",
-          "createDate",
-          "action",
+          { key: "transactionId", sortable: true },
+          { key: "orderId", sortable: true },
+          { key: "tableId", sortable: true },
+          { key: "paymentType", sortable: true },
+          { key: "totalPrice", sortable: true },
+          { key: "createBy", sortable: true },
+          { key: "createDate", sortable: true },
+          { key: "action" },
         ],
         listTransaction: [],
         totalSale: "",
@@ -371,7 +359,7 @@ export default {
     },
 
     // search transactions depend on time
-    searchTransactionByTime() {
+    filerTransaction() {
       var criteria = this.criteria;
       this.show = true;
       http
@@ -540,9 +528,14 @@ export default {
 }
 
 h2 {
-  color: red;
+  color: green;
 }
 
+.region-transactions {
+  font-size: 13px;
+  height: 660px;
+  padding: 20px;
+}
 .overflow-auto {
   font-size: 13px;
 }

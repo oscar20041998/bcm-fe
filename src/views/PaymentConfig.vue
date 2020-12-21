@@ -34,17 +34,18 @@ export default {
   color: #212529 !important;
 }
 
+.nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-link.active {
-  color: #495057 !important;
-  background-color: #fff !important;
-  border-color: #dee2e6 #dee2e6 #fff !important;
-  border-top: 10px solid black !important;
+  color: #495057;
+  background-color: #fff;
+  /* border-color: #dee2e6 #dee2e6 #fff; */
+  border-top: 10px solid;
 }
 
-.nav-tabs .nav-link {
-  border: 1px solid transparent !important;
-  border-top-left-radius: 0.25rem !important;
-  border-top-right-radius: 0.25rem !important;
-  color: gray !important;
+.nav-link {
+  border: 1px solid transparent;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  color: gray;
 }
 </style>

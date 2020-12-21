@@ -1,206 +1,240 @@
 <template>
-  <div class="jumbotron">
-    <div class="container card-body">
-      <h5>
-        <b-icon icon="credit-card" font-scale="1"></b-icon> INFORMATION PAYMENT DETAIL
-        {{ table }}
-      </h5>
-      <hr class="my-4" />
-      <form>
-        <div class="form-group row">
-          <div class="col-sm-10">
-            <b-form-group label="Select payment type">
-              <b-row>
-                <b-col>
-                  <b-form-radio
-                    v-model="paymentType"
-                    name="some-radios"
-                    value="Cash option"
-                    @change="onClickCashOption()"
-                    >Cash option</b-form-radio
-                  >
-                </b-col>
-                <b-col>
-                  <b-form-radio
-                    v-model="paymentType"
-                    name="some-radios"
-                    value="Card option"
-                    @change="onClickCardOption()"
-                    >Card option</b-form-radio
-                  >
-                </b-col>
-                <b-col>
-                  <b-form-radio
-                    v-model="paymentType"
-                    name="some-radios"
-                    value="Electronic wallet"
-                    @change="onclickEwalletOption()"
-                    >Electronic wallet</b-form-radio
-                  >
-                </b-col>
-              </b-row>
-            </b-form-group>
+  <b-overlay :show="show" rounded="sm">
+    <div class="jumbotron">
+      <div class="container card-body">
+        <h5>
+          <b-icon icon="credit-card" font-scale="1"></b-icon> INFORMATION PAYMENT DETAIL
+          {{ table }}
+        </h5>
+        <hr class="my-4" />
+        <form>
+          <div class="form-group row">
+            <div class="col-sm-10">
+              <b-form-group label="Select payment type">
+                <b-row>
+                  <b-col>
+                    <b-form-radio
+                      v-model="paymentType"
+                      name="some-radios"
+                      value="Cash option"
+                      @change="onClickCashOption()"
+                      >Cash option</b-form-radio
+                    >
+                  </b-col>
+                  <b-col>
+                    <b-form-radio
+                      v-model="paymentType"
+                      name="some-radios"
+                      value="Card option"
+                      @change="onClickCardOption()"
+                      >Card option</b-form-radio
+                    >
+                  </b-col>
+                  <b-col>
+                    <b-form-radio
+                      v-model="paymentType"
+                      name="some-radios"
+                      value="Electronic wallet"
+                      @change="onclickEwalletOption()"
+                      >Electronic wallet</b-form-radio
+                    >
+                  </b-col>
+                </b-row>
+              </b-form-group>
+            </div>
           </div>
-        </div>
 
-        <!---CARD OPTION DIV REGION--------------------------------------------------------------------------------------------------------------------------------------->
-        <div id="cardOptionDiv" style="display: none">
-          <hr class="my-4" />
-          <div class="form-group row">
-            <label for="inputPassword" class="col-sm-3 col-form-label">Select bank</label>
-            <div class="col-sm-5">
-              <select class="form-control" id="selectCategory" v-model="bankName">
-                <option disabled value="">No select</option>
-                <option
-                  v-for="bank in listBanks"
-                  :key="bank.bankCode"
-                  :value="bank.bankName"
-                >
-                  {{ bank.bankCode }} - {{ bank.bankName }}
-                </option>
-              </select>
+          <!---CARD OPTION DIV REGION--------------------------------------------------------------------------------------------------------------------------------------->
+          <div id="cardOptionDiv" style="display: none">
+            <hr class="my-4" />
+            <div class="form-group row">
+              <label for="inputPassword" class="col-sm-3 col-form-label"
+                >Select bank</label
+              >
+              <div class="col-sm-5">
+                <select class="form-control" id="selectCategory" v-model="bankName">
+                  <option disabled value="">No select</option>
+                  <option
+                    v-for="bank in listBanks"
+                    :key="bank.bankCode"
+                    :value="bank.bankName"
+                  >
+                    {{ bank.bankCode }} - {{ bank.bankName }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <!-- Input card number -->
+            <div class="form-group row">
+              <label for="inputPassword" class="col-sm-3 col-form-label"
+                >Card number</label
+              >
+              <div class="col-sm-5">
+                <input
+                  type="text "
+                  class="form-control"
+                  id="cashInput"
+                  maxlength="19"
+                  placeholder="Input card number"
+                  v-model="cardNumber"
+                  v-mask="'#### #### #### ####'"
+                />
+              </div>
+            </div>
+            <!-- Input card type -->
+            <div class="form-group row">
+              <label for="inputPassword" class="col-sm-3 col-form-label"
+                >Select card</label
+              >
+              <div class="col-sm-5">
+                <select class="form-control" id="selectCategory" v-model="cardType">
+                  <option disabled value="">No select</option>
+                  <option
+                    v-for="card in listCards"
+                    :key="card.id"
+                    :value="card.cardType"
+                    :label="card.cardName"
+                  ></option>
+                </select>
+              </div>
+            </div>
+            <!-- Input card owner name -->
+            <div class="form-group row">
+              <label for="inputPassword" class="col-sm-3 col-form-label"
+                >Owner name</label
+              >
+              <div class="col-sm-5">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cashInput"
+                  maxlength="100"
+                  placeholder="Input owner name"
+                  v-model="cardOwnerName"
+                />
+              </div>
+            </div>
+            <!-- Input expire time -->
+            <div class="form-group row">
+              <label for="inputPassword" class="col-sm-3 col-form-label">Expire</label>
+              <div class="col-sm-5">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inputExprie"
+                  maxlength="5"
+                  placeholder="MM/YY"
+                  v-model="expireDate"
+                  v-mask="'##/##'"
+                />
+              </div>
+            </div>
+            <!-- Input cvv -->
+            <div class="form-group row">
+              <label for="inputPassword" class="col-sm-3 col-form-label">CVV</label>
+              <div class="col-sm-5">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cashInput"
+                  maxlength="3"
+                  placeholder="Input cvv"
+                  v-model="cvv"
+                />
+              </div>
             </div>
           </div>
-          <!-- Input card number -->
-          <div class="form-group row">
-            <label for="inputPassword" class="col-sm-3 col-form-label">Card number</label>
-            <div class="col-sm-5">
-              <input
-                type="text "
-                class="form-control"
-                id="cashInput"
-                maxlength="19"
-                placeholder="Input card number"
-                v-model="cardNumber"
-                v-mask="'#### #### #### ####'"
-              />
-            </div>
-          </div>
-          <!-- Input card type -->
-          <div class="form-group row">
-            <label for="inputPassword" class="col-sm-3 col-form-label">Select card</label>
-            <div class="col-sm-5">
-              <select class="form-control" id="selectCategory" v-model="cardType">
-                <option disabled value="">No select</option>
-                <option
-                  v-for="card in listCards"
-                  :key="card.id"
-                  :value="card.cardType"
-                  :label="card.cardName"
-                ></option>
-              </select>
-            </div>
-          </div>
-          <!-- Input card owner name -->
-          <div class="form-group row">
-            <label for="inputPassword" class="col-sm-3 col-form-label">Owner name</label>
-            <div class="col-sm-5">
-              <input
-                type="text"
-                class="form-control"
-                id="cashInput"
-                maxlength="100"
-                placeholder="Input owner name"
-                v-model="cardOwnerName"
-              />
-            </div>
-          </div>
-          <!-- Input expire time -->
-          <div class="form-group row">
-            <label for="inputPassword" class="col-sm-3 col-form-label">Expire</label>
-            <div class="col-sm-5">
-              <input
-                type="text"
-                class="form-control"
-                id="inputExprie"
-                maxlength="5"
-                placeholder="MM/YY"
-                v-model="expireDate"
-                v-mask="'##/##'"
-              />
-            </div>
-          </div>
-          <!-- Input cvv -->
-          <div class="form-group row">
-            <label for="inputPassword" class="col-sm-3 col-form-label">CVV</label>
-            <div class="col-sm-5">
-              <input
-                type="text"
-                class="form-control"
-                id="cashInput"
-                maxlength="3"
-                placeholder="Input cvv"
-                v-model="cvv"
-              />
-            </div>
-          </div>
-        </div>
 
-        <!---EWALETT DIV REGION--------------------------------------------------------------------------------------------------------------------------------------->
-        <div id="eWalletDiv" style="display: none">
-          <hr class="my-4" />
+          <!---EWALETT DIV REGION--------------------------------------------------------------------------------------------------------------------------------------->
+          <div id="eWalletDiv" style="display: none">
+            <hr class="my-4" />
+            <div class="form-group row">
+              <label for="inputPassword" class="col-sm-3 col-form-label"
+                >Select wallet</label
+              >
+              <div class="col-sm-5">
+                <select class="form-control" id="selectEwallet" v-model="providerName">
+                  <option disabled value="">No select</option>
+                  <option
+                    v-for="wallet in listEwallet"
+                    :key="wallet.id"
+                    :value="wallet.walletName"
+                    :label="wallet.walletName"
+                  ></option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="inputPassword" class="col-sm-3 col-form-label"
+                >Transaction code</label
+              >
+              <div class="col-sm-5">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="transactionInput"
+                  maxlength="20"
+                  placeholder="Input transaction code"
+                  v-model="transactionCode"
+                />
+              </div>
+            </div>
+          </div>
           <div class="form-group row">
             <label for="inputPassword" class="col-sm-3 col-form-label"
-              >Select wallet</label
+              >Email customer</label
             >
             <div class="col-sm-5">
-              <select class="form-control" id="selectEwallet" v-model="providerName">
-                <option disabled value="">No select</option>
-                <option
-                  v-for="wallet in listEwallet"
-                  :key="wallet.id"
-                  :value="wallet.walletName"
-                  :label="wallet.walletName"
-                ></option>
-              </select>
+              <input
+                type="email"
+                class="form-control"
+                id="emailCustomerInput"
+                maxlength="1000"
+                placeholder="example@gmail.com"
+                v-model="emailCustomer"
+              />
             </div>
           </div>
+          <hr class="my-4" />
           <div class="form-group row">
-            <label for="inputPassword" class="col-sm-3 col-form-label"
-              >Transaction code</label
-            >
+            <label for="inputPassword" class="col-sm-3 col-form-label">Total price</label>
             <div class="col-sm-5">
               <input
                 type="text"
                 class="form-control"
-                id="transactionInput"
-                maxlength="20"
-                placeholder="Input transaction code"
-                v-model="transactionCode"
+                id="totalPriceInput"
+                v-model="totalPrice"
+                readonly
               />
             </div>
           </div>
-        </div>
-
-        <hr class="my-4" />
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Total price</label>
-          <div class="col-sm-5">
-            <input
-              type="text"
-              class="form-control"
-              id="totalPriceInput"
-              v-model="totalPrice"
-              readonly
-            />
-          </div>
-        </div>
-        <hr class="my-4" />
-        <b-row>
-          <b-col>
-            <b-button block variant="success" size="lg" @click="saveTransaction()"
-              >ACCEPT PAYMENT</b-button
-            ></b-col
-          >
-          <b-col>
-            <b-button block variant="secondary" size="lg" @click="backToOrderProduct()"
-              >CANCEL</b-button
+          <hr class="my-4" />
+          <b-row>
+            <b-col>
+              <b-button
+                squared
+                block
+                variant="success"
+                size="lg"
+                @click="saveTransaction()"
+                >ACCEPT PAYMENT</b-button
+              ></b-col
             >
-          </b-col>
-        </b-row>
-      </form>
+            <b-col>
+              <b-button
+                squared
+                block
+                variant="secondary"
+                size="lg"
+                @click="backToOrderProduct()"
+                >CANCEL</b-button
+              >
+            </b-col>
+          </b-row>
+        </form>
+      </div>
     </div>
-  </div>
+  </b-overlay>
 </template>
 <script>
 import http from "../axios/http-common";
@@ -225,7 +259,9 @@ export default {
       listEwallet: [],
       providerName: "",
       transactionCode: "",
+      emailCustomer: "",
       totalPrice: JSON.parse(localStorage.getItem("orderInfo")).totalPrice,
+      show: false,
     };
   },
 
@@ -310,6 +346,7 @@ export default {
 
     // save tranaction
     saveTransaction() {
+      this.show = true;
       var request = {
         totalPrice: JSON.parse(localStorage.getItem("orderInfo")).totalPrice,
         tableId: JSON.parse(localStorage.getItem("orderInfo")).tableName,
@@ -327,6 +364,8 @@ export default {
           transactionCode: this.transactionCode,
         },
         listOrder: JSON.parse(localStorage.getItem("orderInfo")).listOrder,
+        customerEmail: this.emailCustomer,
+        userId: JSON.parse(localStorage.getItem("user")).userId,
         createBy: JSON.parse(localStorage.getItem("user")).userName,
       };
       var isValid = this.valdiateBeforeSaveTransaction(request);
@@ -412,6 +451,7 @@ export default {
           $(".modal-backdrop").remove();
           this.$router.push({ name: "Position" });
           this.clearData();
+          this.show = false;
         })
         .catch((error) => {
           this.$swal({

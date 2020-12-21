@@ -112,76 +112,64 @@
                 <div class="col-md-12">
                   <h5 id="title-form" class="modal-title">LIST ORDER PRODUCT PENDING</h5>
                 </div>
-                <div class="col-sm-1" id="div-spinner-check-done" style="display: none">
-                  <b-spinner class="m-3" label="Busy"></b-spinner>
-                </div>
               </div>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div class="modal-body">
-              <div style="height: 700px; min-height: 10px; overflow-y: scroll">
-                <table
-                  id="table-log-detail"
-                  class="table table-striped table-responsive-sm"
-                  cellspacing="0"
-                  style="max-heigh: 100px"
+            <b-overlay :show="load" rounded="sm">
+              <div class="modal-body">
+                <b-table
+                  head-variant="dark"
+                  id="my-table"
+                  responsive="sm"
+                  sticky-header
+                  striped
+                  hover
+                  small
+                  sort-icon-left
+                  show-empty
+                  :items="listOrderPending"
+                  :fields="fieldsPending"
+                  :per-page="perPage"
+                  :current-page="currentPage"
                 >
-                  <thead class="thead-dark">
-                    <tr>
-                      <th scope="col">Table ID</th>
-                      <th scope="col">Product name</th>
-                      <th scope="col">Quantity</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Create by</th>
-                      <th scope="col">Create date</th>
-                      <th scope="col">Option</th>
-                    </tr>
-                  </thead>
-                  <tbody sytle="min-height:10px; overflow-y:scroll">
-                    <tr v-for="prd in listOrderPending" :key="prd.productId">
-                      <td>{{ prd.tableId }}</td>
-                      <td>{{ prd.productName }}</td>
-                      <td>
-                        {{ prd.quantity }}
-                        <template v-if="prd.quantity >= 4">
-                          <b-icon icon="chevron-double-up" variant="danger"></b-icon>
-                        </template>
-                        <template v-else-if="prd.quantity <= 3 && prd.quantity > 1">
-                          <b-icon icon="chevron-up" variant="success"></b-icon>
-                        </template>
-                      </td>
-                      <td>
-                        {{ prd.status }}
-                        <b-icon
-                          icon="three-dots"
-                          animation="cylon"
-                          font-scale="2"
-                          variant="info"
-                        ></b-icon>
-                      </td>
-                      <td>{{ prd.createBy }}</td>
-                      <td>{{ prd.createDate }}</td>
-                      <td>
-                        <div class="row">
-                          <div class="col-sm-6">
-                            <button
-                              class="btn btn-success btn-sm"
-                              data-toggle="modal"
-                              data-target="#addNewProducModal"
-                              @click="checkDone(prd)"
-                            >
-                              <b-icon icon="check-circle"></b-icon>
-                            </button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                  <template v-slot:cell(quantity)="data">
+                    <template v-if="data.value >= 4">
+                      <b-icon icon="chevron-double-up" variant="danger"></b-icon>
+                      {{ data.value }}
+                    </template>
+                    <template v-else-if="data.value <= 3 && data.value > 1">
+                      <b-icon icon="chevron-up" variant="success"></b-icon>
+                      {{ data.value }}
+                    </template>
+                    <template v-else>{{ data.value }}</template>
+                  </template>
+                  <template v-slot:cell(action)="data">
+                    <b-button
+                      squared
+                      size="sm"
+                      variant="success"
+                      @click="checkDone(data.item)"
+                    >
+                      <b-icon icon="check-circle"></b-icon> Check out
+                    </b-button>
+                  </template>
+                </b-table>
+                <div class="row" style="margin-left: 10px">
+                  <div class="column">
+                    <b-pagination
+                      size="md"
+                      pills
+                      v-model="currentPage"
+                      :total-rows="rows"
+                      :per-page="perPage"
+                      aria-controls="my-table"
+                    ></b-pagination>
+                  </div>
+                </div>
               </div>
-            </div>
+            </b-overlay>
           </div>
         </div>
       </div>
@@ -189,6 +177,22 @@
   </b-overlay>
   <!-- Modal add new product-->
 </template>
+
+<!-- <template v-if="prd.quantity >= 4">
+                          <b-icon icon="chevron-double-up" variant="danger"></b-icon>
+                        </template>
+                        <template v-else-if="prd.quantity <= 3 && prd.quantity > 1">
+                          <b-icon icon="chevron-up" variant="success"></b-icon>
+                        </template> -->
+
+<!-- <button
+                              class="btn btn-success btn-sm"
+                              data-toggle="modal"
+                              data-target="#addNewProducModal"
+                              @click="checkDone(prd)"
+                            >
+                              <b-icon icon="check-circle"></b-icon>
+                            </button> -->
 
 <script>
 import http from "../axios/http-common";
@@ -215,7 +219,19 @@ export default {
         name: "",
       },
       listOrderPending: [],
+      fieldsPending: [
+        { key: "tableId", sortable: true },
+        { key: "productName", sortable: true },
+        { key: "quantity", sortable: true },
+        { key: "status", sortable: true },
+        { key: "createBy", sortable: true },
+        { key: "createDate", sortable: true },
+        { key: "action", sortable: false },
+      ],
+      currentPage: 1,
+      perPage: 25,
       show: true,
+      load: false,
     };
   },
 
@@ -302,7 +318,7 @@ export default {
     checkDone: function (object) {
       var data = this.listOrderPending;
       var accountId = this.accountUserValid;
-      $("#div-spinner-check-done").css("display", "block");
+      this.load = true;
       http
         .post(
           "/order-product/api/update-order-product-pending/" +
@@ -314,7 +330,7 @@ export default {
         )
         .then((response) => {
           if (response.status == "200") {
-            $("#div-spinner-check-done").css("display", "none");
+            this.load = false;
           }
         })
         .catch((error) => {
@@ -327,7 +343,7 @@ export default {
             showConfirmButton: false,
             timer: 2100,
           });
-          $("#div-spinner-check-done").css("display", "none");
+          this.load = true;
         });
       $.each(data, function (i, e) {
         if (e.productId == object.productId) {
@@ -362,6 +378,7 @@ h6 {
 
 .card-order {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: auto;
   text-align: center;
   background-color: transparent;
   padding: 30px;
@@ -388,7 +405,8 @@ tbody {
 }
 
 .modal-xl {
-  max-width: 100%;
+  max-width: auto;
+  font-size: 13px;
   height: auto;
 }
 
