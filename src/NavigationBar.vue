@@ -200,7 +200,7 @@ export default {
           .post("/api/account/logout-user/" + accountId + "/" + username)
           .then((response) => {
             if (response.status == "200") {
-              localStorage.setItem("user", "");
+              localStorage.clear();
               this.$swal({
                 toast: true,
                 showProgressBar: true,

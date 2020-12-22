@@ -12,7 +12,7 @@ export default new Vuex.Store({
         tableId: '',
         isLogin: false,
         listOrdered: [],
-        totalPrice: ''
+        totalPrice: '',
     },
     mutations: {
         setRoleUser: (state, value) => {

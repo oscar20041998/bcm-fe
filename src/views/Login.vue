@@ -294,7 +294,7 @@ export default {
               showConfirmButton: false,
               timer: 5000,
             });
-            localStorage.clear();
+            localStorage.setItem("init", btoa(response.data));
           }
         })
         .catch((error) => {

@@ -39,8 +39,6 @@ var _PaymentProduct = _interopRequireDefault(require("../components/PaymentProdu
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var token = JSON.parse(localStorage.getItem('user')) != null || JSON.parse(localStorage.getItem('user')) != '' ? btoa(JSON.parse(localStorage.getItem('user')).key) : '';
-
 _vue["default"].use(_vueRouter["default"]);
 
 var routes = [{
@@ -52,31 +50,31 @@ var routes = [{
   name: 'Login',
   component: _Login["default"]
 }, {
-  path: '/home/' + token,
+  path: '/home/',
   name: 'Home',
   component: _Home["default"]
 }, {
-  path: '/accounts-user/' + token,
+  path: '/accounts-user/',
   name: 'AccountUser',
   component: _AccountUser["default"]
 }, {
-  path: '/not-found' + token,
+  path: '/not-found',
   name: 'NotFound',
   component: _NotFound["default"]
 }, {
-  path: '/profile-user/' + token,
+  path: '/profile-user/',
   name: 'ProfileUser',
   component: _ProfileUser["default"]
 }, {
-  path: '/users/' + token,
+  path: '/users/',
   name: 'User',
   component: _User["default"]
 }, {
-  path: '/food-and-drink-management/' + token,
+  path: '/food-and-drink-management/',
   name: 'FoodAndDrink',
   component: _FoodAndDrink["default"]
 }, {
-  path: '/positions/' + token,
+  path: '/positions/',
   name: 'Position',
   component: _Position["default"]
 }, {
@@ -84,19 +82,19 @@ var routes = [{
   name: 'Unauthorize',
   component: _Unauthorize["default"]
 }, {
-  path: '/transaction-list/' + token,
+  path: '/transaction-list/',
   name: 'TransactionList',
   component: _TransactionList["default"]
 }, {
-  path: '/order-product-page/' + token,
+  path: '/order-product-page/',
   name: 'OrderProduct',
   component: _OrderProduct["default"]
 }, {
-  path: '/payment-configurtion/' + token,
+  path: '/payment-configurtion/',
   name: 'PaymentConfig',
   component: _PaymentConfig["default"]
 }, {
-  path: '/payment-product/' + token,
+  path: '/payment-product/',
   name: 'PaymentProduct',
   component: _PaymentProduct["default"]
 }];
@@ -104,15 +102,6 @@ var router = new _vueRouter["default"]({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: routes
-});
-router.beforeEach(function (to, from, next) {
-  if (token == null || token == '') {
-    next({
-      path: '/'
-    });
-  } else {
-    next();
-  }
 });
 var _default = router;
 exports["default"] = _default;
