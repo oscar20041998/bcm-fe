@@ -30,6 +30,7 @@ export default {
   data() {
     return {
       listEwallet: [],
+      selectedFile: null,
       accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
       currentUser: JSON.parse(localStorage.getItem("user")).userName,
     };

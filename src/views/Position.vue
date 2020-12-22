@@ -1,27 +1,37 @@
 <template>
   <b-overlay :show="show" rounded="sm">
     <div class="jumbotron">
-      <div class="row">
-        <div class="col-md-3">
+      <b-row>
+        <b-col>
           <h5>
             <b-icon icon="map"></b-icon>
             POSITION AVAILABLE
           </h5>
-        </div>
-        <div class="col-sm-2">
-          <b-icon
-            icon="circle-fill"
-            animation="throb"
-            font-scale="1"
-            variant="success"
-          ></b-icon>
-          OPENING : {{ isOpening }}
-        </div>
-        <div class="col-sm-2">
-          <b-icon icon="x-circle-fill" font-scale="1" variant="danger"></b-icon>
-          CLOSED : {{ isClosed }}
-        </div>
-        <div class="col-md-5" style="text-align: right">
+        </b-col>
+        <b-col>
+          <b-button-group>
+            <b-button squared variant="outline-success" @click="getPositionsOpening()">
+              <b-icon
+                icon="circle-fill"
+                animation="throb"
+                font-scale="1"
+                variant="success"
+              ></b-icon>
+              OPENING : {{ isOpening }}
+            </b-button>
+            <b-button squared variant="outline-danger" @click="getPositionsClosed()">
+              <b-icon icon="x-circle-fill" font-scale="1" variant="danger"></b-icon>
+              CLOSED : {{ isClosed }}
+            </b-button>
+            <b-button squared variant="outline-primary" @click="getPosition()">
+              <b-icon icon="arrow-clockwise" font-scale="1" variant="primary"></b-icon>
+              Refresh
+            </b-button>
+          </b-button-group>
+        </b-col>
+        <b-col></b-col>
+        <b-col></b-col>
+        <b-col>
           <b-button-group>
             <button
               type="button"
@@ -34,8 +44,8 @@
               ORDERED QUEUE
             </button>
           </b-button-group>
-        </div>
-      </div>
+        </b-col>
+      </b-row>
       <hr class="my-2" />
 
       <!-- Card detail table -->
@@ -289,6 +299,60 @@ export default {
         });
     },
 
+    // get all position available
+    getPositionsOpening() {
+      $("#loading").show();
+      http
+        .get("/position/api/get-positions-opening/" + this.accountUserValid)
+        .then((response) => {
+          if (response.status == "200") {
+            this.positions = response.data.positions;
+            this.isOpening = response.data.isOpening;
+            this.isClosed = response.data.isClosed;
+          }
+          this.show = false;
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+          this.show = false;
+        });
+    },
+
+    // get all position available
+    getPositionsClosed() {
+      $("#loading").show();
+      http
+        .get("/position/api/get-positions-closed/" + this.accountUserValid)
+        .then((response) => {
+          if (response.status == "200") {
+            this.positions = response.data.positions;
+            this.isOpening = response.data.isOpening;
+            this.isClosed = response.data.isClosed;
+          }
+          this.show = false;
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+          this.show = false;
+        });
+    },
+
     // get list order is pending
     getListOrderPending() {
       $("#loading").css("display", "block");
@@ -365,10 +429,6 @@ export default {
 </script>
 
 <style scoped>
-button {
-  text-align: left;
-}
-
 ul,
 li,
 strong,
@@ -389,14 +449,6 @@ h6 {
   background-color: whitesmoke;
 }
 
-thead,
-tr,
-td,
-tbody {
-  font-size: 13px;
-  max-width: fit-content;
-}
-
 #input-quantity {
   width: 70px;
   height: 30px;
@@ -408,12 +460,6 @@ tbody {
   max-width: auto;
   font-size: 13px;
   height: auto;
-}
-
-.column {
-  float: left;
-  width: 25%;
-  padding: 0 10px;
 }
 
 i {

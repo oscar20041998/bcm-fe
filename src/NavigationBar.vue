@@ -267,7 +267,8 @@ export default {
     font-size: 12px;
 
     &.router-link-exact-active {
-      color: orange;
+      background-color: #de8218;
+      color: whitesmoke;
     }
   }
 

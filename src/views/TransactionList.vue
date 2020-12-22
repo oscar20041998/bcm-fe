@@ -1,14 +1,14 @@
 <template>
   <b-overlay :show="show" rounded="sm">
     <div class="jumbotron">
-      <div class="row">
-        <div class="col-sm-3">
+      <b-row>
+        <b-col sm="6">
           <h5>
             <b-icon icon="reception4"></b-icon>
             TRANSACTION LIST
           </h5>
-        </div>
-        <div class="col-sm-2">
+        </b-col>
+        <b-col sm="2">
           <select
             id="select-filter"
             class="form-control"
@@ -20,8 +20,8 @@
             <option value="TODAY">Today</option>
             <option value="YESTERDAY">Yesterday</option>
           </select>
-        </div>
-        <div class="col-md-2">
+        </b-col>
+        <b-col sm="2">
           <input
             id="input-filter"
             class="form-control"
@@ -31,8 +31,27 @@
             @change="searchTransactionByDate"
             v-model="criteriaSearchDate"
           />
-        </div>
-      </div>
+        </b-col>
+        <b-col sm="2">
+          <b-form inline>
+            <b-input
+              type="text"
+              placeholder="Transaction ID: 12345..."
+              v-model="criteriaTranactionId"
+              size="sm"
+            ></b-input>
+            <template v-if="criteriaTranactionId != ''">
+              <b-button
+                squared
+                variant="success"
+                size="md"
+                @click="searchTransactionById()"
+                >Search
+              </b-button>
+            </template>
+          </b-form>
+        </b-col>
+      </b-row>
       <hr class="my-4" />
       <div class="region-transactions">
         <b-table
@@ -112,10 +131,7 @@
         scrollable
         title="Transaction Detail Content"
         no-close-on-backdrop
-        ok-title="Send to email"
-        ok-variant="success"
-        ok-only
-        @ok="handleOK"
+        hide-footer
       >
         <div class="overflow-auto">
           <b-table
@@ -217,6 +233,13 @@
           >
         </b-row>
 
+        <b-row>
+          <b-col><strong>Email customer: </strong></b-col>
+          <b-col
+            ><i>{{ transactionDetail.info.emailCustomer }}</i></b-col
+          >
+        </b-row>
+
         <!--Field create by-->
         <b-row>
           <b-col><strong>Create By: </strong></b-col>
@@ -253,6 +276,7 @@ export default {
       accountUserValid: JSON.parse(localStorage.getItem("user")).accountId,
       criteria: "",
       criteriaSearchDate: "",
+      criteriaTranactionId: "",
       sortBy: "createDate",
       sortDesc: true,
       perPage: 15,
@@ -290,6 +314,7 @@ export default {
           cvv: "",
           providerName: "",
           transactionCode: "",
+          emailCustomer: "",
           createBy: "",
           createDate: "",
         },
@@ -358,49 +383,31 @@ export default {
         });
     },
 
-    // search transactions depend on time
-    filerTransaction() {
-      var criteria = this.criteria;
+    // search transation by id
+    searchTransactionById() {
       this.show = true;
       http
-        .post(
-          "/transaction/api/search-transactions/" + this.accountUserValid + "/" + criteria
+        .get(
+          "/transaction/api/search-transaction/" +
+            this.accountUserValid +
+            "/" +
+            this.criteriaTranactionId
         )
         .then((response) => {
           if (response.status == "200") {
-            if (response.data.listTransactions.size == 0) {
-              this.$swal({
-                toast: true,
-                showProgressBar: true,
-                position: "top-end",
-                title: "Not found any transaction",
-                icon: "info",
-                showConfirmButton: false,
-                timer: 2100,
-              });
-            } else {
-              this.transactionInfo.listTransaction = response.data.listTransactions;
-              this.transactionInfo.totalSale = response.data.totalPrice;
-              this.transactionInfo.totalTransaction = response.data.totalTransaction;
-              this.transactionInfo.totalCashOption =
-                response.data.sumPaymentType.countCashOption;
-              this.transactionInfo.totalCardOption =
-                response.data.sumPaymentType.countCardOption;
-              this.transactionInfo.totalEWaleltOption =
-                response.data.sumPaymentType.electronicWalletOption;
-
-              this.show = false;
-            }
-          } else {
+            this.transactionInfo.listTransaction = response.data.listTransactions;
+            this.show = false;
+          } else if (response.status == "401") {
             this.$swal({
               toast: true,
               showProgressBar: true,
               position: "top-end",
-              title: "Some thing went wrong !!!",
+              title: "You do not have permission",
               icon: "error",
               showConfirmButton: false,
               timer: 2100,
             });
+            this.show = false;
           }
         })
         .catch((error) => {
@@ -411,12 +418,80 @@ export default {
             title: error,
             icon: "error",
             showConfirmButton: false,
-            timer: 2100,
+            timer: 3500,
           });
           this.show = false;
-          this.listTransaction = [];
-          this.totalSale = 0;
         });
+    },
+
+    // search transactions depend on time
+    filerTransaction() {
+      var criteria = this.criteria;
+      this.show = true;
+      if (criteria) {
+        http
+          .post(
+            "/transaction/api/search-transactions/" +
+              this.accountUserValid +
+              "/" +
+              criteria
+          )
+          .then((response) => {
+            if (response.status == "200") {
+              if (response.data.listTransactions.size == 0) {
+                this.$swal({
+                  toast: true,
+                  showProgressBar: true,
+                  position: "top-end",
+                  title: "Not found any transaction",
+                  icon: "info",
+                  showConfirmButton: false,
+                  timer: 2100,
+                });
+              } else {
+                this.transactionInfo.listTransaction = response.data.listTransactions;
+                this.transactionInfo.totalSale = response.data.totalPrice;
+                this.transactionInfo.totalTransaction = response.data.totalTransaction;
+                this.transactionInfo.totalCashOption =
+                  response.data.sumPaymentType.countCashOption;
+                this.transactionInfo.totalCardOption =
+                  response.data.sumPaymentType.countCardOption;
+                this.transactionInfo.totalEWaleltOption =
+                  response.data.sumPaymentType.electronicWalletOption;
+
+                this.show = false;
+              }
+            } else {
+              this.$swal({
+                toast: true,
+                showProgressBar: true,
+                position: "top-end",
+                title: "Some thing went wrong !!!",
+                icon: "error",
+                showConfirmButton: false,
+                timer: 2100,
+              });
+            }
+          })
+          .catch((error) => {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: error,
+              icon: "error",
+              showConfirmButton: false,
+              timer: 2100,
+            });
+            this.show = false;
+            this.listTransaction = [];
+            this.totalSale = 0;
+          });
+      } else {
+        this.show = false;
+        this.listTransaction = [];
+        this.totalSale = 0;
+      }
     },
 
     // search transaction by a date

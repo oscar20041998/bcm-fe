@@ -14,7 +14,7 @@ import TransactionList from '../views/TransactionList.vue'
 import OrderProduct from '../views/OrderProduct.vue'
 import PaymentConfig from '../views/PaymentConfig.vue'
 import PaymentProduct from '../components/PaymentProduct.vue'
-// var token = JSON.parse(localStorage.getItem('user')) != null || JSON.parse(localStorage.getItem('user')) != '' ? btoa(JSON.parse(localStorage.getItem('user'))) : ''
+var token = JSON.parse(localStorage.getItem('user')) != null || JSON.parse(localStorage.getItem('user')) != '' ? btoa(JSON.parse(localStorage.getItem('user')).key) : ''
 Vue.use(VueRouter)
 const routes = [{
         path: '/navigation-bar',
@@ -27,37 +27,37 @@ const routes = [{
         component: Login
     },
     {
-        path: '/home/',
+        path: '/home/' + token,
         name: 'Home',
         component: Home
     },
     {
-        path: '/accounts-user/',
+        path: '/accounts-user/' + token,
         name: 'AccountUser',
         component: AccountUser
     },
     {
-        path: '/not-found',
+        path: '/not-found' + token,
         name: 'NotFound',
         component: NotFound
     },
     {
-        path: '/profile-user/',
+        path: '/profile-user/' + token,
         name: 'ProfileUser',
         component: ProfileUser
     },
     {
-        path: '/users/',
+        path: '/users/' + token,
         name: 'User',
         component: User
     },
     {
-        path: '/food-and-drink-management/',
+        path: '/food-and-drink-management/' + token,
         name: 'FoodAndDrink',
         component: FoodAndDrink
     },
     {
-        path: '/positions/',
+        path: '/positions/' + token,
         name: 'Position',
         component: Position
     },
@@ -67,22 +67,22 @@ const routes = [{
         component: Unauthorize
     },
     {
-        path: '/transaction-list/',
+        path: '/transaction-list/' + token,
         name: 'TransactionList',
         component: TransactionList
     },
     {
-        path: '/order-product-page/',
+        path: '/order-product-page/' + token,
         name: 'OrderProduct',
         component: OrderProduct
     },
     {
-        path: '/payment-configurtion/',
+        path: '/payment-configurtion/' + token,
         name: 'PaymentConfig',
         component: PaymentConfig
     },
     {
-        path: '/payment-product/',
+        path: '/payment-product/' + token,
         name: 'PaymentProduct',
         component: PaymentProduct
     }
@@ -92,6 +92,16 @@ const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes
+})
+
+router.beforeEach((to, from, next) => {
+    if (token == null || token == '') {
+        next({
+            path: '/'
+        })
+    } else {
+        next();
+    }
 })
 
 export default router
