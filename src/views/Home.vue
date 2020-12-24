@@ -5,100 +5,91 @@
         <div class="col-md-5">
           <h5>
             <b-icon icon="house-door-fill"></b-icon>
-            OPERTATION SYSTEM LOG
+            PERSONAL ACTIVITIES LOG
           </h5>
         </div>
       </div>
-      <hr class="my-4" />
-      <!-- <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel"> -->
-      <!--PERSONAL LOG-->
-      <!-- <div class="carousel-inner"> -->
-      <!-- <div class="carousel-item active" data-interval="1000"> -->
-      <h5>PERSONAL ACTIVITIES LOG</h5>
-      <div class="row" style="margin-bottom: 15px">
-        <div class="col-sm-2">
-          <div>
-            <b-form-input
-              list="my-list-id"
-              size="sm"
-              v-model="searchLogRequest.userName"
-            ></b-form-input>
-            <datalist id="my-list-id">
-              <option
-                v-for="account in listAccountAvailabel"
-                v-bind:key="account.accountId"
-              >
-                {{ account.userName }}
-              </option>
-            </datalist>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <b-input
-            size="sm"
-            id="input-filter"
-            class="form-control"
-            type="date"
-            placeholder="Search by card number/ create by"
-            aria-label="Search"
-            v-model="searchLogRequest.date"
-          />
-        </div>
-        <div class="col-md-6">
-          <button class="btn btn-primary" id="button-search" @click="searchPersonalLog()">
-            <b-icon icon="search"></b-icon> Find
-          </button>
-        </div>
-        <div class="col-sm-2">
-          <button class="btn btn-secondary" id="button-search" @click="getListSytemLog()">
-            <b-icon icon="search"></b-icon> Find by me
-          </button>
-        </div>
+    </div>
+    <!-- <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel"> -->
+    <!--PERSONAL LOG-->
+    <!-- <div class="carousel-inner"> -->
+    <!-- <div class="carousel-item active" data-interval="1000"> -->
+    <div class="row" style="margin-bottom: 15px">
+      <b-form inline>
+        <label>Find by user: </label>
+        <b-form-input
+          list="my-list-id"
+          size="sm"
+          v-model="searchLogRequest.userName"
+        ></b-form-input>
+        <datalist id="my-list-id">
+          <option v-for="account in listAccountAvailabel" v-bind:key="account.accountId">
+            {{ account.userName }}
+          </option>
+        </datalist>
+      </b-form>
+      <b-form inline>
+        <label>Find by date: </label>
+        <b-input
+          size="sm"
+          id="input-filter"
+          class="form-control"
+          type="date"
+          placeholder="Search by card number/ create by"
+          aria-label="Search"
+          v-model="searchLogRequest.date"
+        />
+      </b-form>
+      <div class="col-md-6">
+        <button class="btn btn-primary" id="button-search" @click="searchPersonalLog()">
+          <b-icon icon="search"></b-icon> Find
+        </button>
       </div>
-      <div class="card-body">
-        <div class="system-log-div">
-          <b-table
-            :items="sytemLogList"
-            :fields="fieldsPerLog"
-            head-variant="dark"
-            id="my-table-systemLogList"
-            responsive="sm"
-            sticky-header
-            striped
-            hover
-            small
-            sort-icon-left
-            :per-page="perPageSystemLog"
-            :current-page="currentPageSystemLog"
-          >
-            <template v-slot:cell(status)="data">
-              <template v-if="data.value === 'Success'">
-                <b-icon
-                  icon="check-circle-fill"
-                  font-scale="1"
-                  variant="success"
-                ></b-icon>
-                {{ data.value }}
-              </template>
-              <template v-else>
-                <b-icon icon="x-circle-fill" font-scale="1" variant="danger"></b-icon>
-                {{ data.value }}
-              </template>
+      <div class="col-sm-2">
+        <button class="btn btn-secondary" id="button-search" @click="getListSytemLog()">
+          <b-icon icon="search"></b-icon> Find by me
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="system-log-div">
+        <b-table
+          :items="sytemLogList"
+          :fields="fieldsPerLog"
+          head-variant="dark"
+          id="my-table-systemLogList"
+          responsive="sm"
+          sticky-header
+          striped
+          hover
+          small
+          sort-icon-left
+          :per-page="perPageSystemLog"
+          :current-page="currentPageSystemLog"
+        >
+          <template v-slot:cell(status)="data">
+            <template v-if="data.value === 'Success'">
+              <b-icon icon="check-circle-fill" font-scale="1" variant="success"></b-icon>
+              {{ data.value }}
             </template>
-          </b-table>
-          <strong class="mt-3">Current Page: {{ currentPageSystemLog }}</strong>
-          <hr class="my-4" />
-          <div class="row" style="margin-left: 10px">
-            <div class="column">
-              <b-pagination
-                size="md"
-                pills
-                v-model="currentPageSystemLog"
-                :total-rows="rowsSystemLog"
-                :per-page="perPageSystemLog"
-                aria-controls="my-table"
-              ></b-pagination>
-            </div>
+            <template v-else>
+              <b-icon icon="x-circle-fill" font-scale="1" variant="danger"></b-icon>
+              {{ data.value }}
+            </template>
+          </template>
+        </b-table>
+        <strong class="mt-3">Current Page: {{ currentPageSystemLog }}</strong>
+        <hr class="my-4" />
+        <div class="row" style="margin-left: 10px">
+          <div class="column">
+            <b-pagination
+              size="md"
+              pills
+              v-model="currentPageSystemLog"
+              :total-rows="rowsSystemLog"
+              :per-page="perPageSystemLog"
+              aria-controls="my-table"
+            ></b-pagination>
           </div>
         </div>
       </div>
@@ -564,6 +555,10 @@ h3 {
   overflow: auto;
 }
 
+label {
+  margin-left: 10px;
+}
+
 .card-header-log {
   background-color: #ffa50000;
   color: whitesmoke;
@@ -604,6 +599,11 @@ button {
 }
 .system-log-div {
   font-size: 13px;
+  margin: 0 30px 0 30px;
+}
+
+.row {
+  margin: 0 30px 0 30px;
 }
 .b-table-sticky-header {
   overflow-y: auto;
