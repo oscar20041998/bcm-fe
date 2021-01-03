@@ -54,6 +54,7 @@
                         v-model="userRequest.passWord"
                         required
                         size="sm"
+                        @keypress.enter="login()"
                       />
                       <p>{{ errors[0] }}</p>
                     </div>

@@ -2,7 +2,7 @@
   <b-overlay :show="show" rounded="sm">
     <div class="jumbotron">
       <b-row>
-        <b-col sm="6">
+        <b-col sm="5">
           <h5>
             <b-icon icon="reception4"></b-icon>
             TRANSACTION LIST
@@ -40,16 +40,14 @@
               v-model="criteriaTranactionId"
               size="sm"
             ></b-input>
-            <template v-if="criteriaTranactionId != ''">
-              <b-button
-                squared
-                variant="success"
-                size="md"
-                @click="searchTransactionById()"
-                >Search
-              </b-button>
-            </template>
           </b-form>
+        </b-col>
+        <b-col sm="1">
+          <template v-if="criteriaTranactionId != ''">
+            <b-button squared variant="success" size="md" @click="searchTransactionById()"
+              >Search
+            </b-button>
+          </template>
         </b-col>
       </b-row>
       <hr class="my-4" />

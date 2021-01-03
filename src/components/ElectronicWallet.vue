@@ -1,27 +1,30 @@
 <template>
   <div style="height: 600px; min-height: 10px; overflow-y: scroll">
-    <div class="row">
+    <b-row>
       <template v-for="e in listEwallet">
-        <div class="col-sm-2" v-bind:key="e.id">
-          <div class="card">
-            <img class="card-img-top" :src="e.imageContent" />
-            <div class="card-body">
-              <h5 class="card-title">
-                <strong>{{ e.walletName }}</strong>
-              </h5>
-              <p class="card-text">{{ e.createBy }} - {{ e.createDate }}</p>
-              <b-form-checkbox
-                v-model="e.status"
-                name="check-button"
-                size="lg"
-                switch
-                @change="onChange(e, $event)"
-              ></b-form-checkbox>
-            </div>
-          </div>
-        </div>
+        <b-col v-bind:key="e.id">
+          <b-card
+            v-bind:key="e.id"
+            :title="e.walletName"
+            :img-src="e.imageContent"
+            img-alt="Image"
+            img-top
+            tag="article"
+            style="max-width: 20rem"
+            class="mb-2"
+          >
+            <p class="card-text">{{ e.createBy }} - {{ e.createDate }}</p>
+            <b-form-checkbox
+              v-model="e.status"
+              name="check-button"
+              size="lg"
+              switch
+              @change="onChange(e, $event)"
+            ></b-form-checkbox>
+          </b-card>
+        </b-col>
       </template>
-    </div>
+    </b-row>
   </div>
 </template>
 <script>
@@ -202,8 +205,7 @@ export default {
 </script>
 <style scoped>
 img {
-  height: 160px;
-  width: 280px;
+  height: 140px;
 }
 .table td,
 .table th {

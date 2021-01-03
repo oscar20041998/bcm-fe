@@ -5,7 +5,7 @@
         <b-col>
           <h5>
             <b-icon icon="cup"></b-icon>
-            FOOD & DRINK MANAGEMENT
+            PRODUCT MANAGEMENT
           </h5>
         </b-col>
         <b-col>
@@ -16,7 +16,7 @@
               title="Show category"
               variant="light"
             >
-              <b-icon icon="card-text" variant="dark"></b-icon> SHOW CATEGORY
+              <b-icon icon="card-text" variant="dark"></b-icon> CATEGORY
             </b-button>
 
             <template v-if="currentRole == 'ROLE_ADMINISTRATOR'">
@@ -27,12 +27,11 @@
                 data-target="#addNewProducModal"
                 @click="clearData()"
               >
-                <b-icon icon="plus-circle"></b-icon> ADD NEW PRODUCT
+                <b-icon icon="plus-circle"></b-icon> ADD NEW
               </b-button>
             </template>
           </b-button-group>
         </b-col>
-        <b-col></b-col>
         <b-col></b-col>
         <b-col>
           <b-input

@@ -16,7 +16,7 @@
             v-on:click="clearData()"
             title="Add new user"
           >
-            <b-icon icon="person-plus-fill"></b-icon>
+            <b-icon icon="person-plus-fill"></b-icon> ADD NEW
           </b-button>
         </div>
         <div class="col-sm-2">

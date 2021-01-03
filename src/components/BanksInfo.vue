@@ -3,7 +3,7 @@
     <div style="height: 670px; min-height: 10px; overflow-y: scroll">
       <div class="row">
         <template v-for="b in listBankInfo">
-          <div class="col-sm-2" v-bind:key="b.bankCode">
+          <div class="col-sm-3" v-bind:key="b.bankCode">
             <div class="card">
               <img class="card-img-top" :src="b.imageContent" />
               <div class="card-body">
