@@ -17,11 +17,6 @@ import PaymentProduct from '../components/PaymentProduct.vue'
 
 Vue.use(VueRouter)
 const routes = [{
-        path: '/navigation-bar',
-        name: 'NavigationBar',
-        component: NavigationBar
-    },
-    {
         path: '/',
         name: 'Login',
         component: Login

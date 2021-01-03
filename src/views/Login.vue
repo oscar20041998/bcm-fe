@@ -54,7 +54,6 @@
                         v-model="userRequest.passWord"
                         required
                         size="sm"
-                        @keyup.enter="login()"
                       />
                       <p>{{ errors[0] }}</p>
                     </div>
@@ -68,7 +67,7 @@
               id="button-login"
               variant="light"
               class="btn btn-dark btn-lg btn-block"
-              @keyup.enter="login()"
+              @click="login()"
             >
               <div class="hiden">
                 <b-icon

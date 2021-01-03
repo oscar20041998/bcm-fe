@@ -42,10 +42,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 _vue["default"].use(_vueRouter["default"]);
 
 var routes = [{
-  path: '/navigation-bar',
-  name: 'NavigationBar',
-  component: _NavigationBar["default"]
-}, {
   path: '/',
   name: 'Login',
   component: _Login["default"]

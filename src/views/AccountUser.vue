@@ -23,249 +23,250 @@
           <b-icon icon="search"></b-icon>
         </div>
       </div>
-    </div>
-    <div class="user-div">
-      <b-table
-        :items="listAccount"
-        :fields="fields"
-        head-variant="dark"
-        id="my-table-account-user"
-        responsive="sm"
-        striped
-        hover
-        small
-        sort-icon-left
-        :per-page="perPage"
-        :current-page="currentPage"
-        primary-key="userName"
-        :tbody-transition-props="transProps"
-      >
-        <template v-slot:cell(userName)="data">
-          <template v-if="data.item.isLogin === '0'">
-            <b-icon
-              icon="circle-fill"
-              animation="throb"
-              font-scale="1"
-              variant="success"
-              title="Being used"
-            ></b-icon>
-            {{ data.value }}
+      <hr class="my-4" />
+      <div class="user-div">
+        <b-table
+          :items="listAccount"
+          :fields="fields"
+          head-variant="dark"
+          id="my-table-account-user"
+          responsive="sm"
+          striped
+          hover
+          small
+          sort-icon-left
+          :per-page="perPage"
+          :current-page="currentPage"
+          primary-key="userName"
+          :tbody-transition-props="transProps"
+        >
+          <template v-slot:cell(userName)="data">
+            <template v-if="data.item.isLogin === '0'">
+              <b-icon
+                icon="circle-fill"
+                animation="throb"
+                font-scale="1"
+                variant="success"
+                title="Being used"
+              ></b-icon>
+              {{ data.value }}
+            </template>
+            <template v-else>
+              <b-icon
+                icon="circle-fill"
+                font-scale="1"
+                variant="danger"
+                title="Not active now"
+              ></b-icon>
+              {{ data.value }}
+            </template>
           </template>
-          <template v-else>
-            <b-icon
-              icon="circle-fill"
-              font-scale="1"
-              variant="danger"
-              title="Not active now"
-            ></b-icon>
-            {{ data.value }}
+          <template v-slot:cell(status)="data">
+            <template v-if="data.value === 'ACTIVE'">
+              <b-icon icon="unlock-fill" font-scale="1" variant="success"></b-icon>
+              {{ data.value }}
+            </template>
+            <template v-else-if="data.value === 'BLOCKED'">
+              <b-icon
+                icon="lock-fill"
+                animation="throb"
+                font-scale="1"
+                variant="danger"
+              ></b-icon>
+              {{ data.value }}
+            </template>
           </template>
-        </template>
-        <template v-slot:cell(status)="data">
-          <template v-if="data.value === 'ACTIVE'">
-            <b-icon icon="unlock-fill" font-scale="1" variant="success"></b-icon>
-            {{ data.value }}
-          </template>
-          <template v-else-if="data.value === 'BLOCKED'">
-            <b-icon
-              icon="lock-fill"
-              animation="throb"
-              font-scale="1"
-              variant="danger"
-            ></b-icon>
-            {{ data.value }}
-          </template>
-        </template>
-        <template v-slot:cell(option)="data">
-          <b-row>
-            <b-col>
-              <template
-                v-if="
-                  (currentRole == 'ROLE_ADMINISTRATOR' ||
-                    currentRole == 'ROLE_MANAGER') &&
-                  data.item.role != 'Role Administrator' &&
-                  currentAccountId != data.item.accountId
-                "
-              >
-                <button
-                  type="button"
-                  class="btn btn-link btn-sm"
-                  data-toggle="modal"
-                  data-target="#accountUserModal"
-                  @click="getAccountDetail(data.item.accountId)"
+          <template v-slot:cell(option)="data">
+            <b-row>
+              <b-col>
+                <template
+                  v-if="
+                    (currentRole == 'ROLE_ADMINISTRATOR' ||
+                      currentRole == 'ROLE_MANAGER') &&
+                    data.item.role != 'Role Administrator' &&
+                    currentAccountId != data.item.accountId
+                  "
                 >
-                  <b-icon icon="pen-fill"></b-icon>
-                </button>
-              </template>
-            </b-col>
-          </b-row>
-        </template>
-      </b-table>
-      <div class="row" style="margin-left: 10px">
-        <div class="column">
-          <b-pagination
-            size="md"
-            pills
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="my-table"
-          ></b-pagination>
+                  <button
+                    type="button"
+                    class="btn btn-link btn-sm"
+                    data-toggle="modal"
+                    data-target="#accountUserModal"
+                    @click="getAccountDetail(data.item.accountId)"
+                  >
+                    <b-icon icon="pen-fill"></b-icon>
+                  </button>
+                </template>
+              </b-col>
+            </b-row>
+          </template>
+        </b-table>
+        <div class="row" style="margin-left: 10px">
+          <div class="column">
+            <b-pagination
+              size="md"
+              pills
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="my-table"
+            ></b-pagination>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Modal account user -->
-    <div
-      class="modal fade"
-      id="accountUserModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="false"
-      data-backdrop="static"
-    >
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 id="title-form" class="modal-title">INFORMATION DETAIL</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="code"></b-icon>
-                Account ID
-              </label>
+      <!-- Modal account user -->
+      <div
+        class="modal fade"
+        id="accountUserModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="false"
+        data-backdrop="static"
+      >
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 id="title-form" class="modal-title">INFORMATION DETAIL</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="code"></b-icon>
+                  Account ID
+                </label>
 
-              <div class="col-sm-4">
-                {{ accountInfo.accountId }}
+                <div class="col-sm-4">
+                  {{ accountInfo.accountId }}
+                </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="person-square"></b-icon>
-                Used By
-              </label>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="person-square"></b-icon>
+                  Used By
+                </label>
 
-              <div class="col-sm-4">
-                {{ accountInfo.usedBy }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="calendar2-date"></b-icon>
-                Role
-              </label>
-              <div class="col-sm-4" style="text-align: left">
-                {{ accountInfo.role }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="card-heading"></b-icon>
-                Account name
-              </label>
-              <div class="col-sm-6">
-                {{ accountInfo.userName }}
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="key-fill"></b-icon>
-                Password
-              </label>
-              <div class="col-sm-6">
-                {{ accountInfo.password }}
-              </div>
-              <template
-                v-if="
-                  (accountInfo.status == 'ACTIVE' || accountInfo.status == 'BLOCKED') &&
-                  (currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER')
-                "
-              >
-                <div class="col-sm-1">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    v-on:click="resetPassword()"
-                    title="Reset password for this account"
-                  >
-                    <b-icon icon="bootstrap-reboot"></b-icon>
-                  </button>
+                <div class="col-sm-4">
+                  {{ accountInfo.usedBy }}
                 </div>
-              </template>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="phone-vibrate"> </b-icon>
-                Status
-              </label>
-              <div class="col-sm-6">
-                {{ accountInfo.status }}
               </div>
-              <template
-                v-if="
-                  accountInfo.status == 'ACTIVE' &&
-                  (currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER')
-                "
-              >
-                <div class="col-sm-1">
-                  <button
-                    type="button"
-                    class="btn btn-danger"
-                    v-on:click="blockAccountUser()"
-                    title="Block this account"
-                  >
-                    <b-icon icon="lock-fill"></b-icon>
-                  </button>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="calendar2-date"></b-icon>
+                  Role
+                </label>
+                <div class="col-sm-4" style="text-align: left">
+                  {{ accountInfo.role }}
                 </div>
-              </template>
-              <template
-                v-else-if="
-                  accountInfo.status == 'BLOCKED' &&
-                  (currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER')
-                "
-              >
-                <div class="col-sm-1">
-                  <button
-                    type="button"
-                    class="btn btn-success"
-                    v-on:click="unblockAccountUser()"
-                    title="Unblock this account"
-                  >
-                    <b-icon icon="unlock-fill"></b-icon>
-                  </button>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="card-heading"></b-icon>
+                  Account name
+                </label>
+                <div class="col-sm-6">
+                  {{ accountInfo.userName }}
                 </div>
-              </template>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="mailbox2"></b-icon>
-                Create by
-              </label>
-              <div class="col-sm-8">
-                {{ accountInfo.createdBy }}
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="calendar"></b-icon>
-                Create date
-              </label>
-              <div class="col-sm-8">
-                {{ accountInfo.createdDate }}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="key-fill"></b-icon>
+                  Password
+                </label>
+                <div class="col-sm-6">
+                  {{ accountInfo.password }}
+                </div>
+                <template
+                  v-if="
+                    (accountInfo.status == 'ACTIVE' || accountInfo.status == 'BLOCKED') &&
+                    (currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER')
+                  "
+                >
+                  <div class="col-sm-1">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      v-on:click="resetPassword()"
+                      title="Reset password for this account"
+                    >
+                      <b-icon icon="bootstrap-reboot"></b-icon>
+                    </button>
+                  </div>
+                </template>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-3 col-form-label">
-                <b-icon icon="calendar2-check"></b-icon>
-                Last login date
-              </label>
-              <div class="col-sm-8">
-                {{ accountInfo.lasLoginDate }}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="phone-vibrate"> </b-icon>
+                  Status
+                </label>
+                <div class="col-sm-6">
+                  {{ accountInfo.status }}
+                </div>
+                <template
+                  v-if="
+                    accountInfo.status == 'ACTIVE' &&
+                    (currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER')
+                  "
+                >
+                  <div class="col-sm-1">
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      v-on:click="blockAccountUser()"
+                      title="Block this account"
+                    >
+                      <b-icon icon="lock-fill"></b-icon>
+                    </button>
+                  </div>
+                </template>
+                <template
+                  v-else-if="
+                    accountInfo.status == 'BLOCKED' &&
+                    (currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER')
+                  "
+                >
+                  <div class="col-sm-1">
+                    <button
+                      type="button"
+                      class="btn btn-success"
+                      v-on:click="unblockAccountUser()"
+                      title="Unblock this account"
+                    >
+                      <b-icon icon="unlock-fill"></b-icon>
+                    </button>
+                  </div>
+                </template>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="mailbox2"></b-icon>
+                  Create by
+                </label>
+                <div class="col-sm-8">
+                  {{ accountInfo.createdBy }}
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="calendar"></b-icon>
+                  Create date
+                </label>
+                <div class="col-sm-8">
+                  {{ accountInfo.createdDate }}
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-3 col-form-label">
+                  <b-icon icon="calendar2-check"></b-icon>
+                  Last login date
+                </label>
+                <div class="col-sm-8">
+                  {{ accountInfo.lasLoginDate }}
+                </div>
               </div>
             </div>
           </div>
@@ -310,7 +311,7 @@ input {
 
 .user-div {
   font-size: 13px;
-  margin: 0px 30px 0px 30px;
+  height: 660px;
 }
 table#my-table-account-user .flip-list-move {
   transition: transform 1s;
