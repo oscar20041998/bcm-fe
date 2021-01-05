@@ -379,12 +379,7 @@
                   </h5>
                   <ValidationProvider rules="required">
                     <div slot-scope="{ errors }" id="priceDiv" style="display: none">
-                      <b-input
-                        class="form-control"
-                        ref="input"
-                        v-model="product.price"
-                        v-mask="'###,###,###,###'"
-                      />
+                      <b-input class="form-control" ref="input" v-model="product.price" />
                       <p>{{ errors[0] }}</p>
                     </div>
                   </ValidationProvider>

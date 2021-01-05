@@ -24,93 +24,95 @@
         </div>
       </div>
       <hr class="my-4" />
-      <div class="user-div">
-        <b-table
-          :items="listAccount"
-          :fields="fields"
-          head-variant="dark"
-          id="my-table-account-user"
-          responsive="sm"
-          striped
-          hover
-          small
-          sort-icon-left
-          :per-page="perPage"
-          :current-page="currentPage"
-          primary-key="userName"
-          :tbody-transition-props="transProps"
-        >
-          <template v-slot:cell(userName)="data">
-            <template v-if="data.item.isLogin === '0'">
-              <b-icon
-                icon="circle-fill"
-                animation="throb"
-                font-scale="1"
-                variant="success"
-                title="Being used"
-              ></b-icon>
-              {{ data.value }}
+      <div class="card-body">
+        <div class="user-div">
+          <b-table
+            :items="listAccount"
+            :fields="fields"
+            head-variant="dark"
+            id="my-table-account-user"
+            responsive="sm"
+            striped
+            hover
+            small
+            sort-icon-left
+            :per-page="perPage"
+            :current-page="currentPage"
+            primary-key="userName"
+            :tbody-transition-props="transProps"
+          >
+            <template v-slot:cell(userName)="data">
+              <template v-if="data.item.isLogin === '0'">
+                <b-icon
+                  icon="circle-fill"
+                  animation="throb"
+                  font-scale="1"
+                  variant="success"
+                  title="Being used"
+                ></b-icon>
+                {{ data.value }}
+              </template>
+              <template v-else>
+                <b-icon
+                  icon="circle-fill"
+                  font-scale="1"
+                  variant="danger"
+                  title="Not active now"
+                ></b-icon>
+                {{ data.value }}
+              </template>
             </template>
-            <template v-else>
-              <b-icon
-                icon="circle-fill"
-                font-scale="1"
-                variant="danger"
-                title="Not active now"
-              ></b-icon>
-              {{ data.value }}
+            <template v-slot:cell(status)="data">
+              <template v-if="data.value === 'ACTIVE'">
+                <b-icon icon="unlock-fill" font-scale="1" variant="success"></b-icon>
+                {{ data.value }}
+              </template>
+              <template v-else-if="data.value === 'BLOCKED'">
+                <b-icon
+                  icon="lock-fill"
+                  animation="throb"
+                  font-scale="1"
+                  variant="danger"
+                ></b-icon>
+                {{ data.value }}
+              </template>
             </template>
-          </template>
-          <template v-slot:cell(status)="data">
-            <template v-if="data.value === 'ACTIVE'">
-              <b-icon icon="unlock-fill" font-scale="1" variant="success"></b-icon>
-              {{ data.value }}
-            </template>
-            <template v-else-if="data.value === 'BLOCKED'">
-              <b-icon
-                icon="lock-fill"
-                animation="throb"
-                font-scale="1"
-                variant="danger"
-              ></b-icon>
-              {{ data.value }}
-            </template>
-          </template>
-          <template v-slot:cell(option)="data">
-            <b-row>
-              <b-col>
-                <template
-                  v-if="
-                    (currentRole == 'ROLE_ADMINISTRATOR' ||
-                      currentRole == 'ROLE_MANAGER') &&
-                    data.item.role != 'Role Administrator' &&
-                    currentAccountId != data.item.accountId
-                  "
-                >
-                  <button
-                    type="button"
-                    class="btn btn-link btn-sm"
-                    data-toggle="modal"
-                    data-target="#accountUserModal"
-                    @click="getAccountDetail(data.item.accountId)"
+            <template v-slot:cell(option)="data">
+              <b-row>
+                <b-col>
+                  <template
+                    v-if="
+                      (currentRole == 'ROLE_ADMINISTRATOR' ||
+                        currentRole == 'ROLE_MANAGER') &&
+                      data.item.role != 'Role Administrator' &&
+                      currentAccountId != data.item.accountId
+                    "
                   >
-                    <b-icon icon="pen-fill"></b-icon>
-                  </button>
-                </template>
-              </b-col>
-            </b-row>
-          </template>
-        </b-table>
-        <div class="row" style="margin-left: 10px">
-          <div class="column">
-            <b-pagination
-              size="md"
-              pills
-              v-model="currentPage"
-              :total-rows="rows"
-              :per-page="perPage"
-              aria-controls="my-table"
-            ></b-pagination>
+                    <button
+                      type="button"
+                      class="btn btn-link btn-sm"
+                      data-toggle="modal"
+                      data-target="#accountUserModal"
+                      @click="getAccountDetail(data.item.accountId)"
+                    >
+                      <b-icon icon="pen-fill"></b-icon>
+                    </button>
+                  </template>
+                </b-col>
+              </b-row>
+            </template>
+          </b-table>
+          <div class="row" style="margin-left: 10px">
+            <div class="column">
+              <b-pagination
+                size="md"
+                pills
+                v-model="currentPage"
+                :total-rows="rows"
+                :per-page="perPage"
+                aria-controls="my-table"
+              ></b-pagination>
+            </div>
           </div>
         </div>
       </div>

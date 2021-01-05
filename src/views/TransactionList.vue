@@ -39,11 +39,14 @@
               placeholder="Transaction ID: 12345..."
               v-model="criteriaTranactionId"
               size="sm"
+              maxlength="14"
             ></b-input>
           </b-form>
         </b-col>
         <b-col sm="1">
-          <template v-if="criteriaTranactionId != ''">
+          <template
+            v-if="criteriaTranactionId != '' && criteriaTranactionId.length == 14"
+          >
             <b-button squared variant="success" size="md" @click="searchTransactionById()"
               >Search
             </b-button>
@@ -51,75 +54,81 @@
         </b-col>
       </b-row>
       <hr class="my-4" />
-      <div class="region-transactions">
-        <b-table
-          head-variant="dark"
-          id="my-table"
-          responsive="sm"
-          sticky-header
-          striped
-          hover
-          small
-          sort-icon-left
-          show-empty
-          :items="transactionInfo.listTransaction"
-          :fields="transactionInfo.fields"
-          :per-page="perPage"
-          :current-page="currentPage"
-        >
-          <template v-slot:cell(action)="data">
-            <b-button
-              pill
-              size="sm"
-              @click="showDetailTranasction(data.item)"
-              class="mr-1"
-              title="Show detail this transaction"
-              variant="dark"
-              v-b-modal.modal-scrollable
-            >
-              <b-icon size="sm" icon="pencil" font-scale="1"></b-icon>
-            </b-button>
-          </template>
-        </b-table>
-        <strong class="mt-3">Current Page: {{ currentPage }}</strong>
-        <hr class="my-4" />
-        <div class="row" style="margin-left: 10px">
-          <div class="column">
-            <b-pagination
-              size="md"
-              pills
-              v-model="currentPage"
-              :total-rows="rows"
-              :per-page="perPage"
-              aria-controls="my-table"
-            ></b-pagination>
+      <div class="card-body">
+        <div class="region-transactions">
+          <b-table
+            head-variant="dark"
+            id="my-table"
+            responsive="sm"
+            sticky-header
+            striped
+            hover
+            small
+            sort-icon-left
+            show-empty
+            :items="transactionInfo.listTransaction"
+            :fields="transactionInfo.fields"
+            :per-page="perPage"
+            :current-page="currentPage"
+          >
+            <template v-slot:cell(action)="data">
+              <b-button
+                pill
+                size="sm"
+                @click="showDetailTranasction(data.item)"
+                class="mr-1"
+                title="Show detail this transaction"
+                variant="dark"
+                v-b-modal.modal-scrollable
+              >
+                <b-icon size="sm" icon="pencil" font-scale="1"></b-icon>
+              </b-button>
+            </template>
+          </b-table>
+          <strong class="mt-3">Current Page: {{ currentPage }}</strong>
+          <hr class="my-4" />
+          <div class="row" style="margin-left: 10px">
+            <div class="column">
+              <b-pagination
+                size="md"
+                pills
+                v-model="currentPage"
+                :total-rows="rows"
+                :per-page="perPage"
+                aria-controls="my-table"
+              ></b-pagination>
+            </div>
           </div>
-        </div>
-        <div class="col-sm-3">
-          <strong>Total transactions: </strong>
-          <b-icon icon="bullseye" variant="danger"></b-icon>
-          {{ transactionInfo.totalTransaction }}
-        </div>
-        <div class="col-sm-3">
-          <strong>Total cash options: </strong>
-          <b-icon icon="wallet-fill" variant="success"></b-icon>
-          {{ transactionInfo.totalCashOption }}
-        </div>
-        <div class="col-sm-3">
-          <strong>Total card options: </strong>
-          <b-icon icon="credit-card2-front-fill"></b-icon>
-          {{ transactionInfo.totalCardOption }}
-        </div>
-        <div class="col-sm-3">
-          <strong>Total E.Wallet options: </strong>
-          <b-icon icon="upc-scan"></b-icon>
-          {{ transactionInfo.totalEWalletOption }}
-        </div>
-        <div class="col-sm-12" style="text-align: right">
-          <h2>
-            <b-icon icon="server" animation="cylon-vertical" variant="secondary"></b-icon>
-            Total sale: {{ transactionInfo.totalSale }}đ
-          </h2>
+          <div class="col-sm-3">
+            <strong>Total transactions: </strong>
+            <b-icon icon="bullseye" variant="danger"></b-icon>
+            {{ transactionInfo.totalTransaction }}
+          </div>
+          <div class="col-sm-3">
+            <strong>Total cash options: </strong>
+            <b-icon icon="wallet-fill" variant="success"></b-icon>
+            {{ transactionInfo.totalCashOption }}
+          </div>
+          <div class="col-sm-3">
+            <strong>Total card options: </strong>
+            <b-icon icon="credit-card2-front-fill"></b-icon>
+            {{ transactionInfo.totalCardOption }}
+          </div>
+          <div class="col-sm-3">
+            <strong>Total E.Wallet options: </strong>
+            <b-icon icon="upc-scan"></b-icon>
+            {{ transactionInfo.totalEWalletOption }}
+          </div>
+          <div class="col-sm-12" style="text-align: right">
+            <h2>
+              <b-icon
+                icon="server"
+                animation="cylon-vertical"
+                variant="secondary"
+              ></b-icon>
+              Total sale: {{ transactionInfo.totalSale }}đ
+            </h2>
+          </div>
         </div>
       </div>
 

@@ -35,66 +35,68 @@
         </div>
       </div>
       <hr class="my-4" />
-      <div class="user-div">
-        <b-table
-          :items="listUser"
-          :fields="fields"
-          head-variant="dark"
-          id="my-table-systemLogList"
-          responsive="sm"
-          striped
-          hover
-          small
-          :per-page="perPage"
-          :current-page="currentPage"
-        >
-          <template v-slot:cell(option)="data">
-            <div class="row">
-              <div class="col-md-3">
-                <button
-                  class="btn btn-link btn-sm"
-                  type="button"
-                  @click="clickOnEditUser(data.item.userId)"
-                  data-toggle="modal"
-                  data-target="#profileUserModal"
-                >
-                  <b-icon icon="exclamation-circle-fill" variant="info"></b-icon>
-                </button>
-              </div>
-              <div class="col-md-3">
-                <button
-                  class="btn btn-link btn-sm"
-                  @click="clickOnEditUser(data.item.userId)"
-                  data-toggle="modal"
-                  data-target="#addNewUserModal"
-                >
-                  <b-icon icon="pen-fill"></b-icon>
-                </button>
-              </div>
-              <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
+      <div class="card-body">
+        <div class="user-div">
+          <b-table
+            :items="listUser"
+            :fields="fields"
+            head-variant="dark"
+            id="my-table-systemLogList"
+            responsive="sm"
+            striped
+            hover
+            small
+            :per-page="perPage"
+            :current-page="currentPage"
+          >
+            <template v-slot:cell(option)="data">
+              <div class="row">
                 <div class="col-md-3">
                   <button
-                    type="button"
                     class="btn btn-link btn-sm"
-                    v-on:click="deleteUserById(data.item.userId)"
+                    type="button"
+                    @click="clickOnEditUser(data.item.userId)"
+                    data-toggle="modal"
+                    data-target="#profileUserModal"
                   >
-                    <b-icon icon="archive-fill" variant="danger"></b-icon>
+                    <b-icon icon="exclamation-circle-fill" variant="info"></b-icon>
                   </button>
                 </div>
-              </template>
+                <div class="col-md-3">
+                  <button
+                    class="btn btn-link btn-sm"
+                    @click="clickOnEditUser(data.item.userId)"
+                    data-toggle="modal"
+                    data-target="#addNewUserModal"
+                  >
+                    <b-icon icon="pen-fill"></b-icon>
+                  </button>
+                </div>
+                <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
+                  <div class="col-md-3">
+                    <button
+                      type="button"
+                      class="btn btn-link btn-sm"
+                      v-on:click="deleteUserById(data.item.userId)"
+                    >
+                      <b-icon icon="archive-fill" variant="danger"></b-icon>
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </b-table>
+          <div class="row" style="margin-left: 10px">
+            <div class="column">
+              <b-pagination
+                size="md"
+                pills
+                v-model="currentPage"
+                :total-rows="rows"
+                :per-page="perPage"
+                aria-controls="my-table"
+              ></b-pagination>
             </div>
-          </template>
-        </b-table>
-        <div class="row" style="margin-left: 10px">
-          <div class="column">
-            <b-pagination
-              size="md"
-              pills
-              v-model="currentPage"
-              :total-rows="rows"
-              :per-page="perPage"
-              aria-controls="my-table"
-            ></b-pagination>
           </div>
         </div>
       </div>
