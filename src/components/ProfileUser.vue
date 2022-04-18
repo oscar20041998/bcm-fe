@@ -1,212 +1,166 @@
 <template>
-  <div class="jumbotron">
+  <div class="content">
     <h5 style="text-align: center">
       <b-icon icon="person-circle" font-scale="2"></b-icon>
       PROFILE DETAIL OF USER
     </h5>
     <hr class="my-4" />
-    <div
-      id="carouselExampleInterval"
-      class="carousel slide"
-      data-ride="carousel"
-    >
-      <!--PERSONAL LOG-->
-      <div class="carousel-inner">
-        <div class="carousel-item active" data-interval="1000">
-          <div class="card">
-            <div class="card-body">
-              <div class="card-header">PERSONAL INFORMATION</div>
-              <div class="card-body">
-                <div class="form-group row">
-                  <label for="staticEmail" class="col-sm-3 col-form-label">
-                    <b-icon icon="info-circle-fill"></b-icon> User ID
-                  </label>
-                  <div class="col-sm-5">
-                    {{ profileInfo.userId }}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="inputPassword" class="col-sm-3 col-form-label">
-                    <b-icon icon="person-square"></b-icon>
-                    Full name
-                  </label>
-                  <div class="col-sm-5">
-                    {{ profileInfo.fullName }}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="inputPassword" class="col-sm-3 col-form-label">
-                    <b-icon icon="calendar2-date"></b-icon>
-                    Birthday
-                  </label>
-                  <div class="col-sm-5">
-                    {{ profileInfo.dateOfBirth }}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="inputPassword" class="col-sm-3 col-form-label">
-                    <b-icon icon="card-heading"></b-icon>
-                    Id card
-                  </label>
-                  <div class="col-sm-5">
-                    {{ profileInfo.idCard }}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="inputPassword" class="col-sm-3 col-form-label">
-                    <b-icon icon="map"></b-icon>
-                    Address
-                  </label>
-                  <div class="col-sm-5">
-                    {{ profileInfo.address }}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="inputPassword" class="col-sm-3 col-form-label">
-                    <b-icon icon="phone-vibrate"> </b-icon>
-                    Phone number
-                  </label>
-                  <div class="col-sm-5">
-                    {{ profileInfo.phoneNumber }}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="inputPassword" class="col-sm-3 col-form-label">
-                    <b-icon icon="mailbox2"></b-icon>
-                    Email
-                  </label>
-                  <div class="col-sm-5">
-                    {{ profileInfo.email }}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="inputPassword" class="col-sm-3 col-form-label">
-                    <b-icon icon="cursor"></b-icon>
-                    Created by
-                  </label>
-                  <div class="col-sm-5">
-                    {{ profileInfo.createBy }}
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="inputPassword" class="col-sm-3 col-form-label">
-                    <b-icon icon="calendar2-check-fill"></b-icon>
-                    Created on date
-                  </label>
-                  <div class="col-sm-5">
-                    {{ profileInfo.createDate }}
-                  </div>
-                </div>
-              </div>
-              <div class="card-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary btn-sm"
-                  data-toggle="modal"
-                  data-target="#profileUserModal"
-                  @click="hideDivRole()"
-                >
-                  <b-icon icon=" tools"></b-icon> EDIT INFORMATION
-                </button>
-              </div>
+    <!--PERSONAL LOG-->
+    <div class="card">
+      <div class="card-body">
+        <div class="card-header">PERSONAL INFORMATION</div>
+        <div class="card-body">
+          <div class="form-group row">
+            <label for="staticEmail" class="col-sm-3 col-form-label">
+              <b-icon icon="info-circle-fill"></b-icon> User ID
+            </label>
+            <div class="col-sm-5">
+              {{ profileInfo.userId }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">
+              <b-icon icon="person-square"></b-icon>
+              Full name
+            </label>
+            <div class="col-sm-5">
+              {{ profileInfo.fullName }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">
+              <b-icon icon="calendar2-date"></b-icon>
+              Birthday
+            </label>
+            <div class="col-sm-5">
+              {{ profileInfo.dateOfBirth }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">
+              <b-icon icon="card-heading"></b-icon>
+              Id card
+            </label>
+            <div class="col-sm-5">
+              {{ profileInfo.idCard }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">
+              <b-icon icon="map"></b-icon>
+              Address
+            </label>
+            <div class="col-sm-5">
+              {{ profileInfo.address }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">
+              <b-icon icon="phone-vibrate"> </b-icon>
+              Phone number
+            </label>
+            <div class="col-sm-5">
+              {{ profileInfo.phoneNumber }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">
+              <b-icon icon="mailbox2"></b-icon>
+              Email
+            </label>
+            <div class="col-sm-5">
+              {{ profileInfo.email }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">
+              <b-icon icon="cursor"></b-icon>
+              Created by
+            </label>
+            <div class="col-sm-5">
+              {{ profileInfo.createBy }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">
+              <b-icon icon="calendar2-check-fill"></b-icon>
+              Created on date
+            </label>
+            <div class="col-sm-5">
+              {{ profileInfo.createDate }}
             </div>
           </div>
         </div>
-        <div class="carousel-item">
-          <div class="card">
-            <div class="card-header">ACCOUNT INFORMATION</div>
-            <div class="card-body secondary">
-              <div class="form-group row">
-                <label for="" class="col-sm-3 col-form-label">Account ID</label>
-                <div class="col-sm-5">
-                  {{ profileInfo.accountId }}
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="inputPassword" class="col-sm-3 col-form-label"
-                  >User name</label
-                >
-                <div class="col-sm-5">
-                  {{ profileInfo.userName }}
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="inputPassword" class="col-sm-3 col-form-label"
-                  >Role code</label
-                >
-                <div class="col-sm-5">
-                  {{ profileInfo.role }}
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="inputPassword" class="col-sm-3 col-form-label"
-                  >Status</label
-                >
-                <div class="col-sm-5">
-                  {{ profileInfo.statusAccount }}
-                  <template v-if="profileInfo.statusAccount === 'ACTIVE'">
-                    <b-icon icon="check-circle-fill" variant="success"></b-icon>
-                  </template>
-                  <template v-else-if="profileInfo.statusAccount === 'BLOCKED'">
-                    <b-icon icon="lock-fill" variant="danger"></b-icon>
-                  </template>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="inputPassword" class="col-sm-3 col-form-label"
-                  >Created by</label
-                >
-                <div class="col-sm-5">
-                  {{ profileInfo.accountCreatedBy }}
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="inputPassword" class="col-sm-3 col-form-label"
-                  >Created date</label
-                >
-                <div class="col-sm-5">
-                  {{ profileInfo.accountCreatedDate }}
-                </div>
-              </div>
-            </div>
-            <div class="card-footer">
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm"
-                data-toggle="modal"
-                data-target="#changPasswordUserModal"
-              >
-                <b-icon icon="tools"></b-icon> CHANGE PASSWORD
-              </button>
-            </div>
-          </div>
+        <div class="card-footer">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            data-toggle="modal"
+            data-target="#profileUserModal"
+            @click="hideDivRole()"
+          >
+            <b-icon icon=" tools"></b-icon> EDIT INFORMATION
+          </button>
         </div>
       </div>
     </div>
-    <a
-      class="carousel-control-prev"
-      href="#carouselExampleInterval"
-      role="button"
-      data-slide="prev"
-    >
-      <b-icon
-        icon="arrow-left-circle-fill"
-        font-scale="4"
-        variant="secondary"
-      ></b-icon>
-    </a>
-    <a
-      class="carousel-control-next"
-      href="#carouselExampleInterval"
-      role="button"
-      data-slide="next"
-    >
-      <b-icon
-        icon="arrow-right-circle-fill"
-        font-scale="4"
-        variant="secondary"
-      ></b-icon>
-    </a>
+    <div class="card" style="margin-top:30px">
+      <div class="card-header">ACCOUNT INFORMATION</div>
+      <div class="card-body secondary">
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label">Account ID</label>
+          <div class="col-sm-5">
+            {{ profileInfo.accountId }}
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="inputPassword" class="col-sm-3 col-form-label">User name</label>
+          <div class="col-sm-5">
+            {{ profileInfo.userName }}
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="inputPassword" class="col-sm-3 col-form-label">Role code</label>
+          <div class="col-sm-5">
+            {{ profileInfo.role }}
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="inputPassword" class="col-sm-3 col-form-label">Status</label>
+          <div class="col-sm-5">
+            {{ profileInfo.statusAccount }}
+            <template v-if="profileInfo.statusAccount === 'ACTIVE'">
+              <b-icon icon="check-circle-fill" variant="success"></b-icon>
+            </template>
+            <template v-else-if="profileInfo.statusAccount === 'BLOCKED'">
+              <b-icon icon="lock-fill" variant="danger"></b-icon>
+            </template>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="inputPassword" class="col-sm-3 col-form-label">Created by</label>
+          <div class="col-sm-5">
+            {{ profileInfo.accountCreatedBy }}
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="inputPassword" class="col-sm-3 col-form-label">Created date</label>
+          <div class="col-sm-5">
+            {{ profileInfo.accountCreatedDate }}
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          data-toggle="modal"
+          data-target="#changPasswordUserModal"
+        >
+          <b-icon icon="tools"></b-icon> CHANGE PASSWORD
+        </button>
+      </div>
+    </div>
 
     <!-- Modal profile user -->
     <div
@@ -221,15 +175,8 @@
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">
-              EDIT PROFILE USER
-            </h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
+            <h5 class="modal-title" id="exampleModalLabel">EDIT PROFILE USER</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -371,11 +318,7 @@
               <div class="col-sm-10">
                 <ValidationProvider rules="required">
                   <div slot-scope="{ errors }">
-                    <input
-                      type="text"
-                      class="form-control"
-                      v-model="profileInfo.email"
-                    />
+                    <input type="text" class="form-control" v-model="profileInfo.email" />
                     <p>{{ errors[0] }}</p>
                   </div>
                 </ValidationProvider>
@@ -397,11 +340,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary btn-sm"
-              data-dismiss="modal"
-            >
+            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
               <b-icon icon="bookmark-x"></b-icon>
               CANCEL
             </button>
@@ -431,12 +370,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">UPDATE PASSWORD</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>

@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="show" rounded="sm">
-    <div class="jumbotron" style="heigth: 660px">
+    <div class="content" style="heigth: 660px">
       <div class="row">
         <div class="col-md-5">
           <h5>
@@ -63,7 +63,6 @@
             head-variant="dark"
             id="my-table-systemLogList"
             responsive="sm"
-            sticky-header
             striped
             hover
             small
@@ -86,7 +85,25 @@
               </template>
             </template>
           </b-table>
-          <strong class="mt-3">Current Page: {{ currentPageSystemLog }}</strong>
+          <div class="form-inline">
+            <div class="col-sm-1">
+              <strong>Current Page: {{ currentPageSystemLog }}</strong>
+            </div>
+            <div class="form-group col-sm-4">
+              <select
+                class="form-select input-sm"
+                style="width: 100px; margin-right: 10px"
+                v-model="perPageSystemLog"
+                id="select-rows-page"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="50">50</option>
+                <option selected value="100">100</option>
+              </select>
+              <label for="select-rows-page">{{ perPageSystemLog }} rows/ page</label>
+            </div>
+          </div>
           <hr class="my-4" />
           <div class="row" style="margin-left: 10px">
             <div class="column">
@@ -103,196 +120,6 @@
         </div>
       </div>
     </div>
-    <!-- <template
-            v-if="currentRole == 'ROLE_ADMINISTRATOR' || currentRole == 'ROLE_MANAGER'"
-          >
-            <div class="carousel-item">
-              <h5>ACCOUNT USER ACTIVITIVE LOG</h5>
-              <div class="card-body">
-                <div class="system-log-div">
-                  <b-table
-                    :items="accountUserLog"
-                    :fields="fieldsAccountLog"
-                    head-variant="dark"
-                    id="my-table-systemLogList"
-                    responsive="sm"
-                    sticky-header
-                    striped
-                    sort-icon-left
-                    hover
-                    small
-                    :per-page="perPageAccountLog"
-                    :current-page="currentPageAccountLog"
-                  >
-                    <template v-slot:cell(userAction)="data">
-                      <template v-if="data.value === 'INSERTED'">
-                        <b-icon
-                          icon="plus-circle"
-                          font-scale="1"
-                          variant="success"
-                        ></b-icon>
-                        {{ data.value }}
-                      </template>
-                      <template v-else-if="data.value === 'DELETED'">
-                        <b-icon icon="trash" font-scale="1" variant="danger"></b-icon>
-                        {{ data.value }}
-                      </template>
-                      <template v-else>
-                        <b-icon icon="hammer" font-scale="1" variant="info"></b-icon>
-                        {{ data.value }}
-                      </template>
-                    </template>
-                  </b-table>
-                  <strong class="mt-3">Current Page: {{ currentPageAccountLog }}</strong>
-                  <hr class="my-4" />
-                  <div class="row" style="margin-left: 10px">
-                    <div class="column">
-                      <b-pagination
-                        size="md"
-                        pills
-                        v-model="currentPageAccountLog"
-                        :total-rows="rowsAccountLog"
-                        :per-page="perPageAccountLog"
-                        aria-controls="my-table"
-                      ></b-pagination>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="carousel-item">
-              <h5>USER ACTIVITIVE LOG</h5>
-              <div class="card-body">
-                <div class="system-log-div">
-                  <b-table
-                    :items="userLog"
-                    :fields="fieldsUserLog"
-                    head-variant="dark"
-                    id="my-table-systemLogList"
-                    responsive="sm"
-                    sticky-header
-                    striped
-                    sort-icon-left
-                    hover
-                    small
-                    :per-page="perPageUserLog"
-                    :current-page="currentPageUserLog"
-                  >
-                    <template v-slot:cell(userAction)="data">
-                      <template v-if="data.value === 'INSERTED'">
-                        <b-icon
-                          icon="plus-circle"
-                          font-scale="1"
-                          variant="success"
-                        ></b-icon>
-                        {{ data.value }}
-                      </template>
-                      <template v-else-if="data.value === 'DELETED'">
-                        <b-icon icon="trash" font-scale="1" variant="danger"></b-icon>
-                        {{ data.value }}
-                      </template>
-                      <template v-else>
-                        <b-icon icon="hammer" font-scale="1" variant="info"></b-icon>
-                        {{ data.value }}
-                      </template>
-                    </template>
-                  </b-table>
-                  <strong class="mt-3">Current Page: {{ currentPageUserLog }}</strong>
-                  <hr class="my-4" />
-                  <div class="row" style="margin-left: 10px">
-                    <div class="column">
-                      <b-pagination
-                        size="md"
-                        pills
-                        v-model="currentPageUserLog"
-                        :total-rows="rowsUserLog"
-                        :per-page="perPageUserLog"
-                        aria-controls="my-table"
-                      ></b-pagination>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="carousel-item">
-              <h5>PRODUCT ACTIVITIVE LOG</h5>
-              <div class="card-body">
-                <div class="system-log-div">
-                  <b-table
-                    :items="productLog"
-                    :fields="fieldsProductLog"
-                    head-variant="dark"
-                    id="my-table-systemLogList"
-                    responsive="sm"
-                    sticky-header
-                    striped
-                    sort-icon-left
-                    hover
-                    small
-                    :per-page="perPageProductLog"
-                    :current-page="currentPageProductLog"
-                  >
-                    <template v-slot:cell(userAction)="data">
-                      <template v-if="data.value === 'INSERTED'">
-                        <b-icon
-                          icon="plus-circle"
-                          font-scale="1"
-                          variant="success"
-                        ></b-icon>
-                        {{ data.value }}
-                      </template>
-                      <template v-else-if="data.value === 'DELETED'">
-                        <b-icon icon="trash" font-scale="1" variant="danger"></b-icon>
-                        {{ data.value }}
-                      </template>
-                      <template v-else>
-                        <b-icon icon="hammer" font-scale="1" variant="info"></b-icon>
-                        {{ data.value }}
-                      </template>
-                    </template>
-                  </b-table>
-                  <strong class="mt-3">Current Page: {{ currentPageProductLog }}</strong>
-                  <hr class="my-4" />
-                  <div class="row" style="margin-left: 10px">
-                    <div class="column">
-                      <b-pagination
-                        size="md"
-                        pills
-                        v-model="currentPageProductLog"
-                        :total-rows="rowsProductLog"
-                        :per-page="perPageProductLog"
-                        aria-controls="my-table"
-                      ></b-pagination>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </template> -->
-    <!-- </div> -->
-    <!-- <a
-        class="carousel-control-prev"
-        href="#carouselExampleInterval"
-        role="button"
-        data-slide="prev"
-      >
-        <b-icon icon="arrow-left-circle-fill" font-scale="4" variant="secondary"></b-icon>
-      </a>
-      <a
-        class="carousel-control-next"
-        href="#carouselExampleInterval"
-        role="button"
-        data-slide="next"
-      >
-        <b-icon
-          icon="arrow-right-circle-fill"
-          font-scale="4"
-          variant="secondary"
-        ></b-icon>
-      </a> -->
-    <!-- </div> -->
   </b-overlay>
 </template>
 
@@ -347,14 +174,8 @@ export default {
       show: true,
       // current role of user
       currentRole: JSON.parse(localStorage.getItem("user")).roleCode,
-      perPageSystemLog: 20,
       currentPageSystemLog: 1,
-      perPageUserLog: 20,
-      currentPageUserLog: 1,
-      perPageAccountLog: 20,
-      currentPageAccountLog: 1,
-      perPageProductLog: 20,
-      currentPageProductLog: 1,
+      perPageSystemLog: 100,
     };
   },
 

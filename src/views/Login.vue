@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="show" rounded="sm">
-    <div id="form-login" class="jumbotron">
+    <div id="form-login" class="content">
       <div class="container">
         <div class="row" style="margin-left: 30%">
           <div class="col-md-1">

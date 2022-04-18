@@ -80,7 +80,8 @@ const routes = [{
         path: '/payment-product/',
         name: 'PaymentProduct',
         component: PaymentProduct
-    }
+    },
+
 ]
 
 const router = new VueRouter({

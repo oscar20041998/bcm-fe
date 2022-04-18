@@ -1,28 +1,31 @@
 <template>
   <b-overlay :show="show" rounded="sm">
-    <div style="height: 670px; min-height: 10px; overflow-y: scroll">
-      <div class="row">
+    <div class="content">
+      <b-row>
         <template v-for="b in listBankInfo">
-          <div class="col-sm-3" v-bind:key="b.bankCode">
-            <div class="card">
-              <img class="card-img-top" :src="b.imageContent" />
-              <div class="card-body">
-                <h5 class="card-title">
-                  <strong>{{ b.bankName }}</strong>
-                </h5>
-                <p class="card-text">{{ b.createBy }} - {{ b.createDate }}</p>
-                <b-form-checkbox
-                  v-model="b.status"
-                  name="check-button"
-                  size="lg"
-                  switch
-                  @change="onChange(b, $event)"
-                ></b-form-checkbox>
-              </div>
-            </div>
-          </div>
+          <b-col v-bind:key="b.bankCode">
+            <b-card
+              v-bind:key="b.bankCode"
+              :title="b.bankName"
+              :img-src="b.imageContent"
+              img-alt="Image"
+              img-top
+              tag="article"
+              style="float: left; margin: 0 10px 0 10px"
+              class="mb-2"
+            >
+              <b-card-text> {{ b.createBy }} - {{ b.createDate }} </b-card-text>
+              <b-form-checkbox
+                v-model="b.status"
+                name="check-button"
+                size="lg"
+                switch
+                @change="onChange(b, $event)"
+              ></b-form-checkbox>
+            </b-card>
+          </b-col>
         </template>
-      </div>
+      </b-row>
     </div>
   </b-overlay>
 </template>
@@ -215,13 +218,25 @@ export default {
   box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.2);
   text-align: center;
   background-color: transparent;
-  width: 250px;
+  width: 15rem;
   height: fit-content;
+  float: left;
   padding: auto;
   margin: 20px auto auto auto;
 }
+
+.card-body {
+  width: 15rem;
+}
+
+h4 {
+  font-size: 14px;
+  font-weight: bold;
+  font-family: "Lucida Bright";
+}
+
 img {
-  height: 160px;
-  width: 248px;
+  height: 10rem;
+  width: 15rem;
 }
 </style>

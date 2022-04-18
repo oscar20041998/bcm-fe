@@ -1,6 +1,6 @@
 <template>
-  <b-overlay :show="show" rounded="sm">
-    <div class="jumbotron">
+  <div class="content">
+    <b-overlay :show="show" rounded="sm">
       <b-row>
         <b-col>
           <h5>
@@ -31,11 +31,11 @@
         </b-col>
         <b-col></b-col>
         <b-col></b-col>
-        <b-col>
+        <b-col style="text-align: right">
           <b-button-group>
             <button
               type="button"
-              class="btn btn-light"
+              class="btn btn-warning"
               data-toggle="modal"
               data-target="#listOrderPendingModal"
               @click="getListOrderPending()"
@@ -49,11 +49,19 @@
       <hr class="my-2" />
 
       <!-- Card detail table -->
-      <div class="row" style="height: 670px; min-height: 10px; overflow-y: scroll">
-        <template v-for="p in positions">
-          <div class="col-md-3" style="margin-top: 25px" v-bind:key="p.positionId">
-            <div class="card">
-              <div class="card-header">{{ p.positionName }}</div>
+      <div class="row">
+        <template>
+          <div
+            v-for="p in positions"
+            class="col-md-3"
+            style="margin-top: 25px"
+            v-bind:key="p.positionId"
+          >
+            <div class="card" style="border: 0.5px solid #a9a6a6; boder-radius: 0.5rem">
+              <div v-if="p.positionStatus == 'CLOSED'" class="card-header">
+                {{ p.positionName }}
+              </div>
+              <div v-else class="card-header card-success">{{ p.positionName }}</div>
               <div class="card-body" style="text-align: center">
                 <div class="row" style="text-align: left">
                   <div class="col-md-12">
@@ -67,37 +75,43 @@
                 </div>
                 <b-icon icon="cup-straw" variant="dark" font-scale="4"></b-icon>
               </div>
-            </div>
-            <div class="card-footer">
-              <div class="row">
-                <template v-if="p.positionStatus === 'OPENING'">
-                  <div class="col-sm-7">
-                    <strong>{{ p.positionStatus }}</strong>
-                    <b-icon
-                      icon="circle-fill"
-                      animation="throb"
-                      font-scale="1"
-                      variant="success"
-                    ></b-icon>
+              <div class="card-footer">
+                <div class="row">
+                  <template v-if="p.positionStatus === 'OPENING'">
+                    <div class="col-sm-7">
+                      <strong>{{ p.positionStatus }}</strong>
+                      <b-icon
+                        style="margin-left: 5px"
+                        icon="circle-fill"
+                        animation="throb"
+                        font-scale="1"
+                        variant="success"
+                      ></b-icon>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="col-sm-7">
+                      <strong>{{ p.positionStatus }}</strong>
+                      <b-icon
+                        style="margin-left: 5px"
+                        icon="x-circle-fill"
+                        font-scale="1"
+                        variant="danger"
+                      ></b-icon>
+                    </div>
+                  </template>
+                  <div class="col-sm-5">
+                    <b-button
+                      block
+                      squared
+                      variant="outline-dark"
+                      title="Go to detail"
+                      @click="goToPageOrder(p)"
+                    >
+                      <b-icon variant="info" icon="power"></b-icon>
+                      OPEN
+                    </b-button>
                   </div>
-                </template>
-                <template v-else>
-                  <div class="col-sm-7">
-                    <strong>{{ p.positionStatus }}</strong>
-                    <b-icon icon="x-circle-fill" font-scale="1" variant="danger"></b-icon>
-                  </div>
-                </template>
-                <div class="col-sm-5">
-                  <b-button
-                    block
-                    squared
-                    variant="outline-secondary"
-                    title="Go to detail"
-                    @click="goToPageOrder(p)"
-                  >
-                    <b-icon variant="info" icon="power"></b-icon>
-                    OPEN
-                  </b-button>
                 </div>
               </div>
             </div>
@@ -183,26 +197,10 @@
           </div>
         </div>
       </div>
-    </div>
-  </b-overlay>
+    </b-overlay>
+  </div>
   <!-- Modal add new product-->
 </template>
-
-<!-- <template v-if="prd.quantity >= 4">
-                          <b-icon icon="chevron-double-up" variant="danger"></b-icon>
-                        </template>
-                        <template v-else-if="prd.quantity <= 3 && prd.quantity > 1">
-                          <b-icon icon="chevron-up" variant="success"></b-icon>
-                        </template> -->
-
-<!-- <button
-                              class="btn btn-success btn-sm"
-                              data-toggle="modal"
-                              data-target="#addNewProducModal"
-                              @click="checkDone(prd)"
-                            >
-                              <b-icon icon="check-circle"></b-icon>
-                            </button> -->
 
 <script>
 import http from "../axios/http-common";
@@ -250,7 +248,11 @@ export default {
     this.getPosition();
   },
 
-  computed: {},
+  computed: {
+    rows() {
+      return this.listOrderPending.length;
+    },
+  },
 
   methods: {
     // check local storage
@@ -447,6 +449,10 @@ h6 {
 
 .card-footer {
   background-color: whitesmoke;
+}
+
+.card-success {
+  background-color: #28a745 !important;
 }
 
 #input-quantity {

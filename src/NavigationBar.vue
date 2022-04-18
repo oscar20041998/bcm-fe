@@ -1,6 +1,6 @@
 <template>
   <div id="navigation-bar">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark w-responsive">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark w-responsive nav-bar-fixed">
       <div class="collapse navbar-collapse" id="navaigation-bar">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0 column">
           <template
@@ -103,9 +103,7 @@
       >
         <b-list-group-item class="d-flex align-items-center" style="height: 30px">
           <b-avatar size="sm" class="mr-2"></b-avatar>
-          <span class="mr-auto"
-            ><i>Hello,{{ getUserName }}</i></span
-          >
+          <span class="mr-auto">Hello,{{ getUserName }}</span>
           <div class="btn-group dropleft">
             <button
               type="button"
@@ -114,7 +112,7 @@
               aria-haspopup="false"
               aria-expanded="false"
             >
-              Option <b-icon icon="gear-fill" aria-hidden="true"></b-icon>
+              <b-icon icon="gear-fill" aria-hidden="true"></b-icon>
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
               <button
@@ -256,7 +254,9 @@ export default {
 //  <router-link class="nav-link" to="/">Home</router-link>
 
 #navigation-bar {
-  padding: 0px;
+  padding: 30px;
+  font-size: 13px;
+  font-family: Tahoma;
 
   button {
     font-size: 12px;
@@ -281,7 +281,193 @@ export default {
   }
 
   html {
-    font-size: 12px;
+    font-size: 13px;
+  }
+
+  .modal-header {
+    background: #343a40;
+    color: white;
   }
 }
+.nav-bar-fixed {
+  box-shadow: rgb(193 200 207) 12px 10px 5px 5px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.content {
+  padding-top: 50px;
+  width: 100%;
+  text-align: left;
+  vertical-align: top;
+
+  table tr,
+  thead,
+  th,
+  tbody,
+  td {
+    font-size: 13px;
+  }
+}
+
+.loading-text {
+  text-align: center;
+  font-size: 23px;
+  position: relative;
+  display: block;
+  z-index: 1000;
+}
+
+select {
+  cursor: pointer;
+}
+
+@media print {
+  body {
+    text-align: center;
+    font-size: 13px;
+    font-family: "Lucida Bright";
+
+    i,
+    strong {
+      font-size: 14px;
+      font-family: "Lucida Bright", cursive;
+      word-break: break-all;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-size: 13px !important;
+      font-family: "Lucida Bright", cursive !important;
+      word-break: break-all !important;
+      font-weight: "normal";
+    }
+
+    .row {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      margin-right: -15px;
+      margin-left: -15px;
+    }
+
+    .col,
+    .col-1,
+    .col-10,
+    .col-11,
+    .col-12,
+    .col-2,
+    .col-3,
+    .col-4,
+    .col-5,
+    .col-6,
+    .col-7,
+    .col-8,
+    .col-9,
+    .col-auto,
+    .col-lg,
+    .col-lg-1,
+    .col-lg-10,
+    .col-lg-11,
+    .col-lg-12,
+    .col-lg-2,
+    .col-lg-3,
+    .col-lg-4,
+    .col-lg-5,
+    .col-lg-6,
+    .col-lg-7,
+    .col-lg-8,
+    .col-lg-9,
+    .col-lg-auto,
+    .col-md,
+    .col-md-1,
+    .col-md-10,
+    .col-md-11,
+    .col-md-12,
+    .col-md-2,
+    .col-md-3,
+    .col-md-4,
+    .col-md-5,
+    .col-md-6,
+    .col-md-7,
+    .col-md-8,
+    .col-md-9,
+    .col-md-auto,
+    .col-sm,
+    .col-sm-1,
+    .col-sm-10,
+    .col-sm-11,
+    .col-sm-12,
+    .col-sm-2,
+    .col-sm-3,
+    .col-sm-4,
+    .col-sm-5,
+    .col-sm-6,
+    .col-sm-7,
+    .col-sm-8,
+    .col-sm-9,
+    .col-sm-auto,
+    .col-xl,
+    .col-xl-1,
+    .col-xl-10,
+    .col-xl-11,
+    .col-xl-12,
+    .col-xl-2,
+    .col-xl-3,
+    .col-xl-4,
+    .col-xl-5,
+    .col-xl-6,
+    .col-xl-7,
+    .col-xl-8,
+    .col-xl-9,
+    .col-xl-auto {
+      position: relative;
+      width: 100%;
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+    table,
+    th,
+    td {
+      border: 1px solid;
+    }
+
+    .table .thead-dark th {
+      color: #fff;
+      background-color: #343a40;
+      border-color: #454d55;
+    }
+
+    .table > thead {
+      vertical-align: bottom;
+    }
+
+    tbody,
+    td,
+    tfoot,
+    th,
+    thead,
+    tr {
+      border-color: inherit;
+      border-style: solid;
+      border-width: 0;
+    }
+
+    .table > :not(:first-child) {
+      border-top: 2px solid currentColor;
+    }
+  }
+} ;
 </style>

@@ -1,10 +1,10 @@
 "use strict";
 
 module.exports = {
-  publicPath: '/bcm-web-app/',
-  devServer: {
-    proxy: "https://coffee-management-api.herokuapp.com",
-    compress: true,
-    disableHostCheck: true
-  }
+    publicPath: '/bcm-web-app/',
+    devServer: {
+        proxy: "http://localhost:1510/",
+        compress: true,
+        disableHostCheck: true
+    }
 };

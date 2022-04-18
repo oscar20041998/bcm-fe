@@ -1,6 +1,10 @@
 <template>
-  <div class="jumbotron">
+  <div class="content">
     <b-overlay :show="show" rounded="sm">
+      <template v-if="show">
+        <div class="loading-text">Loading <b-icon icon="three-dots" animation="cylon" font-scale="1"></b-icon></div>
+      </template>
+
       <b-row>
         <b-col>
           <h5>
@@ -10,15 +14,6 @@
         </b-col>
         <b-col>
           <b-button-group>
-            <b-button
-              squared
-              v-b-toggle.sidebar-footer
-              title="Show category"
-              variant="light"
-            >
-              <b-icon icon="card-text" variant="dark"></b-icon> CATEGORY
-            </b-button>
-
             <template v-if="currentRole == 'ROLE_ADMINISTRATOR'">
               <b-button
                 squared
@@ -32,14 +27,13 @@
             </template>
           </b-button-group>
         </b-col>
-        <b-col></b-col>
         <b-col>
           <b-input
             id="input-search"
-            class="form-control"
             type="search"
             size="sm"
             placeholder="Search"
+            style="width:300px; float:right"
             aria-label="Search"
             v-model="criteria"
             @keyup="getProductsByName()"
@@ -52,48 +46,27 @@
       <hr class="my-4" />
 
       <!-- Left side bar -->
-      <div class="form-row">
-        <b-sidebar
-          bg-variant="light"
-          text-variant="light"
-          shadow
-          id="sidebar-footer"
-          aria-label="Sidebar with custom footer"
-          header
-        >
-          <template #footer="{ hide }">
-            <div class="d-flex bg-dark text-light align-items-center px-3 py-2">
-              <b-button size="sm" @click="hide">
-                <b-icon
-                  icon="chevron-double-left"
-                  variant="light"
-                  animation="cylon"
-                ></b-icon>
-              </b-button>
-            </div>
-          </template>
+      <div class="row">
+        <div class="col-sm-2">
           <div class="px-4 py-6">
             <h5 style="color: black; text-algin: left">CATEGORY AVAILABLE</h5>
-            <hr class="my-4" />
             <b-button block variant="light" @click="callBackProducts()">
-              <b-icon icon="star-fill" variant="dark"></b-icon> All
+              <b-icon icon="star-fill" variant="warning"></b-icon> All
             </b-button>
             <template>
               <b-list-group v-for="c in listCategory" :key="c.idCategory">
                 <div class="row">
-                  <div class="col-sm-8">
+                  <b-button-group>
                     <b-button
                       block
                       variant="light"
                       v-model="categoryModelEdit.categoryId"
                       @click="getProductByCategoryId(c.idCategory)"
                     >
-                      <b-icon icon="star-fill" variant="dark"></b-icon>
+                      <b-icon icon="star-fill" variant="warning"></b-icon>
                       {{ c.categoryName }}
                     </b-button>
-                  </div>
-                  <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
-                    <div class="col-sm-2">
+                    <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
                       <b-button
                         variant="light"
                         title="Delete category"
@@ -101,8 +74,6 @@
                       >
                         <b-icon icon="trash-fill" variant="danger"></b-icon>
                       </b-button>
-                    </div>
-                    <div class="col-sm-2">
                       <b-button
                         variant="light"
                         title="Edit this category"
@@ -110,10 +81,10 @@
                         data-target="#categoryDetailModal"
                         @click="bindingData(c)"
                       >
-                        <b-icon icon=" pen"> </b-icon>
+                        <b-icon icon="pen-fill" variant="primary"> </b-icon>
                       </b-button>
-                    </div>
-                  </template>
+                    </template>
+                  </b-button-group>
                 </div>
               </b-list-group>
             </template>
@@ -148,10 +119,8 @@
               </div>
             </template>
           </div>
-        </b-sidebar>
-      </div>
-      <div style="height: 670px; min-height: 10px; overflow-x: scroll">
-        <b-row>
+        </div>
+        <div class="col-xl-10">
           <template v-for="prd in listProduct">
             <b-col :key="prd.productId">
               <b-card
@@ -161,11 +130,11 @@
                 img-alt="Image"
                 img-top
                 tag="article"
-                style="max-width: 20rem"
-                class="mb-2"
+                style="float: left; margin: 0 10px 0 10px"
+                class="mb-3"
               >
                 <b-card-text>
-                  {{ prd.priceFormatString }}
+                  {{ prd.price }}
                 </b-card-text>
 
                 <b-button-group>
@@ -189,37 +158,30 @@
                       <b-icon icon="archive-fill" variant="danger"></b-icon>
                     </b-button>
                   </template>
+                  <template
+                    v-if="
+                      currentRole === 'ROLE_ADMINISTRATOR' ||
+                      currentRole === 'ROLE_MANAGER'
+                    "
+                  >
+                    <b-button
+                      size="sm"
+                      squared
+                      title="Show history product"
+                      variant="light"
+                      data-toggle="modal"
+                      data-target="#productLogModal"
+                      @click="getListProductLogById(prd.productId)"
+                    >
+                      <b-icon icon="clock-history" variant="dark"></b-icon>
+                    </b-button>
+                  </template>
                 </b-button-group>
               </b-card>
             </b-col>
           </template>
-        </b-row>
+        </div>
       </div>
-
-      <!-- <b-button-group>
-                      <b-button
-                        size="sm"
-                        block
-                        squared
-                        variant="light"
-                        @click="bindingDataProduct(prd.productId)"
-                      >
-                        <b-icon variant="primary" icon="pen-fill"></b-icon>
-                      </b-button>
-                      <template v-if="currentRole === 'ROLE_ADMINISTRATOR'">
-                        <b-button
-                          size="sm"
-                          block
-                          squared
-                          variant="light"
-                          @click="deleteProduct(prd.productId)"
-                        >
-                          <b-icon icon="archive-fill" variant="danger"></b-icon>
-                        </b-button>
-                      </template>
-                    </b-button-group> -->
-
-      <!-- Modal category-->
       <div
         class="modal fade"
         id="categoryDetailModal"
@@ -286,11 +248,22 @@
         aria-hidden="false"
         data-backdrop="static"
       >
-        <div class="modal-dialog modal-md" role="document">
+        <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 id="title-form" class="modal-title">ADD NEW/ UPDATE PRODUCT</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <h5 v-if="modeAddForm == true" id="title-form" class="modal-title">
+                ADD NEW PRODUCT
+              </h5>
+              <h5 v-if="modeEditForm == true" id="title-form" class="modal-title">
+                UPDATE INFO PRODUCT
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                @click="clearData()"
+              >
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -300,7 +273,7 @@
                   <b-icon icon="code"></b-icon>
                   Product Id
                 </label>
-                <div class="col-sm-8">
+                <div class="col-sm-7">
                   <input
                     type="text"
                     class="form-control"
@@ -314,19 +287,20 @@
                   <b-icon icon="tag-fill"></b-icon>
                   Category
                 </label>
-                <div class="col-sm-8">
+                <div class="col-sm-7">
                   <div>
                     <ValidationProvider rules="required">
                       <div slot-scope="{ errors }">
                         <select
-                          class="form-control"
+                          class="form-select"
                           id="selectCategory"
                           v-model="product.categoryId"
                         >
+                          <option value="">Select one</option>
                           <option
                             v-for="ctg in listCategory"
-                            selected="ctg.categoryId"
                             :key="ctg.idCategory"
+                            :selected="ctg.idCategory == product.categoryId"
                             :value="ctg.idCategory"
                             :label="ctg.categoryName"
                           ></option>
@@ -342,13 +316,14 @@
                   <b-icon icon="box"></b-icon>
                   Product name
                 </label>
-                <div class="col-sm-8" style="text-align: left">
+                <div class="col-sm-7" style="text-align: left">
                   <ValidationProvider rules="required">
                     <div slot-scope="{ errors }">
                       <input
                         class="form-control"
                         type="text"
                         placeholder="Entry name of product"
+                        maxlength="100"
                         v-model="product.productName"
                       />
                       <p>{{ errors[0] }}</p>
@@ -361,7 +336,13 @@
                   <b-icon icon="image-fill"></b-icon>
                   Choose image
                 </label>
-                <input ref="fileInput" type="file" @change="pickFile" />
+                <input
+                  class="form-control col-sm-7"
+                  ref="fileInput"
+                  type="file"
+                  @change="pickFile"
+                />
+                <hr class="my-2" />
                 <div
                   class="imagePreviewWrapper"
                   :style="{ 'background-image': `url(${selectedFile})` }"
@@ -374,33 +355,241 @@
                   Price
                 </label>
                 <div class="col-sm-4">
-                  <h5 id="price-format-string" style="display: block">
-                    {{ product.priceFormatString }}
-                  </h5>
                   <ValidationProvider rules="required">
-                    <div slot-scope="{ errors }" id="priceDiv" style="display: none">
-                      <b-input class="form-control" ref="input" v-model="product.price" />
+                    <div slot-scope="{ errors }" id="priceDiv">
+                      <b-input
+                        class="form-control"
+                        ref="input"
+                        v-money="money"
+                        @input="changePrice($event)"
+                        v-model.lazy="product.price"
+                      />
                       <p>{{ errors[0] }}</p>
                     </div>
                   </ValidationProvider>
                 </div>
-                <div class="col-sm-4">
-                  <b-form-checkbox
-                    id="checkBoxEditMode"
-                    v-model="checked"
-                    name="check-button"
-                    switch
-                    @change="showEditPrice($event)"
-                  >
-                    Edit mode
-                  </b-form-checkbox>
-                </div>
+                <h4 v-if="modeEditForm == true" id="label-price" class="text col-sm-3">
+                  {{ labelPrice }}
+                </h4>
               </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-success btn-sm" @click="saveProduct()">
                 <b-icon icon="box-arrow-in-down-right"></b-icon>SAVE CHANGE
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Modal product log-->
+      <div
+        class="modal fade"
+        id="productLogModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="productLogModal"
+        aria-hidden="false"
+        data-backdrop="static"
+      >
+        <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 id="title-form" class="modal-title">PRODUCT HISTORY CHANGES</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <b-table
+                style="font-size = 13"
+                head-variant="dark"
+                id="my-table"
+                responsive="sm"
+                striped
+                hover
+                small
+                sort-icon-left
+                show-empty
+                :items="productLogList"
+                :fields="productLogFieds"
+                :per-page="perPage"
+                :current-page="currentPage"
+              >
+                <template v-slot:cell(action)="row">
+                  <template v-if="!row.detailsShowing">
+                    <b-button
+                      size="sm"
+                      @click="
+                        row.toggleDetails();
+                        getDetailLog(row);
+                      "
+                      class="mr-2"
+                      id="btn-detail-log-showing"
+                      variant="light"
+                    >
+                      <b-icon icon="caret-down-fill" variant="dark" size="sm"></b-icon>
+                    </b-button>
+                  </template>
+                  <template v-else>
+                    <b-button variant="light" size="sm" @click="row.toggleDetails()"
+                      ><b-icon icon="caret-up-fill" variant="dark" size="sm"></b-icon
+                    ></b-button>
+                  </template>
+                </template>
+                <template #row-details>
+                  <div class="col-sm">
+                    <template
+                      v-if="
+                        detailLog.previousDetail != null ||
+                        detailLog.currentDetail != null
+                      "
+                    >
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th scope="col">ADDITIONAL INFO</th>
+                            <th scope="col">PREVIOUS</th>
+                            <th scope="col">CURRENT</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td scope="row">Image</td>
+                            <td v-if="detailLog.previousDetail.image != null">
+                              <img
+                                class="card-img-top"
+                                style="height: 10rem; width: 10rem; float: left"
+                                :src="detailLog.previousDetail.image"
+                              />
+                            </td>
+                            <td v-else>-</td>
+                            <td>
+                              <img
+                                class="card-img-top"
+                                style="height: 10rem; width: 10rem; float: left"
+                                :src="detailLog.currentDetail.image"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td scope="row">Product Id</td>
+                            <td v-if="detailLog.previousDetail.productId != null">
+                              <label> {{ detailLog.previousDetail.productId }} </label>
+                            </td>
+                            <td v-else>-</td>
+                            <td>
+                              <label
+                                class="different-content"
+                                v-if="
+                                  detailLog.currentDetail.productId !=
+                                  detailLog.previousDetail.productId
+                                "
+                              >
+                                {{ detailLog.currentDetail.productId }}</label
+                              >
+                              <label v-else>
+                                {{ detailLog.currentDetail.productId }}</label
+                              >
+                            </td>
+                          </tr>
+                          <tr>
+                            <td scope="row">Product Name</td>
+                            <td v-if="detailLog.previousDetail.productName != null">
+                              <label> {{ detailLog.previousDetail.productName }} </label>
+                            </td>
+                            <td v-else>-</td>
+                            <td>
+                              <label
+                                class="different-content"
+                                v-if="
+                                  detailLog.currentDetail.productName !=
+                                  detailLog.previousDetail.productName
+                                "
+                              >
+                                {{ detailLog.currentDetail.productName }}</label
+                              >
+                              <label v-else>
+                                {{ detailLog.currentDetail.productName }}</label
+                              >
+                            </td>
+                          </tr>
+                          <tr>
+                            <td scope="row">Price</td>
+                            <td v-if="detailLog.previousDetail.price != null">
+                              <label>{{ detailLog.previousDetail.price }}</label>
+                            </td>
+                            <td v-else>-</td>
+                            <td>
+                              <label
+                                class="different-content"
+                                v-if="
+                                  detailLog.previousDetail.price !=
+                                  detailLog.currentDetail.price
+                                "
+                                >{{ detailLog.currentDetail.price }}</label
+                              >
+                              <label v-else>{{ detailLog.currentDetail.price }}</label>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td scope="row">Create By</td>
+                            <td v-if="detailLog.previousDetail.createBy != null">
+                              <label>{{ detailLog.previousDetail.createBy }}</label>
+                            </td>
+                            <td v-else>-</td>
+                            <td>
+                              <label
+                                class="different-content"
+                                v-if="
+                                  detailLog.currentDetail.createBy !=
+                                  detailLog.previousDetail.createBy
+                                "
+                                >{{ detailLog.currentDetail.createBy }}</label
+                              >
+                              <label v-else>{{ detailLog.currentDetail.createBy }}</label>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td scope="row">Create Date</td>
+                            <td v-if="detailLog.previousDetail.createDate != null">
+                              <label>{{ detailLog.previousDetail.createDate }}</label>
+                            </td>
+                            <td v-else>-</td>
+                            <td>
+                              <label
+                                class="different-content"
+                                v-if="
+                                  detailLog.currentDetail.createDate !=
+                                  detailLog.previousDetail.createDate
+                                "
+                                >{{ detailLog.currentDetail.createDate }}</label
+                              >
+                              <label v-else>{{
+                                detailLog.currentDetail.createDate
+                              }}</label>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </template>
+                  </div>
+                </template>
+              </b-table>
+              <strong class="mt-3">Current Page: {{ currentPage }}</strong>
+              <hr class="my-4" />
+              <div class="row" style="margin-left: 10px">
+                <div class="column">
+                  <b-pagination
+                    size="md"
+                    pills
+                    v-model="currentPage"
+                    :total-rows="rows"
+                    :per-page="perPage"
+                    aria-controls="my-table"
+                  ></b-pagination>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -414,6 +603,7 @@ import http from "../axios/http-common";
 import { parse } from "vue-currency-input";
 import { extend } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
+import { VMoney } from "v-money";
 
 // Add the required rule
 extend("required", {
@@ -427,8 +617,33 @@ export default {
       currentRole: JSON.parse(localStorage.getItem("user")).roleCode,
       accountCurrent: JSON.parse(localStorage.getItem("user")).accountId,
       userCurrent: JSON.parse(localStorage.getItem("user")).userName,
+      labelPrice: "",
+      money: {
+        thousands: ",",
+        precision: 2,
+        masked: true /* doesn't work with directive */,
+      },
       listCategory: [],
       listProduct: [],
+      productLogList: [],
+      detailLog: {
+        currentDetail: {
+          productId: "",
+          productName: "",
+          image: "",
+          price: "",
+          createBy: "",
+          createDate: "",
+        },
+        previousDetail: {
+          productId: "",
+          productName: "",
+          image: "",
+          price: "",
+          createBy: "",
+          createDate: "",
+        },
+      },
       categoryModelEdit: {
         categoryId: "",
         categoryName: "",
@@ -442,14 +657,28 @@ export default {
         categoryId: "",
         productName: "",
         price: "",
+        seqId: "",
         priceFormatString: "",
       },
+      productLogFieds: [
+        { key: "action", sortable: false },
+        { key: "logDate", sortable: true },
+        { key: "actionUser", sortable: true },
+        { key: "createBy", sortable: true },
+      ],
       checked: false,
       selectedFile: null,
       show: true,
+      sortBy: "createDate",
+      sortDesc: true,
+      perPage: 50,
+      currentPage: 1,
+      modeAddForm: false,
+      modeEditForm: false,
     };
   },
 
+  directives: { money: VMoney },
   mounted() {
     $("#loading").hide();
     this.checkLocalStorage();
@@ -458,13 +687,22 @@ export default {
   },
 
   computed: {
-    options() {
-      return {
-        distractionFree: false,
-        currency: "VND",
-        valueAsInteger: true,
-        autoDecimalMode: true,
-      };
+    // options() {
+    //   return {
+    //     locale: "vn-VN",
+    //     currency: "VND",
+    //     precision: 2,
+    //     hideCurrencySymbolOnFocus: true,
+    //     hideGroupingSeparatorOnFocus: true,
+    //     hideNegligibleDecimalDigitsOnFocus: true,
+    //     autoDecimalDigits: false,
+    //     exportValueAsInteger: true,
+    //     autoSign: false,
+    //     useGrouping: true,
+    //   };
+    // },
+    rows() {
+      return this.productLogList.length;
     },
     convertValueToInt() {
       return parse(this.product.price, this.options);
@@ -537,6 +775,7 @@ export default {
 
     // get all product
     getProducts() {
+      this.show = true;
       http
         .get("/product/api/get-all-products/" + this.accountCurrent)
         .then((response) => {
@@ -630,8 +869,7 @@ export default {
           showConfirmButton: false,
           timer: 2100,
         });
-        $(".modal").hide();
-        $(".modal-backdrop").css("display", "none");
+        $("button.close").click();
       }
     },
 
@@ -650,8 +888,11 @@ export default {
       this.product.productId = "";
       this.product.productName = "";
       this.product.categoryId = "";
-      this.selectedFile = null;
+      this.selectedFile = "";
       this.product.price = "";
+      this.labelPrice = "";
+      this.modeAddForm = true;
+      this.modeEditForm = false;
     },
 
     // save after edit
@@ -677,8 +918,7 @@ export default {
               });
               this.callBackCategories();
               this.callBackProducts();
-              $(".modal").hide();
-              $(".modal-backdrop").css("display", "none");
+              $("button.close").click();
             }
           })
           .catch((error) => {
@@ -704,8 +944,7 @@ export default {
           showConfirmButton: false,
           timer: 2100,
         });
-        $(".modal").hide();
-        $(".modal-backdrop").css("display", "none");
+        $("button.close").click();
       }
     },
 
@@ -755,8 +994,7 @@ export default {
               this.$router({
                 name: "NotFound",
               });
-              $(".modal").hide();
-              $(".modal-backdrop").css("display", "none");
+              $("button.close").click();
             });
         }
       });
@@ -769,6 +1007,7 @@ export default {
         categoryId: this.product.categoryId,
         productName: this.product.productName,
         image: this.selectedFile,
+        seqId: parseInt(this.product.seqId) || 1,
         price: this.product.price,
         createBy: this.userCurrent,
         createDate: "",
@@ -788,8 +1027,7 @@ export default {
                 timer: 2100,
               });
               this.callBackProducts();
-              $(".modal").hide();
-              $(".modal-backdrop").css("display", "none");
+              $("button.close").click();
             } else {
               this.$swal({
                 toast: true,
@@ -800,8 +1038,7 @@ export default {
                 showConfirmButton: false,
                 timer: 2100,
               });
-              $(".modal").hide();
-              $(".modal-backdrop").css("display", "none");
+              $("button.close").click();
             }
           })
           .catch((error) => {
@@ -814,8 +1051,7 @@ export default {
               showConfirmButton: false,
               timer: 2100,
             });
-            $(".modal").hide();
-            $(".modal-backdrop").css("display", "none");
+            $("button.close").click();
           });
       } else {
         this.$swal({
@@ -827,8 +1063,7 @@ export default {
           showConfirmButton: false,
           timer: 2100,
         });
-        $(".modal").hide();
-        $(".modal-backdrop").css("display", "none");
+        $("button.close").click();
       }
     },
 
@@ -839,8 +1074,18 @@ export default {
         .get("/product/api/get-product-by-id/" + productId + "/" + this.accountCurrent)
         .then((response) => {
           if (response.status == "200") {
-            this.product = response.data;
+            this.product.categoryId = response.data.categoryId;
+            this.product.productId = response.data.productId;
+            this.product.productName = response.data.productName;
+            this.product.price = response.data.price;
+            this.product.imageContent = response.data.imageContent;
+            this.product.createBy = response.data.c;
+            this.product.createDate = response.data.createBy;
+            this.product.seqId = parseInt(response.data.seqId);
             this.selectedFile = response.data.imageContent;
+            this.modeAddForm = false;
+            this.modeEditForm = true;
+            this.labelPrice = response.data.price;
           }
         })
         .catch((error) => {
@@ -1008,6 +1253,7 @@ export default {
     selectImage() {
       this.$refs.fileInput.click();
     },
+
     pickFile(event) {
       this.selectedFile = event.target.files[0];
       let input = this.$refs.fileInput;
@@ -1022,15 +1268,87 @@ export default {
       }
     },
 
-    // show input edit price
-    showEditPrice: function (event) {
-      if (event == true) {
-        $("#priceDiv").css("display", "block");
-        $("#price-format-string").css("display", "none");
+    changePrice(value) {
+      if (value == "0.00") {
+        $("#label-price").removeClass("text-decoration-line");
       } else {
-        $("#priceDiv").css("display", "none");
-        $("#price-format-string").css("display", "block");
+        $("#label-price").addClass("text-decoration-line");
       }
+    },
+
+    getListProductLogById(productId) {
+      http
+        .get(
+          "/product-log/api/get-list-product-log/" + this.accountCurrent + "/" + productId
+        )
+        .then((response) => {
+          if (response.status == "200") {
+            this.productLogList = response.data;
+            this.show = false;
+          } else {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: "Something went wrong !!!",
+              icon: "error",
+              showConfirmButton: false,
+              timer: 2100,
+            });
+            this.show = false;
+            this.$router.push({
+              name: "NotFound",
+            });
+          }
+        });
+    },
+
+    getDetailLog(row) {
+      this.show = true;
+      $("tr.b-table-details").remove();
+      $("tr.b-table-has-details").find("button").click();
+      http
+        .get(
+          "/product-log/api/get-product-log-detail/" +
+            this.accountCurrent +
+            "/" +
+            row.item.productId +
+            "/" +
+            parseInt(row.item.seqId)
+        )
+        .then((response) => {
+          if (response.status == "200") {
+            this.detailLog.currentDetail = response.data.current;
+            this.detailLog.previousDetail = response.data.previous;
+            this.show = false;
+          } else {
+            this.$swal({
+              toast: true,
+              showProgressBar: true,
+              position: "top-end",
+              title: "Something went wrong !!!",
+              icon: "error",
+              showConfirmButton: false,
+              timer: 2100,
+            });
+            this.show = false;
+            this.$router.push({
+              name: "NotFound",
+            });
+          }
+        })
+        .catch((error) => {
+          this.$swal({
+            toast: true,
+            showProgressBar: true,
+            position: "top-end",
+            title: error,
+            icon: "error",
+            showConfirmButton: false,
+            timer: 2100,
+          });
+        });
+      this.show = false;
     },
   },
 };
@@ -1052,14 +1370,24 @@ button {
 }
 img {
   height: 10rem;
-  width: 19rem;
+  width: 14rem;
 }
 
+label {
+  font-size: 13;
+  margin-left: 5px;
+  font-family: Tahoma;
+}
+
+.card-body {
+  width: 14rem;
+  height: fit-content;
+}
 .card {
   box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.2);
   text-align: center;
   background-color: transparent;
-  width: fit-content;
+  width: 14rem;
   height: fit-content;
   padding: auto;
   margin: 20px auto auto auto;
@@ -1068,8 +1396,37 @@ img {
 p {
   font-size: 13px;
 }
+
+h4.card-title {
+  font-size: 14px;
+  font-weight: bold;
+  font-family: "Lucida Bright";
+}
+
 #input-search {
   height: 30px;
+}
+
+.different-content {
+  color: red;
+}
+.form-row-left {
+  display: flex;
+  flex-wrap: wrap;
+  float: left;
+  margin-left: -5px;
+}
+
+.form-row-right {
+  display: flex;
+  flex-wrap: wrap;
+  width: 80%;
+  float: left;
+  right: 0;
+}
+
+.text-decoration-line {
+  text-decoration-line: line-through;
 }
 </style>
 >

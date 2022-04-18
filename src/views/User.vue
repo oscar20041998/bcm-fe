@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="show" rounded="sm">
-    <div class="jumbotron">
+    <div class="content">
       <div class="row">
         <div class="col-md-5">
           <h5>
@@ -86,6 +86,26 @@
               </div>
             </template>
           </b-table>
+          <div class="form-inline">
+            <div class="col-sm-1">
+              <strong>Current Page: {{ currentPage }}</strong>
+            </div>
+            <div class="form-group col-sm-4">
+              <select
+                class="form-select input-sm"
+                style="width: 100px; margin-right: 10px"
+                v-model="perPage"
+                id="select-rows-page"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="50">50</option>
+                <option selected value="100">100</option>
+              </select>
+              <label for="select-rows-page">{{ perPage }} rows/ page</label>
+            </div>
+          </div>
+          <hr class="my-4" />
           <div class="row" style="margin-left: 10px">
             <div class="column">
               <b-pagination
@@ -129,6 +149,7 @@
                   <input
                     disabled
                     type="text"
+                    autocomplete="off"
                     class="form-control"
                     v-model="profileInfo.userId"
                   />
@@ -145,6 +166,7 @@
                       <input
                         id="input-first-name"
                         type="text"
+                        autocomplete="off"
                         class="form-control"
                         v-model="profileInfo.firstName"
                         placeholder="Entry frist name"
@@ -159,6 +181,7 @@
                       <input
                         id="input-midle-name"
                         type="text"
+                        autocomplete="off"
                         class="form-control"
                         v-model="profileInfo.midleName"
                         placeholder="Entry midle name"
@@ -173,6 +196,7 @@
                       <input
                         id="input-last-name"
                         type="text"
+                        autocomplete="off"
                         class="form-control"
                         v-model="profileInfo.lastName"
                         placeholder="Entry last name"
@@ -193,6 +217,7 @@
                       <input
                         id="dpDateOfBirth"
                         type="date"
+                        autocomplete="off"
                         class="form-control"
                         v-model="profileInfo.dateOfBirth"
                       />
@@ -213,6 +238,7 @@
                         id="input-card-number"
                         type="text"
                         class="form-control"
+                        autocomplete="off"
                         v-model="profileInfo.idCard"
                         maxlength="12"
                         placeholder="Entry id card number"
@@ -233,6 +259,7 @@
                       <input
                         id="input-address"
                         type="address"
+                        autocomplete="off"
                         class="form-control"
                         v-model="profileInfo.address"
                         placeholder="Entry address"
@@ -254,6 +281,7 @@
                         id="input-phone-number"
                         type="phone"
                         class="form-control"
+                        autocomplete="off"
                         v-model="profileInfo.phoneNumber"
                         maxlength="11"
                         placeholder="Entry phone number"
@@ -274,10 +302,11 @@
                       <div slot-scope="{ errors }">
                         <select
                           id="select-role"
-                          class="form-control"
+                          class="form-select"
                           v-model="profileInfo.role"
                           aria-placeholder="Select a role"
                         >
+                          <option selected value="">Select Role</option>
                           <option value="ROLE_ADMINISTRATOR">Role Administrator</option>
                           <option value="ROLE_MANAGER">Role Manager</option>
                           <option value="ROLE_STAFF">Role Staff</option>
@@ -299,6 +328,7 @@
                       <input
                         id="input-email"
                         type="email"
+                        autocomplete="off"
                         class="form-control"
                         v-model="profileInfo.email"
                         placeholder="Entry email"
@@ -492,7 +522,7 @@ export default {
       currentRole: "",
       listUser: [],
       currentPage: 1,
-      perPage: 25,
+      perPage: 100,
       fields: [
         { key: "userId", sortable: true },
         { key: "fullName", sortable: true },

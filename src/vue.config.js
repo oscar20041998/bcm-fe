@@ -1,7 +1,7 @@
 module.exports = {
     publicPath: '/bcm-web-app/',
     devServer: {
-        proxy: "https://coffee-management-api.herokuapp.com",
+        proxy: "http://localhost:1510/",
         compress: true,
         disableHostCheck: true,
     }

@@ -16,6 +16,7 @@ import Vuex from 'vuex';
 import { ModalPlugin } from 'bootstrap-vue'
 import { ValidationProvider } from 'vee-validate';
 import VueMask from 'v-mask'
+import VMoney from 'v-money'
 
 Vue.use(VueMask);
 Vue.use(ModalPlugin)
@@ -30,11 +31,13 @@ Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
 Vue.use($)
 Vue.use(SlidingPagination)
+Vue.use(VMoney)
 Vue.component('paginate', VuejsPaginate)
 Vue.component('ValidationProvider', ValidationProvider);
 
-Vue.config.productionTip = false
-Vue.config.devtools = false
+Vue.config.productionTip = true
+Vue.config.devtools = true
+Vue.config.keyCodes = true
 
 new Vue({
     BootstrapVue,

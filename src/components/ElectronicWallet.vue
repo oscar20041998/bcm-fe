@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 600px; min-height: 10px; overflow-y: scroll">
+  <div class="content">
     <b-row>
       <template v-for="e in listEwallet">
         <b-col v-bind:key="e.id">
@@ -10,7 +10,7 @@
             img-alt="Image"
             img-top
             tag="article"
-            style="max-width: 20rem"
+            style="max-width: 15rem"
             class="mb-2"
           >
             <p class="card-text">{{ e.createBy }} - {{ e.createDate }}</p>

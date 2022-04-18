@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="show" rounded="sm">
-    <div class="jumbotron">
+    <div class="content">
       <div class="row">
         <div class="col">
           <h5>
@@ -102,6 +102,26 @@
               </b-row>
             </template>
           </b-table>
+          <div class="form-inline">
+            <div class="col-sm-1">
+              <strong>Current Page: {{ currentPage }}</strong>
+            </div>
+            <div class="form-group col-sm-4">
+              <select
+                class="form-select input-sm"
+                style="width: 100px; margin-right: 10px"
+                v-model="perPage"
+                id="select-rows-page"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="50">50</option>
+                <option selected value="100">100</option>
+              </select>
+              <label for="select-rows-page">{{ perPage }} rows/ page</label>
+            </div>
+          </div>
+          <hr class="my-4" />
           <div class="row" style="margin-left: 10px">
             <div class="column">
               <b-pagination
@@ -349,7 +369,7 @@ export default {
       currentRole: JSON.parse(localStorage.getItem("user")).roleCode,
       currentAccountId: JSON.parse(localStorage.getItem("user")).accountId,
       currentPage: 1,
-      perPage: 25,
+      perPage: 100,
       fields: [
         { key: "accountId", sortable: true },
         { key: "userName", sortable: true },

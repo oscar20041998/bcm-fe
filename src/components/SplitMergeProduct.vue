@@ -1,9 +1,11 @@
 <template>
   <b-modal
-    id="modal-xl"
+    id="modal-split-merge-product"
     size="xl"
     title="PRODUCTION SPLIT"
     no-close-on-backdrop
+    header-bg-variant="dark"
+    header-text-variant="light"
     ok-title="Agree and split"
     ok-variant="success"
     @ok="saveSplitList"
@@ -133,8 +135,7 @@ export default {
   },
 
   mounted() {
-    this.getListOrderByTable(this.table.positionId);
-    this.getPosition();
+    
   },
 
   methods: {

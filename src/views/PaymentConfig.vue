@@ -1,5 +1,5 @@
 <template>
-  <div class="jumbotron">
+  <div class="content">
     <b-tabs id="tab-payment-config" content-class="mt-3">
       <b-tab title="Bank" active><BankInfosComponent></BankInfosComponent></b-tab>
       <b-tab title="Electronic Wallet"
